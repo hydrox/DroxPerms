@@ -67,5 +67,5 @@ public interface IDataProvider {
 	
 	public void removeGroupPermission(String player, String world, String node);
 	
-	public void getPlayerPermissions(String player, String world);
+	public String[] getPlayerPermissions(String player, String world);
 }

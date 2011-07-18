@@ -1,0 +1,29 @@
+name: DroxPerms
+main: de.hydrox.bukkit.DroxPerms.DroxPerms
+author: Matthias Soehnholz
+website: https://github.com/hydrox/DroxPerms
+version: 0.0.1
+commands:
+  permissions:
+    aliases: [ perms, perm ]
+    description: Commands for manipulating permissions.
+    usage: |
+        /<command> reload - reload the configuration from disk.
+        /<command> check <node> [player] - check if a player or the sender has a permission (any plugin).
+        /<command> info <node> - prints information on a specific permission.
+        /<command> dump [player] [page] - prints info about a player's (or the sender's) permissions.
+        /<command> group - list group-related commands.
+        /<command> group list - list all groups.
+        /<command> group players <group> - list players in a group.
+        /<command> group setperm <group> <[world:]node> [true|false] - set a permission on a group.
+        /<command> group unsetperm <group> <[world:]node> - unset a permission on a group.
+        /<command> player - list player-related commands.
+        /<command> player groups <player> - list groups a player is in.
+        /<command> player addgroup <player> <group> - add a player to a group.
+        /<command> player removegroup <player> <group> - remove a player from a group.
+        /<command> player setperm <player> <[world:]node> [true|false] - set a permission on a player.
+        /<command> player unsetperm <player> <[world:]node> - unset a permission on a player.
+permissions:
+  permissions.*:
+    default: op
+    description: Allows use of all PermissionsBukkit administration commands.

@@ -2,9 +2,9 @@ package de.hydrox.bukkit.DroxPerms;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.hydrox.bukkit.DroxPerms.data.Configuration;
-import de.hydrox.bukkit.DroxPerms.data.FlatFilePermissions;
+import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
+import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
 
 /**
  * Base Class of DroxPerms
@@ -12,7 +12,7 @@ import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
  */
 public class DroxPerms extends JavaPlugin
 {
-	protected Configuration config;
+	protected Config config;
 	protected IDataProvider dataProvider;
 
 	public void onDisable() {
@@ -21,9 +21,9 @@ public class DroxPerms extends JavaPlugin
 	}
 
 	public void onEnable() {
-		config = new Configuration();
+		config = new Config(this);
 		if(config.getDataProvider().equals(FlatFilePermissions.NODE)) {
-			dataProvider = new FlatFilePermissions();
+			dataProvider = new FlatFilePermissions(this);
 		}
 	}
 
