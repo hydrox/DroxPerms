@@ -43,53 +43,13 @@ public class FlatFilePermissions implements IDataProvider {
     }
 	
 	public static final String NODE = "FlatFile";
-
-	public String getGroup(String player) {
+	
+	public boolean createPlayer(String name) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public void setPlayerGroup(String player, String group) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	public String[] getPlayerSubgroups(String player) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	public void addPlayerSubgroup(String player, String subgroup) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	public void removePlayerSubgroup(String player, String subgroup) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	public void addPlayerPermission(String player, String world, String node) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	public void removePlayerPermission(String player, String world, String node) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	public void addGroupPermission(String player, String world, String node) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	public void removeGroupPermission(String player, String world, String node) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
-
-	public String[] getPlayerPermissions(String player, String world) {
+	public boolean createGroup(String name) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
@@ -99,7 +59,52 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setGroupSubgroup(String group, String subgroup) {
+	public boolean setPlayerGroup(String player, String group) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public String[] getPlayerSubgroups(String player) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean addPlayerSubgroup(String player, String subgroup) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean removePlayerSubgroup(String player, String subgroup) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean addPlayerPermission(String player, String world, String node) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean removePlayerPermission(String player, String world, String node) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public String[] getPlayerPermissions(String player, String world) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean addGroupPermission(String player, String world, String node) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean removeGroupPermission(String player, String world, String node) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public boolean setGroupSubgroup(String group, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
@@ -109,12 +114,17 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public void addGroupSubgroup(String group, String subgroup) {
+	public boolean addGroupSubgroup(String group, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public void removeGroupSubgroup(String group, String subgroup) {
+	public boolean removeGroupSubgroup(String group, String subgroup) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public String[] getGroupPermissions(String player, String world) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
