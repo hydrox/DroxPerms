@@ -18,17 +18,17 @@ public interface IDataProvider {
 	 *            player to be queried.
 	 * @return main group of the Player
 	 */
-	public String getGroup(String player);
+	public String getPlayerGroup(String player);
 
 	/**
 	 * Sets the main-group of the Player
 	 * 
 	 * @param player
 	 *            player to be modified
-	 * @param group
+	 * @param subgroup
 	 *            group to be set
 	 */
-	public void setGroup(String player, String group);
+	public void setPlayerGroup(String player, String subgroup);
 
 	/**
 	 * Returns the sub-groups of the Player
@@ -37,7 +37,7 @@ public interface IDataProvider {
 	 *            player to be queried
 	 * @return array of sub-groups
 	 */
-	public String[] getSubgroups(String player);
+	public String[] getPlayerSubgroups(String player);
 
 	/**
 	 * Adds a Sub-group to a Player
@@ -47,7 +47,7 @@ public interface IDataProvider {
 	 * @param subgroup
 	 *            sub-group to be added
 	 */
-	public void addSubgroup(String player, String subgroup);
+	public void addPlayerSubgroup(String player, String subgroup);
 
 	/**
 	 * Removes a Sub-group from a Player
@@ -57,12 +57,20 @@ public interface IDataProvider {
 	 * @param subgroup
 	 *            sub-group to be removed
 	 */
-	public void removeSubgroup(String player, String subgroup);
+	public void removePlayerSubgroup(String player, String subgroup);
 	
 	public void addPlayerPermission(String player, String world, String node);
 	
 	public void removePlayerPermission(String player, String world, String node);
 	
+	public void setGroupSubgroup(String group, String subgroup);
+
+	public String[] getGroupSubgroups(String group);
+
+	public void addGroupSubgroup(String group, String subgroup);
+
+	public void removeGroupSubgroup(String group, String subgroup);
+
 	public void addGroupPermission(String player, String world, String node);
 	
 	public void removeGroupPermission(String player, String world, String node);

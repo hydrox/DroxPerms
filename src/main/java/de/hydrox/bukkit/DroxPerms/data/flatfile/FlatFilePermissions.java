@@ -1,7 +1,6 @@
 package de.hydrox.bukkit.DroxPerms.data.flatfile;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.plugin.Plugin;
@@ -16,28 +15,31 @@ import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
  */
 public class FlatFilePermissions implements IDataProvider {
 	
-	private Configuration groups;
-	private Configuration users;
+	private Configuration groupsConfig;
+	private Configuration usersConfig;
 	
 	public FlatFilePermissions(Plugin plugin) {
         // Write some default configuration
 		
-		groups = new Configuration(new File(plugin.getDataFolder(), "groups.yml"));
-		users = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
-        if (!new File(plugin.getDataFolder(), "groups.yml").exists()) {
-        	plugin.getServer().getLogger().info("[DroxPerms] Generating default groups.yml");
-        	groups.setProperty("Groups", new Group().toConfigurationNode());
-        	groups.save();
-        }
-        if (!new File(plugin.getDataFolder(), "users.yml").exists()) {
-        	plugin.getServer().getLogger().info("[DroxPerms] Generating default users.yml");
-        	HashMap<String,Object> tmp = new HashMap<String,Object>();
-        	tmp.put("mydrox", new User().toConfigurationNode());
-        	tmp.put("tehbeard", new User().toConfigurationNode());
-        
-        	users.setProperty("Users", tmp);
-        	users.save();
-        }
+		groupsConfig = new Configuration(new File(plugin.getDataFolder(), "groups.yml"));
+		usersConfig = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
+		if (!new File(plugin.getDataFolder(), "groups.yml").exists()) {
+			plugin.getServer().getLogger().info("[DroxPerms] Generating default groups.yml");
+			HashMap<String,Object> tmp = new HashMap<String,Object>();
+			tmp.put("default", new Group("default").toConfigurationNode());
+
+			groupsConfig.setProperty("Groups", tmp);
+			groupsConfig.save();
+		}
+		if (!new File(plugin.getDataFolder(), "users.yml").exists()) {
+			plugin.getServer().getLogger().info("[DroxPerms] Generating default users.yml");
+			HashMap<String,Object> tmp = new HashMap<String,Object>();
+			tmp.put("mydrox", new User().toConfigurationNode());
+			tmp.put("tehbeard", new User().toConfigurationNode());
+
+			usersConfig.setProperty("Users", tmp);
+			usersConfig.save();
+		}
     }
 	
 	public static final String NODE = "FlatFile";
@@ -47,22 +49,22 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public void setGroup(String player, String group) {
+	public void setPlayerGroup(String player, String group) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public String[] getSubgroups(String player) {
+	public String[] getPlayerSubgroups(String player) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public void addSubgroup(String player, String subgroup) {
+	public void addPlayerSubgroup(String player, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public void removeSubgroup(String player, String subgroup) {
+	public void removePlayerSubgroup(String player, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
@@ -88,6 +90,31 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public String[] getPlayerPermissions(String player, String world) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public String getPlayerGroup(String player) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public void setGroupSubgroup(String group, String subgroup) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public String[] getGroupSubgroups(String group) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public void addGroupSubgroup(String group, String subgroup) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+	}
+
+	public void removeGroupSubgroup(String group, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
