@@ -18,6 +18,11 @@ public class FlatFilePermissions implements IDataProvider {
 	private Configuration groupsConfig;
 	private Configuration usersConfig;
 	
+	public FlatFilePermissions() {
+		groupsConfig = new Configuration(new File("groupsConfig.yml"));
+		usersConfig = new Configuration(new File("users.yml"));
+	}
+	
 	public FlatFilePermissions(Plugin plugin) {
         // Write some default configuration
 		
@@ -94,12 +99,12 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean addGroupPermission(String player, String world, String node) {
+	public boolean addGroupPermission(String group, String world, String node) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean removeGroupPermission(String player, String world, String node) {
+	public boolean removeGroupPermission(String group, String world, String node) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
@@ -124,7 +129,7 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public String[] getGroupPermissions(String player, String world) {
+	public String[] getGroupPermissions(String group, String world) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}

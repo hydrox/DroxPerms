@@ -9,12 +9,13 @@ public class GroupTest extends TestCase {
 		super(name);
 	}
 	
-	public void setUp() {
+	public void setUp() throws Exception {
+		super.setUp();
 		Group.clearGroups();
 	}
 	
-	public void tearDown() {
-		
+	public void tearDown() throws Exception {
+		super.tearDown();
 	}
 	
 	public void testGetName() {
