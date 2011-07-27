@@ -1,6 +1,8 @@
 package de.hydrox.bukkit.DroxPerms.data;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.plugin.Plugin;
@@ -10,6 +12,7 @@ import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
 
 public class Config {
 	private String dataProvider = null;
+	private String defaultWorld = null;
 	private Configuration configuration = null;
 	private Logger logger;
 	
@@ -21,10 +24,17 @@ public class Config {
         // Write some default configuration
         if (!new File(plugin.getDataFolder(), "config.yml").exists()) {
         	plugin.getServer().getLogger().info("[DroxPerms] Generating default configuration");
+            HashMap<String, ArrayList<String>> mirrors = new HashMap<String, ArrayList<String>>();
+            ArrayList<String> defaultMirror = new ArrayList<String>();
+            defaultMirror.add("nether");
+            mirrors.put("world", defaultMirror);
             configuration.setProperty("DataProvider", FlatFilePermissions.NODE);
+            configuration.setProperty("DefaultWorld", "world");
+            configuration.setProperty("Mirrors", mirrors);
             configuration.save();
         }
 		dataProvider = configuration.getString("DataProvider");
+		defaultWorld = configuration.getString("DefaultWorld");
 		logger.info("[DroxPerms] Using DataProvider: " + dataProvider);
 		
 		// TODO Needs config-file reader
