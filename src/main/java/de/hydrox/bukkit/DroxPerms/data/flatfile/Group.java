@@ -17,6 +17,7 @@ public class Group {
 	public Group() {
 		this("default");
 	}
+
 	public Group(String name) {
 		this.name = name;
 		this.subgroups = new ArrayList<String>();

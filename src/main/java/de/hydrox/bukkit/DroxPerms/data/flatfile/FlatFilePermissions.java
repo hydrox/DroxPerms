@@ -42,6 +42,7 @@ public class FlatFilePermissions implements IDataProvider {
 			groupsConfig.setProperty("groups", tmp);
 			groupsConfig.save();
 		}
+
 		groupsConfig.load();
 		System.out.println(groupsConfig.getKeys().toString());
 		Map<String, ConfigurationNode> groups = groupsConfig.getNodes("groups");
@@ -63,6 +64,18 @@ public class FlatFilePermissions implements IDataProvider {
 			usersConfig.setProperty("users", tmp);
 			usersConfig.save();
 		}
+
+		usersConfig.load();
+		System.out.println(usersConfig.getKeys().toString());
+		Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
+		iter = users.keySet().iterator();
+		while (iter.hasNext()) {
+			String key = iter.next();
+			plugin.getServer().getLogger().fine("load user: " + key);
+			ConfigurationNode conf = users.get(key);
+			User newUser = new User(key, conf);
+			User.addUser(newUser);
+		}
     }
 
 	public void save() {
@@ -75,6 +88,16 @@ public class FlatFilePermissions implements IDataProvider {
 
 		groupsConfig.setProperty("groups", tmp);
 		groupsConfig.save();
+
+		tmp = new HashMap<String,Object>();
+		Iterator<User> iter2 = User.iter(); 
+		while (iter2.hasNext()) {
+			User user = iter2.next();
+			tmp.put(user.getName().toLowerCase(), user.toConfigurationNode());
+		}
+
+		usersConfig.setProperty("users", tmp);
+		usersConfig.save();
 	}
 
 	public boolean createPlayer(String name) {
