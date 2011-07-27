@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.bukkit.permissions.Permission;
 import org.bukkit.util.config.ConfigurationNode;
+
+import de.hydrox.bukkit.DroxPerms.data.Config;
 
 public class Group {
 	private static HashMap<String, Group> groups = new HashMap<String, Group>();
@@ -13,6 +16,8 @@ public class Group {
 	private HashMap<String, ArrayList<String>> permissions;
 	private ArrayList<String> globalPermissions;
 	private ArrayList<String> subgroups;
+
+	private HashMap<String, Permission> bukkitPermissions;
 
 	public Group() {
 		this("default");
@@ -40,6 +45,35 @@ public class Group {
 			String world = iter.next();
 			permissions.put(world, (ArrayList<String>) tmp.getStringList(world, new ArrayList<String>()));
 			System.out.println("permissions "+world+": " + permissions.get(world).size());
+		}
+
+		//create Permission for default world
+		if (!permissions.containsKey(Config.getDefaultWorld())) {
+			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
+			for (String subgroup : subgroups) {
+				children.put("droxperms.meta.group." + subgroup + "." + Config.getDefaultWorld(), false);
+			}
+			children.put("droxperms.meta.group." + name, false);
+
+			Permission permission = new Permission("droxperms.meta.group." + name + "." + Config.getDefaultWorld(), "Group-Permissions for group " + name + " on world " + Config.getDefaultWorld(), children);
+			bukkitPermissions.put(Config.getDefaultWorld(), permission);
+		}
+
+		//create Permissions for other worlds
+		for (String world : permissions.keySet()) {
+			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
+			for (String subgroup : subgroups) {
+				children.put("droxperms.meta.group." + subgroup + "." + world, false);
+			}
+
+			for (String permission : permissions.get(world)) {
+				children.put(permission, false);
+			}
+
+			children.put("droxperms.meta.group." + name, false);
+
+			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, children);
+			bukkitPermissions.put(world, permission);
 		}
 	}
 

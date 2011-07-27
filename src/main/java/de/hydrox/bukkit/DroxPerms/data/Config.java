@@ -11,8 +11,8 @@ import org.bukkit.util.config.Configuration;
 import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
 
 public class Config {
-	private String dataProvider = null;
-	private String defaultWorld = null;
+	private static String dataProvider = null;
+	private static String defaultWorld = null;
 	private Configuration configuration = null;
 	private Logger logger;
 	
@@ -40,7 +40,11 @@ public class Config {
 		// TODO Needs config-file reader
 	}
 	
-	public String getDataProvider() {
+	public static String getDataProvider() {
 		return dataProvider;
+	}
+
+	public static String getDefaultWorld() {
+		return defaultWorld;
 	}
 }
