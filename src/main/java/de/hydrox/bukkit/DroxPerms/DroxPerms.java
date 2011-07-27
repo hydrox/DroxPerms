@@ -16,8 +16,7 @@ public class DroxPerms extends JavaPlugin
 	protected IDataProvider dataProvider;
 
 	public void onDisable() {
-		// TODO Auto-generated method stub
-		
+		dataProvider.save();
 	}
 
 	public void onEnable() {

@@ -2,9 +2,12 @@ package de.hydrox.bukkit.DroxPerms.data.flatfile;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
+import org.bukkit.util.config.ConfigurationNode;
 
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
@@ -14,15 +17,18 @@ import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
  *
  */
 public class FlatFilePermissions implements IDataProvider {
-	
+
+	public static final String NODE = "FlatFile";
+
 	private Configuration groupsConfig;
 	private Configuration usersConfig;
 	
+
 	public FlatFilePermissions() {
 		groupsConfig = new Configuration(new File("groupsConfig.yml"));
 		usersConfig = new Configuration(new File("users.yml"));
 	}
-	
+
 	public FlatFilePermissions(Plugin plugin) {
         // Write some default configuration
 		
@@ -33,22 +39,44 @@ public class FlatFilePermissions implements IDataProvider {
 			HashMap<String,Object> tmp = new HashMap<String,Object>();
 			tmp.put("default", new Group("default").toConfigurationNode());
 
-			groupsConfig.setProperty("Groups", tmp);
+			groupsConfig.setProperty("groups", tmp);
 			groupsConfig.save();
 		}
+		groupsConfig.load();
+		System.out.println(groupsConfig.getKeys().toString());
+		Map<String, ConfigurationNode> groups = groupsConfig.getNodes("groups");
+		Iterator<String> iter = groups.keySet().iterator();
+		while (iter.hasNext()) {
+			String key = iter.next();
+			plugin.getServer().getLogger().fine("load group: " + key);
+			ConfigurationNode conf = groups.get(key);
+			Group newGroup = new Group(key, conf);
+			Group.addGroup(newGroup);
+		}
+
 		if (!new File(plugin.getDataFolder(), "users.yml").exists()) {
 			plugin.getServer().getLogger().info("[DroxPerms] Generating default users.yml");
 			HashMap<String,Object> tmp = new HashMap<String,Object>();
 			tmp.put("mydrox", new User().toConfigurationNode());
 			tmp.put("tehbeard", new User().toConfigurationNode());
 
-			usersConfig.setProperty("Users", tmp);
+			usersConfig.setProperty("users", tmp);
 			usersConfig.save();
 		}
     }
-	
-	public static final String NODE = "FlatFile";
-	
+
+	public void save() {
+		HashMap<String,Object> tmp = new HashMap<String,Object>();
+		Iterator<Group> iter = Group.iter();
+		while (iter.hasNext()) {
+			Group group = iter.next();
+			tmp.put(group.getName().toLowerCase(), group.toConfigurationNode());
+		}
+
+		groupsConfig.setProperty("groups", tmp);
+		groupsConfig.save();
+	}
+
 	public boolean createPlayer(String name) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();

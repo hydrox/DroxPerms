@@ -98,4 +98,6 @@ public interface IDataProvider {
 			String node);
 
 	public String[] getGroupPermissions(String player, String world);
+
+	public void save();
 }
