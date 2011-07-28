@@ -47,6 +47,96 @@ public class Group {
 			System.out.println("permissions "+world+": " + permissions.get(world).size());
 		}
 
+		updatePermissions();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public HashMap<String, Object> toConfigurationNode() {
+		HashMap<String, Object> output = new HashMap<String, Object>();
+		output.put("subgroups", subgroups);
+		output.put("permissions", permissions);
+		output.put("globalpermissions", globalPermissions);
+		return output;
+	}
+
+	public boolean addPermission(String world, String permission) {
+		ArrayList<String> permArray = permissions.get(world.toLowerCase());
+		if (permArray != null) {
+			if (permArray.contains(permission)) {
+				return false;
+			}
+			permArray.add(permission);
+			updatePermissions();
+			return true;
+		}
+		return false;
+	}
+
+	public boolean removePermission(String world, String permission) {
+		ArrayList<String> permArray = permissions.get(world.toLowerCase());
+		if (permArray != null) {
+			if (permArray.contains(permission)) {
+				permArray.remove(permission);
+				updatePermissions();
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+
+	public boolean addSubgroup(String subgroup) {
+		if(Group.existGroup(subgroup.toLowerCase())) {
+			if(!subgroups.contains(subgroup.toLowerCase())) {
+				subgroups.add(subgroup.toLowerCase());
+				updatePermissions();
+				return true;
+			}
+			
+		} 
+		return false;
+	}
+
+	public boolean removeSubgroup(String subgroup) {
+		if(subgroups.contains(subgroup.toLowerCase())) {
+			subgroups.remove(subgroup.toLowerCase());
+			updatePermissions();
+			return true;
+		}
+		return false;
+	}
+
+	public boolean hasPermission(String world, String permission) {
+		ArrayList<String> permArray = permissions.get(world.toLowerCase());
+		if (permArray != null) {
+			if (permArray.contains(permission)) {
+				return true;
+			}
+		}
+
+		for (String subgroup : subgroups) {
+			if (Group.getGroup(subgroup) != null) {
+				if (Group.getGroup(subgroup).hasPermission(world.toLowerCase(), permission)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean addWorld(String world) {
+		if (permissions.containsKey(world.toLowerCase())) {
+			return false;
+		}
+		permissions.put(world.toLowerCase(), new ArrayList<String>());
+		updatePermissions();
+		return true;
+	}
+
+	public void updatePermissions() {
 		bukkitPermissions = new HashMap<String, Permission>();
 		//create Permission for default world
 		if (!permissions.containsKey(Config.getDefaultWorld())) {
@@ -90,87 +180,6 @@ public class Group {
 		Permission permission = new Permission("droxperms.meta.group." + name, "Group-Permissions for group " + name, children);
 		FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name);
 		FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public HashMap<String, Object> toConfigurationNode() {
-		HashMap<String, Object> output = new HashMap<String, Object>();
-		output.put("subgroups", subgroups);
-		output.put("permissions", permissions);
-		output.put("globalpermissions", globalPermissions);
-		return output;
-	}
-
-	public boolean addPermission(String world, String permission) {
-		ArrayList<String> permArray = permissions.get(world.toLowerCase());
-		if (permArray != null) {
-			if (permArray.contains(permission)) {
-				return false;
-			}
-			permArray.add(permission);
-			return true;
-		}
-		return false;
-	}
-
-	public boolean removePermission(String world, String permission) {
-		ArrayList<String> permArray = permissions.get(world.toLowerCase());
-		if (permArray != null) {
-			if (permArray.contains(permission)) {
-				permArray.remove(permission);
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
-
-	public boolean addSubgroup(String subgroup) {
-		if(Group.existGroup(subgroup.toLowerCase())) {
-			if(!subgroups.contains(subgroup.toLowerCase())) {
-				subgroups.add(subgroup.toLowerCase());
-				return true;
-			}
-			
-		} 
-		return false;
-	}
-
-	public boolean removeSubgroup(String subgroup) {
-		if(subgroups.contains(subgroup.toLowerCase())) {
-			subgroups.remove(subgroup.toLowerCase());
-			return true;
-		}
-		return false;
-	}
-
-	public boolean hasPermission(String world, String permission) {
-		ArrayList<String> permArray = permissions.get(world.toLowerCase());
-		if (permArray != null) {
-			if (permArray.contains(permission)) {
-				return true;
-			}
-		}
-
-		for (String subgroup : subgroups) {
-			if (Group.getGroup(subgroup) != null) {
-				if (Group.getGroup(subgroup).hasPermission(world.toLowerCase(), permission)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	public boolean addWorld(String world) {
-		if (permissions.containsKey(world.toLowerCase())) {
-			return false;
-		}
-		permissions.put(world.toLowerCase(), new ArrayList<String>());
-		return true;
 	}
 
 	public static boolean addGroup(Group group) {
