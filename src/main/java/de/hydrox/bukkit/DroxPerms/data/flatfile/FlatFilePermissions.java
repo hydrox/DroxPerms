@@ -19,6 +19,7 @@ import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 public class FlatFilePermissions implements IDataProvider {
 
 	public static final String NODE = "FlatFile";
+	protected static Plugin plugin = null;
 
 	private Configuration groupsConfig;
 	private Configuration usersConfig;
@@ -30,6 +31,7 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public FlatFilePermissions(Plugin plugin) {
+		FlatFilePermissions.plugin = plugin;
         // Write some default configuration
 		
 		groupsConfig = new Configuration(new File(plugin.getDataFolder(), "groups.yml"));

@@ -47,6 +47,7 @@ public class Group {
 			System.out.println("permissions "+world+": " + permissions.get(world).size());
 		}
 
+		bukkitPermissions = new HashMap<String, Permission>();
 		//create Permission for default world
 		if (!permissions.containsKey(Config.getDefaultWorld())) {
 			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
@@ -56,6 +57,8 @@ public class Group {
 			children.put("droxperms.meta.group." + name, false);
 
 			Permission permission = new Permission("droxperms.meta.group." + name + "." + Config.getDefaultWorld(), "Group-Permissions for group " + name + " on world " + Config.getDefaultWorld(), children);
+			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name + "." + Config.getDefaultWorld());
+			FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 			bukkitPermissions.put(Config.getDefaultWorld(), permission);
 		}
 
@@ -73,8 +76,20 @@ public class Group {
 			children.put("droxperms.meta.group." + name, false);
 
 			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, children);
+			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name + "." + world);
+			FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 			bukkitPermissions.put(world, permission);
 		}
+
+		HashMap<String, Boolean> children = new HashMap<String, Boolean>();
+		for (String permission : globalPermissions) {
+			children.put(permission, false);
+		}
+
+		//create Permission for global grouppermissions
+		Permission permission = new Permission("droxperms.meta.group." + name, "Group-Permissions for group " + name, children);
+		FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name);
+		FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 	}
 
 	public String getName() {
