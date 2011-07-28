@@ -30,6 +30,7 @@ public class User {
 
 	public User(String name, ConfigurationNode node) {
 		this.name = name;
+		this.group = node.getString("group");
 		System.out.println("users" + node.getKeys().toString());
 		System.out.println("users.subgroups" + node.getStringList("subgroups", new ArrayList<String>()));
 		this.subgroups = (ArrayList<String>) node.getStringList("subgroups", new ArrayList<String>());
