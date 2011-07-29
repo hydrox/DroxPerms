@@ -32,19 +32,19 @@ public class Group {
 
 	public Group(String name, ConfigurationNode node) {
 		this.name = name;
-		System.out.println("groups" + node.getKeys().toString());
-		System.out.println("groups.subgroups" + node.getStringList("subgroups", new ArrayList<String>()));
+//		System.out.println("groups" + node.getKeys().toString());
+//		System.out.println("groups.subgroups" + node.getStringList("subgroups", new ArrayList<String>()));
 		this.subgroups = (ArrayList<String>) node.getStringList("subgroups", new ArrayList<String>());
-		System.out.println("subgroups: " + subgroups.size());
+//		System.out.println("subgroups: " + subgroups.size());
 		this.globalPermissions = (ArrayList<String>) node.getStringList("globalpermissions", new ArrayList<String>());
-		System.out.println("globalpermissions: " + globalPermissions.size());
+//		System.out.println("globalpermissions: " + globalPermissions.size());
 		this.permissions = new HashMap<String, ArrayList<String>>();
 		ConfigurationNode tmp = node.getNode("permissions");
 		Iterator<String> iter = tmp.getKeys().iterator();
 		while (iter.hasNext()) {
 			String world = iter.next();
 			permissions.put(world, (ArrayList<String>) tmp.getStringList(world, new ArrayList<String>()));
-			System.out.println("permissions "+world+": " + permissions.get(world).size());
+//			System.out.println("permissions "+world+": " + permissions.get(world).size());
 		}
 
 		updatePermissions();

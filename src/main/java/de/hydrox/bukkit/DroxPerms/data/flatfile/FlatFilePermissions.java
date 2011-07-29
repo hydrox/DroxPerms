@@ -46,7 +46,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 
 		groupsConfig.load();
-		System.out.println(groupsConfig.getKeys().toString());
+//		System.out.println(groupsConfig.getKeys().toString());
 		Map<String, ConfigurationNode> groups = groupsConfig.getNodes("groups");
 		Iterator<String> iter = groups.keySet().iterator();
 		while (iter.hasNext()) {
@@ -68,7 +68,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 
 		usersConfig.load();
-		System.out.println(usersConfig.getKeys().toString());
+//		System.out.println(usersConfig.getKeys().toString());
 		Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
 		iter = users.keySet().iterator();
 		while (iter.hasNext()) {
