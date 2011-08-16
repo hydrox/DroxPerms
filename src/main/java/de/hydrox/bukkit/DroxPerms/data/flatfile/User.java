@@ -60,6 +60,22 @@ public class User {
 		return output;
 	}
 	
+	public String[] getPermissions(String world) {
+		ArrayList<String> perms = new ArrayList<String>();
+		//add group permissions
+		perms.add("droxperms.meta.group." + group);
+		//add subgroup permissions
+		for (Iterator<String> iterator = subgroups.iterator(); iterator.hasNext();) {
+			String subgroup = iterator.next();
+			perms.add("droxperms.meta.group." + subgroup);
+		}
+		//add global permissions
+		perms.addAll(globalPermissions);
+		//add world permissions
+		perms.addAll(permissions.get(world));
+		return perms.toArray(new String[0]);
+	}
+
 	public static boolean addUser(User user) {
 		if (existUser(user.name.toLowerCase())) {
 			return false;

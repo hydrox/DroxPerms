@@ -142,9 +142,9 @@ public class Group {
 		if (!permissions.containsKey(Config.getDefaultWorld())) {
 			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
 			for (String subgroup : subgroups) {
-				children.put("droxperms.meta.group." + subgroup + "." + Config.getDefaultWorld(), false);
+				children.put("droxperms.meta.group." + subgroup + "." + Config.getDefaultWorld(), true);
 			}
-			children.put("droxperms.meta.group." + name, false);
+			children.put("droxperms.meta.group." + name, true);
 
 			Permission permission = new Permission("droxperms.meta.group." + name + "." + Config.getDefaultWorld(), "Group-Permissions for group " + name + " on world " + Config.getDefaultWorld(), children);
 			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name + "." + Config.getDefaultWorld());
@@ -156,14 +156,18 @@ public class Group {
 		for (String world : permissions.keySet()) {
 			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
 			for (String subgroup : subgroups) {
-				children.put("droxperms.meta.group." + subgroup + "." + world, false);
+				children.put("droxperms.meta.group." + subgroup + "." + world, true);
 			}
 
 			for (String permission : permissions.get(world)) {
-				children.put(permission, false);
+				if (permission.startsWith("-")) {
+					children.put(permission, false);
+				} else {
+					children.put(permission, true);
+				}
 			}
 
-			children.put("droxperms.meta.group." + name, false);
+			children.put("droxperms.meta.group." + name, true);
 
 			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, children);
 			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name + "." + world);
@@ -173,7 +177,11 @@ public class Group {
 
 		HashMap<String, Boolean> children = new HashMap<String, Boolean>();
 		for (String permission : globalPermissions) {
-			children.put(permission, false);
+			if (permission.startsWith("-")) {
+				children.put(permission, false);
+			} else {
+				children.put(permission, true);
+			}
 		}
 
 		//create Permission for global grouppermissions

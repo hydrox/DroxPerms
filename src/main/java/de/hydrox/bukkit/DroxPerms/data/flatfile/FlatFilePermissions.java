@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 
+import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
 /**
@@ -148,8 +149,11 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public String[] getPlayerPermissions(String player, String world) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (!User.existUser(player)) {
+			plugin.getServer().getLogger().severe("[DroxPerms] User " + player + " doesn't exist");
+			return new String[0];
+		}
+		return User.getUser(player).getPermissions(Config.getRealWorld(world));
 	}
 
 	public boolean addGroupPermission(String group, String world, String node) {
