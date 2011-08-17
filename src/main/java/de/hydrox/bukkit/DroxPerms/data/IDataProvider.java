@@ -1,5 +1,7 @@
 package de.hydrox.bukkit.DroxPerms.data;
 
+import org.bukkit.command.CommandSender;
+
 /**
  * Interface for accessing and modifying Groups and Player. This includes
  * accessing and modifying the main Group of a Player, adding, removing
@@ -27,7 +29,7 @@ public interface IDataProvider {
 	 *            name of the Group
 	 * @return returns true if the Group could be created.
 	 */
-	public boolean createGroup(String name);
+	public boolean createGroup(CommandSender sender, String name);
 	
 	/**
 	 * Returns the main-group of the Player
@@ -46,7 +48,7 @@ public interface IDataProvider {
 	 * @param subgroup
 	 *            group to be set
 	 */
-	public boolean setPlayerGroup(String player, String subgroup);
+	public boolean setPlayerGroup(CommandSender sender, String player, String subgroup);
 
 	/**
 	 * Returns the sub-groups of the Player
@@ -65,7 +67,7 @@ public interface IDataProvider {
 	 * @param subgroup
 	 *            sub-group to be added
 	 */
-	public boolean addPlayerSubgroup(String player, String subgroup);
+	public boolean addPlayerSubgroup(CommandSender sender, String player, String subgroup);
 
 	/**
 	 * Removes a Sub-group from a Player
@@ -75,11 +77,11 @@ public interface IDataProvider {
 	 * @param subgroup
 	 *            sub-group to be removed
 	 */
-	public boolean removePlayerSubgroup(String player, String subgroup);
+	public boolean removePlayerSubgroup(CommandSender sender, String player, String subgroup);
 
-	public boolean addPlayerPermission(String player, String world, String node);
+	public boolean addPlayerPermission(CommandSender sender, String player, String world, String node);
 
-	public boolean removePlayerPermission(String player, String world,
+	public boolean removePlayerPermission(CommandSender sender, String player, String world,
 			String node);
 
 	public String[] getPlayerPermissions(String player, String world);
@@ -88,13 +90,13 @@ public interface IDataProvider {
 
 	public String[] getGroupSubgroups(String group);
 
-	public boolean addGroupSubgroup(String group, String subgroup);
+	public boolean addGroupSubgroup(CommandSender sender, String group, String subgroup);
 
-	public boolean removeGroupSubgroup(String group, String subgroup);
+	public boolean removeGroupSubgroup(CommandSender sender, String group, String subgroup);
 
-	public boolean addGroupPermission(String player, String world, String node);
+	public boolean addGroupPermission(CommandSender sender, String player, String world, String node);
 
-	public boolean removeGroupPermission(String player, String world,
+	public boolean removeGroupPermission(CommandSender sender, String player, String world,
 			String node);
 
 	public String[] getGroupPermissions(String player, String world);

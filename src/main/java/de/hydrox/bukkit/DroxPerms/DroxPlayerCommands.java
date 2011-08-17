@@ -28,10 +28,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("addperm")) {
 			if (split.length == 3) {
 				// add global permission
-				result = plugin.dataProvider.addPlayerPermission(split[1], null, split[2]);
+				result = plugin.dataProvider.addPlayerPermission(sender, split[1], null, split[2]);
 			} else if (split.length == 4) {
 				// add world permission
-				result = plugin.dataProvider.addPlayerPermission(split[1], split[3], split[2]);				
+				result = plugin.dataProvider.addPlayerPermission(sender, split[1], split[3], split[2]);
 			}
 			plugin.refreshPlayer((Player) sender);
 			return result;
@@ -41,10 +41,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("remperm")) {
 			if (split.length == 3) {
 				// remove global permission
-				result = plugin.dataProvider.removePlayerPermission(split[1], null, split[2]);
+				result = plugin.dataProvider.removePlayerPermission(sender, split[1], null, split[2]);
 			} else if (split.length == 4) {
 				// remove world permission
-				result = plugin.dataProvider.removePlayerPermission(split[1], split[3], split[2]);				
+				result = plugin.dataProvider.removePlayerPermission(sender, split[1], split[3], split[2]);
 			}
 			plugin.refreshPlayer((Player) sender);
 			return result;
@@ -53,7 +53,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// add subgroup
 		if (split[0].equalsIgnoreCase("addsub")) {
 			if (split.length == 3) {
-				result = plugin.dataProvider.addPlayerSubgroup(split[1], split[2]);
+				result = plugin.dataProvider.addPlayerSubgroup(sender, split[1], split[2]);
 			}
 			plugin.refreshPlayer((Player) sender);
 			return result;
@@ -62,7 +62,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// remove subgroup
 		if (split[0].equalsIgnoreCase("remperm")) {
 			if (split.length == 3) {
-				result = plugin.dataProvider.removePlayerSubgroup(split[1],split[2]);
+				result = plugin.dataProvider.removePlayerSubgroup(sender, split[1],split[2]);
 			}
 			plugin.refreshPlayer((Player) sender);
 			return result;
@@ -71,7 +71,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// set group
 		if (split[0].equalsIgnoreCase("setgroup")) {
 			if (split.length == 3) {
-				result = plugin.dataProvider.setPlayerGroup(split[1],split[2]);
+				result = plugin.dataProvider.setPlayerGroup(sender, split[1],split[2]);
 			}
 			plugin.refreshPlayer((Player) sender);
 			return result;

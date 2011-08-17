@@ -21,10 +21,10 @@ public class DroxGroupCommands implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("addperm")) {
 			if (split.length == 3) {
 				// add global permission
-				result = plugin.dataProvider.addGroupPermission(split[1], null, split[2]);
+				result = plugin.dataProvider.addGroupPermission(sender, split[1], null, split[2]);
 			} else if (split.length == 4) {
 				// add world permission
-				result = plugin.dataProvider.addGroupPermission(split[1], split[3], split[2]);				
+				result = plugin.dataProvider.addGroupPermission(sender, split[1], split[3], split[2]);
 			}
 			plugin.refreshPermissions();
 			return result;
@@ -34,10 +34,10 @@ public class DroxGroupCommands implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("remperm")) {
 			if (split.length == 3) {
 				// remove global permission
-				result = plugin.dataProvider.removeGroupPermission(split[1], null, split[2]);
+				result = plugin.dataProvider.removeGroupPermission(sender, split[1], null, split[2]);
 			} else if (split.length == 4) {
 				// remove world permission
-				result = plugin.dataProvider.removeGroupPermission(split[1], split[3], split[2]);				
+				result = plugin.dataProvider.removeGroupPermission(sender, split[1], split[3], split[2]);
 			}
 			plugin.refreshPermissions();
 			return result;
@@ -46,7 +46,7 @@ public class DroxGroupCommands implements CommandExecutor {
 		// add subgroup
 		if (split[0].equalsIgnoreCase("addsub")) {
 			if (split.length == 3) {
-				result = plugin.dataProvider.addGroupSubgroup(split[1], split[2]);
+				result = plugin.dataProvider.addGroupSubgroup(sender, split[1], split[2]);
 			}
 			plugin.refreshPermissions();
 			return result;
@@ -55,7 +55,7 @@ public class DroxGroupCommands implements CommandExecutor {
 		// remove subgroup
 		if (split[0].equalsIgnoreCase("remperm")) {
 			if (split.length == 3) {
-				result = plugin.dataProvider.removeGroupSubgroup(split[1],split[2]);
+				result = plugin.dataProvider.removeGroupSubgroup(sender, split[1],split[2]);
 			}
 			plugin.refreshPermissions();
 			return result;
@@ -64,7 +64,7 @@ public class DroxGroupCommands implements CommandExecutor {
 		// add new group
 		if (split[0].equalsIgnoreCase("new")) {
 			if (split.length == 2) {
-				return plugin.dataProvider.createGroup(split[1]);
+				return plugin.dataProvider.createGroup(sender, split[1]);
 			} else {
 				return false;
 			}

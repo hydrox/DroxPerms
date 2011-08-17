@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Logger;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
@@ -109,7 +109,7 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean createGroup(String name) {
+	public boolean createGroup(CommandSender sender, String name) {
 		if (Group.existGroup(name)) {
 			return false;
 		} else {
@@ -123,7 +123,7 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean setPlayerGroup(String player, String group) {
+	public boolean setPlayerGroup(CommandSender sender, String player, String group) {
 		if (User.existUser(player)) {
 			return User.getUser(player).setGroup(group);
 		} else {
@@ -136,17 +136,17 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean addPlayerSubgroup(String player, String subgroup) {
+	public boolean addPlayerSubgroup(CommandSender sender, String player, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean removePlayerSubgroup(String player, String subgroup) {
+	public boolean removePlayerSubgroup(CommandSender sender, String player, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean addPlayerPermission(String player, String world, String node) {
+	public boolean addPlayerPermission(CommandSender sender, String player, String world, String node) {
 		if (User.existUser(player)) {
 			return User.getUser(player).addPermission(world, node);
 		} else {
@@ -154,7 +154,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public boolean removePlayerPermission(String player, String world, String node) {
+	public boolean removePlayerPermission(CommandSender sender, String player, String world, String node) {
 		if (User.existUser(player)) {
 			return User.getUser(player).removePermission(world, node);
 		} else {
@@ -171,7 +171,7 @@ public class FlatFilePermissions implements IDataProvider {
 		return User.getUser(player).getPermissions(Config.getRealWorld(world));
 	}
 
-	public boolean addGroupPermission(String group, String world, String node) {
+	public boolean addGroupPermission(CommandSender sender, String group, String world, String node) {
 		if (Group.existGroup(group)) {
 			return Group.getGroup(group).addPermission(world, node);
 		} else {
@@ -179,7 +179,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public boolean removeGroupPermission(String group, String world, String node) {
+	public boolean removeGroupPermission(CommandSender sender, String group, String world, String node) {
 		if (Group.existGroup(group)) {
 			return Group.getGroup(group).removePermission(world, node);
 		} else {
@@ -197,12 +197,12 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean addGroupSubgroup(String group, String subgroup) {
+	public boolean addGroupSubgroup(CommandSender sender, String group, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}
 
-	public boolean removeGroupSubgroup(String group, String subgroup) {
+	public boolean removeGroupSubgroup(CommandSender sender, String group, String subgroup) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 	}

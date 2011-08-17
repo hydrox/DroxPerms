@@ -77,15 +77,12 @@ public class Group {
 			permArray = new ArrayList<String>();
 			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
 		}
-		if (permArray != null) {
-			if (permArray.contains(permission)) {
-				return false;
-			}
-			permArray.add(permission);
-			updatePermissions();
-			return true;
+		if (permArray.contains(permission)) {
+			return false;
 		}
-		return false;
+		permArray.add(permission);
+		updatePermissions();
+		return true;
 	}
 
 	public boolean removePermission(String world, String permission) {
@@ -103,13 +100,10 @@ public class Group {
 			permArray = new ArrayList<String>();
 			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
 		}
-		if (permArray != null) {
-			if (permArray.contains(permission)) {
-				permArray.remove(permission);
-				updatePermissions();
-				return true;
-			}
-			return false;
+		if (permArray.contains(permission)) {
+			permArray.remove(permission);
+			updatePermissions();
+			return true;
 		}
 		return false;
 	}
