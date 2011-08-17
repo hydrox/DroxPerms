@@ -144,13 +144,32 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean addPlayerSubgroup(CommandSender sender, String player, String subgroup) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
-	}
+		if (User.existUser(player)) {
+			boolean result = User.getUser(player).addSubgroup(subgroup);
+			if (result) {
+				sender.sendMessage("Added " + subgroup + " to subgrouplist of player " + player);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't add subgroup to player " + player);
+				return false;
+			}
+		} else {
+			return false;
+		}	}
 
 	public boolean removePlayerSubgroup(CommandSender sender, String player, String subgroup) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (User.existUser(player)) {
+			boolean result = User.getUser(player).removeSubgroup(subgroup);
+			if (result) {
+				sender.sendMessage("removed " + subgroup + " from subgrouplist of player " + player);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't remove subgroup from player " + player);
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	public boolean addPlayerPermission(CommandSender sender, String player, String world, String node) {
