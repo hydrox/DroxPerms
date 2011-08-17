@@ -82,6 +82,9 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void refreshPlayer(Player player) {
+		if (player == null) {
+			return;
+		}
 		PermissionAttachment attachment = permissions.get(player);
 		for (String key : attachment.getPermissions().keySet()) {
 			attachment.unsetPermission(key);

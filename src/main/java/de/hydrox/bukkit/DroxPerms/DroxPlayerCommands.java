@@ -13,11 +13,14 @@ public class DroxPlayerCommands implements CommandExecutor {
         this.plugin = plugin;
     }
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
-		Player caller = (Player) sender;
+		Player caller = null;
+		if (sender instanceof Player) {
+			caller = (Player) sender;
+		}
 		boolean result = false;
 		if (split.length == 0) {
 			return false;
-		} else if (caller.getName().equalsIgnoreCase(split[1]) && !(sender.hasPermission("droxperms.player.self"))) {
+		} else if (caller != null && caller.getName().equalsIgnoreCase(split[1]) && !(sender.hasPermission("droxperms.player.self"))) {
 			sender.sendMessage("You don't have permission to modify your Permissions.");
 			return true;			
 		} else if (!(sender.hasPermission("droxperms.players.others"))) {
@@ -33,7 +36,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 				// add world permission
 				result = plugin.dataProvider.addPlayerPermission(sender, split[1], split[3], split[2]);
 			}
-			plugin.refreshPlayer((Player) sender);
+			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			return result;
 		}
 
@@ -46,7 +49,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 				// remove world permission
 				result = plugin.dataProvider.removePlayerPermission(sender, split[1], split[3], split[2]);
 			}
-			plugin.refreshPlayer((Player) sender);
+			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			return result;
 		}
 
@@ -55,7 +58,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			if (split.length == 3) {
 				result = plugin.dataProvider.addPlayerSubgroup(sender, split[1], split[2]);
 			}
-			plugin.refreshPlayer((Player) sender);
+			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			return result;
 		}
 
@@ -64,7 +67,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			if (split.length == 3) {
 				result = plugin.dataProvider.removePlayerSubgroup(sender, split[1],split[2]);
 			}
-			plugin.refreshPlayer((Player) sender);
+			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			return result;
 		}
 
@@ -73,7 +76,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			if (split.length == 3) {
 				result = plugin.dataProvider.setPlayerGroup(sender, split[1],split[2]);
 			}
-			plugin.refreshPlayer((Player) sender);
+			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			return result;
 		}
 		return true;
