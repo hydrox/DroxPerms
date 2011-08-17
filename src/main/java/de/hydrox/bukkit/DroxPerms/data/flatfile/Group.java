@@ -63,7 +63,20 @@ public class Group {
 	}
 
 	public boolean addPermission(String world, String permission) {
-		ArrayList<String> permArray = permissions.get(world.toLowerCase());
+		if (world == null) {
+			if (globalPermissions.contains(permission)) {
+				return false;
+			}
+			globalPermissions.add(permission);
+			updatePermissions();
+			return true;
+		}
+
+		ArrayList<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
+		if (permArray == null) {
+			permArray = new ArrayList<String>();
+			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
+		}
 		if (permArray != null) {
 			if (permArray.contains(permission)) {
 				return false;
@@ -76,7 +89,20 @@ public class Group {
 	}
 
 	public boolean removePermission(String world, String permission) {
-		ArrayList<String> permArray = permissions.get(world.toLowerCase());
+		if (world == null) {
+			if (globalPermissions.contains(permission)) {
+				globalPermissions.remove(permission);
+				updatePermissions();
+				return true;
+			}
+			return false;
+		}
+
+		ArrayList<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
+		if (permArray == null) {
+			permArray = new ArrayList<String>();
+			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
+		}
 		if (permArray != null) {
 			if (permArray.contains(permission)) {
 				permArray.remove(permission);

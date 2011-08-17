@@ -4,26 +4,40 @@ author: Matthias Soehnholz
 website: https://github.com/hydrox/DroxPerms
 version: 0.0.1
 commands:
-  permissions:
-    aliases: [ perms, perm ]
-    description: Commands for manipulating permissions.
+  changegroup:
+    aliases: [cg]
+    description: Commands for manipulating groups.
     usage: |
-        /<command> reload - reload the configuration from disk.
-        /<command> check <node> [player] - check if a player or the sender has a permission (any plugin).
-        /<command> info <node> - prints information on a specific permission.
-        /<command> dump [player] [page] - prints info about a player's (or the sender's) permissions.
-        /<command> group - list group-related commands.
-        /<command> group list - list all groups.
-        /<command> group players <group> - list players in a group.
-        /<command> group setperm <group> <[world:]node> [true|false] - set a permission on a group.
-        /<command> group unsetperm <group> <[world:]node> - unset a permission on a group.
-        /<command> player - list player-related commands.
-        /<command> player groups <player> - list groups a player is in.
-        /<command> player addgroup <player> <group> - add a player to a group.
-        /<command> player removegroup <player> <group> - remove a player from a group.
-        /<command> player setperm <player> <[world:]node> [true|false] - set a permission on a player.
-        /<command> player unsetperm <player> <[world:]node> - unset a permission on a player.
+        /<command> addperm group permission [world] - adds a permission to a group
+        /<command> remperm group permission [world] - removes a permission from a group
+        /<command> addsub group subgroup - adds a subgroup to a group
+        /<command> remsub group subgroup - removes a subgroup from a group
+        /<command> new group - creates a new group
+  changeplayer:
+    aliases: [cp]
+    description: Commands for manipulating groups.
+    usage: |
+        /<command> addperm player permission [world] - adds a permission to a player
+        /<command> remperm player permission [world] - removes a permission from a player
+        /<command> addsub player subgroup - adds a subgroup to a player
+        /<command> remsub player subgroup - removes a subgroup from a player
 permissions:
-  permissions.*:
-    default: op
+  droxperms.*:
     description: Allows use of all PermissionsBukkit administration commands.
+    children:
+      droxperms.players.*: true
+      droxperms.groups: true
+  droxperms.players.*
+    description: Allows to modify all Players.
+    children:
+      droxperms.players.others: true
+      droxperms.players.self: true
+  droxperms.players.others:
+    description: Allows to modify other Players.
+    default: op
+  droxperms.players.self:
+    description: Allows to modify the own Players.
+    default: op
+  dropperms.groups:
+    description: Allows to modify groups.
+    default: op

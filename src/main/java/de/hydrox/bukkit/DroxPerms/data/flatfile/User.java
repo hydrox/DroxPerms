@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 
 import org.bukkit.util.config.ConfigurationNode;
 
+import de.hydrox.bukkit.DroxPerms.data.Config;
+
 public class User {
 	private static HashMap<String, User> users = new HashMap<String, User>();
 
@@ -74,6 +76,72 @@ public class User {
 		//add world permissions
 		perms.addAll(permissions.get(world));
 		return perms.toArray(new String[0]);
+	}
+
+	public boolean addPermission(String world, String permission) {
+		if (world == null) {
+			if (globalPermissions.contains(permission)) {
+				return false;
+			}
+			globalPermissions.add(permission);
+			return true;
+		}
+
+		ArrayList<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
+		if (permArray == null) {
+			permArray = new ArrayList<String>();
+			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
+		}
+		if (permArray != null) {
+			if (permArray.contains(permission)) {
+				return false;
+			}
+			permArray.add(permission);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean removePermission(String world, String permission) {
+		if (world == null) {
+			if (globalPermissions.contains(permission)) {
+				globalPermissions.remove(permission);
+				return true;
+			}
+			return false;
+		}
+
+		ArrayList<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
+		if (permArray == null) {
+			permArray = new ArrayList<String>();
+			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
+		}
+		if (permArray != null) {
+			if (permArray.contains(permission)) {
+				permArray.remove(permission);
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+
+	public boolean addSubgroup(String subgroup) {
+		if(Group.existGroup(subgroup.toLowerCase())) {
+			if(!subgroups.contains(subgroup.toLowerCase())) {
+				subgroups.add(subgroup.toLowerCase());
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean removeSubgroup(String subgroup) {
+		if(subgroups.contains(subgroup.toLowerCase())) {
+			subgroups.remove(subgroup.toLowerCase());
+			return true;
+		}
+		return false;
 	}
 
 	public static boolean addUser(User user) {

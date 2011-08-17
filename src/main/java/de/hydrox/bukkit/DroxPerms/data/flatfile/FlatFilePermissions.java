@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
@@ -109,8 +110,12 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean createGroup(String name) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (Group.existGroup(name)) {
+			return false;
+		} else {
+			Group.addGroup(new Group(name));
+			return true;
+		}
 	}
 
 	public String getPlayerGroup(String player) {
@@ -139,31 +144,44 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean addPlayerPermission(String player, String world, String node) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (User.existUser(player)) {
+			return User.getUser(player).addPermission(world, node);
+		} else {
+			return false;
+		}
 	}
 
 	public boolean removePlayerPermission(String player, String world, String node) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (User.existUser(player)) {
+			return User.getUser(player).removePermission(world, node);
+		} else {
+			return false;
+		}
 	}
 
 	public String[] getPlayerPermissions(String player, String world) {
 		if (!User.existUser(player)) {
-			plugin.getServer().getLogger().severe("[DroxPerms] User " + player + " doesn't exist");
-			return new String[0];
+			plugin.getServer().getLogger().info("[DroxPerms] User " + player + " doesn't exist yet. Creating ...");
+			User.addUser(new User(player));
+			return User.getUser(player).getPermissions(Config.getRealWorld(world));
 		}
 		return User.getUser(player).getPermissions(Config.getRealWorld(world));
 	}
 
 	public boolean addGroupPermission(String group, String world, String node) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (Group.existGroup(group)) {
+			return Group.getGroup(group).addPermission(world, node);
+		} else {
+			return false;
+		}
 	}
 
 	public boolean removeGroupPermission(String group, String world, String node) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (Group.existGroup(group)) {
+			return Group.getGroup(group).removePermission(world, node);
+		} else {
+			return false;
+		}
 	}
 
 	public boolean setGroupSubgroup(String group, String subgroup) {

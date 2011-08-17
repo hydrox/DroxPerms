@@ -24,6 +24,8 @@ public class DroxPerms extends JavaPlugin {
 	protected IDataProvider dataProvider;
 
 	private DroxPlayerListener playerListener = new DroxPlayerListener(this);
+    private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
+    private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
 	private HashMap<Player, PermissionAttachment> permissions = new HashMap<Player, PermissionAttachment>();
 
 	private Logger logger;
@@ -44,6 +46,10 @@ public class DroxPerms extends JavaPlugin {
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
 			dataProvider = new FlatFilePermissions(this);
 		}
+
+        // Commands
+        getCommand("changegroup").setExecutor(groupCommandExecutor);
+        getCommand("changeplayer").setExecutor(playerCommandExecutor);
 
 		// Events
 		PluginManager pm = getServer().getPluginManager();
@@ -66,6 +72,22 @@ public class DroxPerms extends JavaPlugin {
 	protected void unregisterPlayer(Player player) {
 		player.removeAttachment(permissions.get(player));
 		permissions.remove(player);
+	}
+
+	protected void refreshPermissions() {
+		getConfiguration().save();
+		for (Player player : permissions.keySet()) {
+			refreshPlayer(player);
+		}
+	}
+
+	protected void refreshPlayer(Player player) {
+		PermissionAttachment attachment = permissions.get(player);
+		for (String key : attachment.getPermissions().keySet()) {
+			attachment.unsetPermission(key);
+		}
+
+		calculateAttachment(player);
 	}
 
 	private void calculateAttachment(Player player) {
