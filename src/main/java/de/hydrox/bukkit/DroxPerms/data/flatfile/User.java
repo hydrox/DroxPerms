@@ -78,6 +78,14 @@ public class User {
 		return perms.toArray(new String[0]);
 	}
 
+	public boolean setGroup(String newGroup) {
+		if (Group.existGroup(newGroup)) {
+			group = newGroup;
+			return true;
+		}
+		return false;
+	}
+
 	public boolean addPermission(String world, String permission) {
 		if (world == null) {
 			if (globalPermissions.contains(permission)) {

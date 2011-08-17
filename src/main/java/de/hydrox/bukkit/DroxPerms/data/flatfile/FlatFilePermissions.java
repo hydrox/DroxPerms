@@ -124,8 +124,11 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean setPlayerGroup(String player, String group) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (User.existUser(player)) {
+			return User.getUser(player).setGroup(group);
+		} else {
+			return false;
+		}
 	}
 
 	public String[] getPlayerSubgroups(String player) {

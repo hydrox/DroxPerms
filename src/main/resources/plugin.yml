@@ -21,6 +21,7 @@ commands:
         /<command> remperm player permission [world] - removes a permission from a player
         /<command> addsub player subgroup - adds a subgroup to a player
         /<command> remsub player subgroup - removes a subgroup from a player
+        /<command> setgroup player group - set the group of a player
 permissions:
   droxperms.*:
     description: Allows use of all PermissionsBukkit administration commands.

@@ -20,7 +20,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		} else if (caller.getName().equalsIgnoreCase(split[1]) && !(sender.hasPermission("droxperms.player.self"))) {
 			sender.sendMessage("You don't have permission to modify your Permissions.");
 			return true;			
-		} else if (!(sender.hasPermission("droxperms.player.others"))) {
+		} else if (!(sender.hasPermission("droxperms.players.others"))) {
 			sender.sendMessage("You don't have permission to modify other Players Permissions.");
 			return true;
 		}
@@ -63,6 +63,15 @@ public class DroxPlayerCommands implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("remperm")) {
 			if (split.length == 3) {
 				result = plugin.dataProvider.removePlayerSubgroup(split[1],split[2]);
+			}
+			plugin.refreshPlayer((Player) sender);
+			return result;
+		}
+
+		// set group
+		if (split[0].equalsIgnoreCase("setgroup")) {
+			if (split.length == 3) {
+				result = plugin.dataProvider.setPlayerGroup(split[1],split[2]);
 			}
 			plugin.refreshPlayer((Player) sender);
 			return result;
