@@ -27,7 +27,7 @@ permissions:
     children:
       droxperms.players.*: true
       droxperms.groups: true
-  droxperms.players.*
+  droxperms.players.*:
     description: Allows to modify all Players.
     children:
       droxperms.players.others: true
