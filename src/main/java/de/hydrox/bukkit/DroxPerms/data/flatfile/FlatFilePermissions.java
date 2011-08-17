@@ -254,13 +254,35 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean addGroupSubgroup(CommandSender sender, String group, String subgroup) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (Group.existGroup(group)) {
+			boolean result = Group.getGroup(group).addSubgroup(subgroup);
+			if (result) {
+				sender.sendMessage("Added " + subgroup + " to subgrouplist of group " + group);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't add subgroup to group " + group);
+				return false;
+			}
+		} else {
+			sender.sendMessage("Group " + group + " doesn't exist.");
+			return false;
+		}
 	}
 
 	public boolean removeGroupSubgroup(CommandSender sender, String group, String subgroup) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (Group.existGroup(group)) {
+			boolean result = Group.getGroup(group).removeSubgroup(subgroup);
+			if (result) {
+				sender.sendMessage("removed " + subgroup + " from subgrouplist of group " + group);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't remove subgroup from group " + group);
+				return false;
+			}
+		} else {
+			sender.sendMessage("Group " + group + " doesn't exist.");
+			return false;
+		}
 	}
 
 	public String[] getGroupPermissions(String group, String world) {
