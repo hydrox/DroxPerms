@@ -125,7 +125,14 @@ public class FlatFilePermissions implements IDataProvider {
 
 	public boolean setPlayerGroup(CommandSender sender, String player, String group) {
 		if (User.existUser(player)) {
-			return User.getUser(player).setGroup(group);
+			boolean result = User.getUser(player).setGroup(group);
+			if (result) {
+				sender.sendMessage("Set group of player " + player + " to " + group);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't set group of player " + player);
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -148,7 +155,14 @@ public class FlatFilePermissions implements IDataProvider {
 
 	public boolean addPlayerPermission(CommandSender sender, String player, String world, String node) {
 		if (User.existUser(player)) {
-			return User.getUser(player).addPermission(world, node);
+			boolean result = User.getUser(player).addPermission(world, node);
+			if (result) {
+				sender.sendMessage("Added " + node + " to permissionslist of player " + player);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't add permission to player " + player);
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -156,7 +170,14 @@ public class FlatFilePermissions implements IDataProvider {
 
 	public boolean removePlayerPermission(CommandSender sender, String player, String world, String node) {
 		if (User.existUser(player)) {
-			return User.getUser(player).removePermission(world, node);
+			boolean result = User.getUser(player).removePermission(world, node);
+			if (result) {
+				sender.sendMessage("removed " + node + " from permissionslist of player " + player);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't remove permission from player " + player);
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -173,16 +194,32 @@ public class FlatFilePermissions implements IDataProvider {
 
 	public boolean addGroupPermission(CommandSender sender, String group, String world, String node) {
 		if (Group.existGroup(group)) {
-			return Group.getGroup(group).addPermission(world, node);
+			boolean result = Group.getGroup(group).addPermission(world, node);
+			if (result) {
+				sender.sendMessage("Added " + node + " to permissionslist of group " + group);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't add permission to group " + group);
+				return false;
+			}
 		} else {
+			sender.sendMessage("Group " + group + " doesn't exist.");
 			return false;
 		}
 	}
 
 	public boolean removeGroupPermission(CommandSender sender, String group, String world, String node) {
 		if (Group.existGroup(group)) {
-			return Group.getGroup(group).removePermission(world, node);
+			boolean result = Group.getGroup(group).removePermission(world, node);
+			if (result) {
+				sender.sendMessage("removed " + node + " from permissionslist of group " + group);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't remove permission from group " + group);
+				return false;
+			}
 		} else {
+			sender.sendMessage("Group " + group + " doesn't exist.");
 			return false;
 		}
 	}
