@@ -100,14 +100,11 @@ public class User {
 			permArray = new ArrayList<String>();
 			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
 		}
-		if (permArray != null) {
-			if (permArray.contains(permission)) {
-				return false;
-			}
-			permArray.add(permission);
-			return true;
+		if (permArray.contains(permission)) {
+			return false;
 		}
-		return false;
+		permArray.add(permission);
+		return true;
 	}
 
 	public boolean removePermission(String world, String permission) {
@@ -124,12 +121,9 @@ public class User {
 			permArray = new ArrayList<String>();
 			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
 		}
-		if (permArray != null) {
-			if (permArray.contains(permission)) {
-				permArray.remove(permission);
-				return true;
-			}
-			return false;
+		if (permArray.contains(permission)) {
+			permArray.remove(permission);
+			return true;
 		}
 		return false;
 	}
