@@ -33,19 +33,16 @@ public class User {
 	public User(String name, ConfigurationNode node) {
 		this.name = name;
 		this.group = node.getString("group");
-//		System.out.println("users" + node.getKeys().toString());
-//		System.out.println("users.subgroups" + node.getStringList("subgroups", new ArrayList<String>()));
 		this.subgroups = (ArrayList<String>) node.getStringList("subgroups", new ArrayList<String>());
-//		System.out.println("subgroups: " + subgroups.size());
 		this.globalPermissions = (ArrayList<String>) node.getStringList("globalpermissions", new ArrayList<String>());
-//		System.out.println("globalpermissions: " + globalPermissions.size());
 		this.permissions = new HashMap<String, ArrayList<String>>();
 		ConfigurationNode tmp = node.getNode("permissions");
-		Iterator<String> iter = tmp.getKeys().iterator();
-		while (iter.hasNext()) {
-			String world = iter.next();
-			permissions.put(world, (ArrayList<String>) tmp.getStringList(world, new ArrayList<String>()));
-//			System.out.println("permissions "+world+": " + permissions.get(world).size());
+		if(tmp != null) {
+			Iterator<String> iter = tmp.getKeys().iterator();
+			while (iter.hasNext()) {
+				String world = iter.next();
+				permissions.put(world, (ArrayList<String>) tmp.getStringList(world, new ArrayList<String>()));
+			}
 		}
 	}
 
