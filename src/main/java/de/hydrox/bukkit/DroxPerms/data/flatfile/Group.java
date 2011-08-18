@@ -54,7 +54,9 @@ public class Group {
 	public HashMap<String, Object> toConfigurationNode() {
 		HashMap<String, Object> output = new HashMap<String, Object>();
 		output.put("subgroups", subgroups);
-		output.put("permissions", permissions);
+		if (permissions.size() != 0) {
+			output.put("permissions", permissions);
+		}
 		output.put("globalpermissions", globalPermissions);
 		return output;
 	}

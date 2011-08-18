@@ -32,12 +32,15 @@ public class DroxPerms extends JavaPlugin {
 
 	public void onDisable() {
 		// Unregister everyone
+		logger.info("[DroxPerms] unregister Players");
 		for (Player p : getServer().getOnlinePlayers()) {
 			unregisterPlayer(p);
 		}
 
 		// Safe data
+		logger.info("[DroxPerms] safe configs");
 		dataProvider.save();
+		logger.info("[DroxPerms] shutting down");
 	}
 
 	public void onEnable() {

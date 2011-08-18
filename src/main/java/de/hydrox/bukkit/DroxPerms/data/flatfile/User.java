@@ -35,9 +35,9 @@ public class User {
 		this.group = node.getString("group");
 		this.subgroups = (ArrayList<String>) node.getStringList("subgroups", new ArrayList<String>());
 		this.globalPermissions = (ArrayList<String>) node.getStringList("globalpermissions", new ArrayList<String>());
-		this.permissions = new HashMap<String, ArrayList<String>>();
 		ConfigurationNode tmp = node.getNode("permissions");
 		if(tmp != null) {
+			this.permissions = new HashMap<String, ArrayList<String>>();
 			Iterator<String> iter = tmp.getKeys().iterator();
 			while (iter.hasNext()) {
 				String world = iter.next();
@@ -53,9 +53,15 @@ public class User {
 	public HashMap<String, Object> toConfigurationNode() {
 		LinkedHashMap<String, Object> output = new LinkedHashMap<String, Object>();
 		output.put("group", group);
-		output.put("subgroups", subgroups);
-		output.put("permissions", permissions);
-		output.put("globalpermissions", globalPermissions);
+		if (subgroups != null && subgroups.size() != 0) {
+			output.put("subgroups", subgroups);
+		}
+		if (permissions != null && permissions.size() != 0) {
+			output.put("permissions", permissions);
+		}
+		if (globalPermissions != null && globalPermissions.size() != 0) {
+			output.put("globalpermissions", globalPermissions);
+		}
 		return output;
 	}
 	
@@ -64,14 +70,20 @@ public class User {
 		//add group permissions
 		perms.add("droxperms.meta.group." + group);
 		//add subgroup permissions
-		for (Iterator<String> iterator = subgroups.iterator(); iterator.hasNext();) {
-			String subgroup = iterator.next();
-			perms.add("droxperms.meta.group." + subgroup);
+		if (subgroups != null) {
+			for (Iterator<String> iterator = subgroups.iterator(); iterator.hasNext();) {
+				String subgroup = iterator.next();
+				perms.add("droxperms.meta.group." + subgroup);
+			}
 		}
 		//add global permissions
-		perms.addAll(globalPermissions);
+		if (globalPermissions != null) {
+			perms.addAll(globalPermissions);
+		}
 		//add world permissions
-		perms.addAll(permissions.get(world));
+		if (permissions != null) {
+			perms.addAll(permissions.get(world));
+		}
 		return perms.toArray(new String[0]);
 	}
 
@@ -85,6 +97,9 @@ public class User {
 
 	public boolean addPermission(String world, String permission) {
 		if (world == null) {
+			if (globalPermissions == null) {
+				globalPermissions = new ArrayList<String>();
+			}
 			if (globalPermissions.contains(permission)) {
 				return false;
 			}
@@ -92,6 +107,9 @@ public class User {
 			return true;
 		}
 
+		if (permissions == null) {
+			permissions = new HashMap<String, ArrayList<String>>();
+		}
 		ArrayList<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
 		if (permArray == null) {
 			permArray = new ArrayList<String>();
@@ -106,13 +124,16 @@ public class User {
 
 	public boolean removePermission(String world, String permission) {
 		if (world == null) {
-			if (globalPermissions.contains(permission)) {
+			if (globalPermissions != null && globalPermissions.contains(permission)) {
 				globalPermissions.remove(permission);
 				return true;
 			}
 			return false;
 		}
 
+		if (permissions == null) {
+			return false;
+		}
 		ArrayList<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
 		if (permArray == null) {
 			permArray = new ArrayList<String>();
@@ -127,7 +148,10 @@ public class User {
 
 	public boolean addSubgroup(String subgroup) {
 		if(Group.existGroup(subgroup.toLowerCase())) {
-			if(!subgroups.contains(subgroup.toLowerCase())) {
+			if (subgroups == null) {
+				subgroups = new ArrayList<String>();
+			}
+			if (!subgroups.contains(subgroup.toLowerCase())) {
 				subgroups.add(subgroup.toLowerCase());
 				return true;
 			}
@@ -136,7 +160,7 @@ public class User {
 	}
 
 	public boolean removeSubgroup(String subgroup) {
-		if(subgroups.contains(subgroup.toLowerCase())) {
+		if(subgroups != null && subgroups.contains(subgroup.toLowerCase())) {
 			subgroups.remove(subgroup.toLowerCase());
 			return true;
 		}
