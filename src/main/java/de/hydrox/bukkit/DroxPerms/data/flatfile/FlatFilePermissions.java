@@ -71,14 +71,20 @@ public class FlatFilePermissions implements IDataProvider {
 
 		usersConfig.load();
 //		System.out.println(usersConfig.getKeys().toString());
-		Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
-		iter = users.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			plugin.getServer().getLogger().fine("load user: " + key);
-			ConfigurationNode conf = users.get(key);
-			User newUser = new User(key, conf);
-			User.addUser(newUser);
+		String fileVersion = usersConfig.getString("fileversion");
+		if (fileVersion == null || !fileVersion.equals(plugin.getDescription().getVersion())) {
+			plugin.getServer().getLogger().info("[DroxPerms] users.yml-version to old or unknown. Doing full conversion");
+			usersConfig.setProperty("fileversion", plugin.getDescription().getVersion());
+			Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
+			iter = users.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				plugin.getServer().getLogger().fine("load user: " + key);
+				ConfigurationNode conf = users.get(key);
+				User newUser = new User(key, conf);
+				newUser.dirty();
+				User.addUser(newUser);
+			}
 		}
     }
 
@@ -97,10 +103,11 @@ public class FlatFilePermissions implements IDataProvider {
 		Iterator<User> iter2 = User.iter(); 
 		while (iter2.hasNext()) {
 			User user = iter2.next();
-			tmp.put(user.getName().toLowerCase(), user.toConfigurationNode());
+			if (user.isDirty()) {
+				usersConfig.getNode("users").setProperty(user.getName(), user.toConfigurationNode());
+				user.clean();
+			}
 		}
-
-		usersConfig.setProperty("users", tmp);
 		usersConfig.save();
 	}
 
@@ -124,8 +131,9 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean setPlayerGroup(CommandSender sender, String player, String group) {
-		if (User.existUser(player)) {
-			boolean result = User.getUser(player).setGroup(group);
+		User user = getUser(player);
+		if (user != null) {
+			boolean result = user.setGroup(group);
 			if (result) {
 				sender.sendMessage("Set group of player " + player + " to " + group);
 				return true;
@@ -144,8 +152,9 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean addPlayerSubgroup(CommandSender sender, String player, String subgroup) {
-		if (User.existUser(player)) {
-			boolean result = User.getUser(player).addSubgroup(subgroup);
+		User user = getUser(player);
+		if (user != null) {
+			boolean result = user.addSubgroup(subgroup);
 			if (result) {
 				sender.sendMessage("Added " + subgroup + " to subgrouplist of player " + player);
 				return true;
@@ -158,8 +167,9 @@ public class FlatFilePermissions implements IDataProvider {
 		}	}
 
 	public boolean removePlayerSubgroup(CommandSender sender, String player, String subgroup) {
-		if (User.existUser(player)) {
-			boolean result = User.getUser(player).removeSubgroup(subgroup);
+		User user = getUser(player);
+		if (user != null) {
+			boolean result = user.removeSubgroup(subgroup);
 			if (result) {
 				sender.sendMessage("removed " + subgroup + " from subgrouplist of player " + player);
 				return true;
@@ -173,8 +183,9 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean addPlayerPermission(CommandSender sender, String player, String world, String node) {
-		if (User.existUser(player)) {
-			boolean result = User.getUser(player).addPermission(world, node);
+		User user = getUser(player);
+		if (user != null) {
+			boolean result = user.addPermission(world, node);
 			if (result) {
 				sender.sendMessage("Added " + node + " to permissionslist of player " + player);
 				return true;
@@ -188,8 +199,9 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean removePlayerPermission(CommandSender sender, String player, String world, String node) {
-		if (User.existUser(player)) {
-			boolean result = User.getUser(player).removePermission(world, node);
+		User user = getUser(player);
+		if (user != null) {
+			boolean result = user.removePermission(world, node);
 			if (result) {
 				sender.sendMessage("removed " + node + " from permissionslist of player " + player);
 				return true;
@@ -203,12 +215,14 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public String[] getPlayerPermissions(String player, String world) {
-		if (!User.existUser(player)) {
+		User user = getUser(player);
+		if (user == null) {
 			plugin.getServer().getLogger().info("[DroxPerms] User " + player + " doesn't exist yet. Creating ...");
-			User.addUser(new User(player));
-			return User.getUser(player).getPermissions(Config.getRealWorld(world));
+			user = new User(player);
+			User.addUser(user);
+			return user.getPermissions(Config.getRealWorld(world));
 		}
-		return User.getUser(player).getPermissions(Config.getRealWorld(world));
+		return user.getPermissions(Config.getRealWorld(world));
 	}
 
 	public boolean addGroupPermission(CommandSender sender, String group, String world, String node) {
@@ -241,11 +255,6 @@ public class FlatFilePermissions implements IDataProvider {
 			sender.sendMessage("Group " + group + " doesn't exist.");
 			return false;
 		}
-	}
-
-	public boolean setGroupSubgroup(String group, String subgroup) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
 	}
 
 	public String[] getGroupSubgroups(String group) {
@@ -288,5 +297,18 @@ public class FlatFilePermissions implements IDataProvider {
 	public String[] getGroupPermissions(String group, String world) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
+	}
+
+	public User getUser(String name) {
+		User user = null;
+		if (User.existUser(name)) {
+			user = User.getUser(name);
+		} else {
+			ConfigurationNode node = usersConfig.getNode("users." + name);
+			if (node != null) {
+				user = new User(name, node);
+			}
+		}
+		return user;
 	}
 }

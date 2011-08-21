@@ -31,6 +31,8 @@ public class DroxPerms extends JavaPlugin {
 	private Logger logger;
 
 	public void onDisable() {
+		long time = System.currentTimeMillis();
+		logger.info("[DroxPerms] shutting down");
 		// Unregister everyone
 		logger.info("[DroxPerms] unregister Players");
 		for (Player p : getServer().getOnlinePlayers()) {
@@ -40,10 +42,11 @@ public class DroxPerms extends JavaPlugin {
 		// Safe data
 		logger.info("[DroxPerms] safe configs");
 		dataProvider.save();
-		logger.info("[DroxPerms] shutting down");
+		logger.info("[DroxPerms] Plugin unloaded in " + (System.currentTimeMillis() - time) + "ms.");
 	}
 
 	public void onEnable() {
+		long time = System.currentTimeMillis();
 		logger = getServer().getLogger();
 		config = new Config(this);
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
@@ -64,6 +67,7 @@ public class DroxPerms extends JavaPlugin {
 		for (Player p : getServer().getOnlinePlayers()) {
 			registerPlayer(p);
 		}
+		logger.info("[DroxPerms] Plugin loaded in " + (System.currentTimeMillis() - time) + "ms.");
 	}
 
 	protected void registerPlayer(Player player) {

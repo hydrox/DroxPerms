@@ -86,8 +86,6 @@ public interface IDataProvider {
 
 	public String[] getPlayerPermissions(String player, String world);
 
-	public boolean setGroupSubgroup(String group, String subgroup);
-
 	public String[] getGroupSubgroups(String group);
 
 	public boolean addGroupSubgroup(CommandSender sender, String group, String subgroup);

@@ -17,6 +17,7 @@ public class User {
 	private ArrayList<String> subgroups;
 	private ArrayList<String> globalPermissions;
 	private HashMap<String, ArrayList<String>> permissions;
+	private boolean dirty;
 
 	public User() {
 		this("mydrox");
@@ -28,6 +29,7 @@ public class User {
 		this.subgroups = new ArrayList<String>();
 		this.globalPermissions = new ArrayList<String>();
 		this.permissions = new HashMap<String, ArrayList<String>>();
+		this.dirty = true;
 	}
 
 	public User(String name, ConfigurationNode node) {
@@ -44,6 +46,7 @@ public class User {
 				permissions.put(world, (ArrayList<String>) tmp.getStringList(world, new ArrayList<String>()));
 			}
 		}
+		this.dirty = false;
 	}
 
 	public String getName() {
@@ -64,7 +67,19 @@ public class User {
 		}
 		return output;
 	}
-	
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void clean() {
+		dirty = false;
+	}
+
+	public void dirty() {
+		dirty = true;
+	}
+
 	public String[] getPermissions(String world) {
 		ArrayList<String> perms = new ArrayList<String>();
 		//add group permissions
@@ -90,6 +105,7 @@ public class User {
 	public boolean setGroup(String newGroup) {
 		if (Group.existGroup(newGroup)) {
 			group = newGroup;
+			dirty = true;
 			return true;
 		}
 		return false;
@@ -104,6 +120,7 @@ public class User {
 				return false;
 			}
 			globalPermissions.add(permission);
+			dirty = true;
 			return true;
 		}
 
@@ -119,6 +136,7 @@ public class User {
 			return false;
 		}
 		permArray.add(permission);
+		dirty = true;
 		return true;
 	}
 
@@ -126,6 +144,7 @@ public class User {
 		if (world == null) {
 			if (globalPermissions != null && globalPermissions.contains(permission)) {
 				globalPermissions.remove(permission);
+				dirty = true;
 				return true;
 			}
 			return false;
@@ -141,6 +160,7 @@ public class User {
 		}
 		if (permArray.contains(permission)) {
 			permArray.remove(permission);
+			dirty = true;
 			return true;
 		}
 		return false;
@@ -153,6 +173,7 @@ public class User {
 			}
 			if (!subgroups.contains(subgroup.toLowerCase())) {
 				subgroups.add(subgroup.toLowerCase());
+				dirty = true;
 				return true;
 			}
 		}
@@ -162,6 +183,7 @@ public class User {
 	public boolean removeSubgroup(String subgroup) {
 		if(subgroups != null && subgroups.contains(subgroup.toLowerCase())) {
 			subgroups.remove(subgroup.toLowerCase());
+			dirty = true;
 			return true;
 		}
 		return false;
