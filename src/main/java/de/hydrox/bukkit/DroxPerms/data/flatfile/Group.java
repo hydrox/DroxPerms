@@ -14,6 +14,7 @@ public class Group {
 	
 	private String name;
 	private HashMap<String, ArrayList<String>> permissions;
+	private HashMap<String, String> info;
 	private ArrayList<String> globalPermissions;
 	private ArrayList<String> subgroups;
 
@@ -41,7 +42,17 @@ public class Group {
 			while (iter.hasNext()) {
 				String world = iter.next();
 				permissions.put(world, (ArrayList<String>) tmp.getStringList(world, new ArrayList<String>()));
+			}
 		}
+		tmp = null;
+		tmp = node.getNode("info");
+		if(tmp != null) {
+			this.info = new HashMap<String, String>();
+			Iterator<String> iter = tmp.getKeys().iterator();
+			while (iter.hasNext()) {
+				String infoNode = iter.next();
+				info.put(infoNode, tmp.getString(infoNode));
+			}
 		}
 
 		updatePermissions();
@@ -53,16 +64,26 @@ public class Group {
 
 	public HashMap<String, Object> toConfigurationNode() {
 		HashMap<String, Object> output = new HashMap<String, Object>();
-		output.put("subgroups", subgroups);
+		if (subgroups != null && subgroups.size() != 0) {
+			output.put("subgroups", subgroups);
+		}
 		if (permissions.size() != 0) {
 			output.put("permissions", permissions);
 		}
-		output.put("globalpermissions", globalPermissions);
+		if (info.size() != 0) {
+			output.put("info", info);
+		}
+		if (globalPermissions != null && globalPermissions.size() != 0) {
+			output.put("globalpermissions", globalPermissions);
+		}
 		return output;
 	}
 
 	public boolean addPermission(String world, String permission) {
 		if (world == null) {
+			if (globalPermissions == null) {
+				globalPermissions = new ArrayList<String>();
+			}
 			if (globalPermissions.contains(permission)) {
 				return false;
 			}
@@ -109,6 +130,9 @@ public class Group {
 
 	public boolean addSubgroup(String subgroup) {
 		if(Group.existGroup(subgroup.toLowerCase())) {
+			if (subgroups == null) {
+				subgroups = new ArrayList<String>();
+			}
 			if(!subgroups.contains(subgroup.toLowerCase())) {
 				subgroups.add(subgroup.toLowerCase());
 				updatePermissions();
@@ -120,7 +144,7 @@ public class Group {
 	}
 
 	public boolean removeSubgroup(String subgroup) {
-		if(subgroups.contains(subgroup.toLowerCase())) {
+		if(subgroups != null && subgroups.contains(subgroup.toLowerCase())) {
 			subgroups.remove(subgroup.toLowerCase());
 			updatePermissions();
 			return true;
