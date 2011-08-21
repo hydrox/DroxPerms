@@ -17,7 +17,7 @@ public class User {
 	private ArrayList<String> subgroups;
 	private ArrayList<String> globalPermissions;
 	private HashMap<String, ArrayList<String>> permissions;
-	private HashMap<String, ArrayList<String>> info;
+	private HashMap<String, String> info;
 	private boolean dirty;
 
 	public User() {
@@ -50,11 +50,11 @@ public class User {
 		tmp = null;
 		tmp = node.getNode("info");
 		if(tmp != null) {
-			this.info = new HashMap<String, ArrayList<String>>();
+			this.info = new HashMap<String, String>();
 			Iterator<String> iter = tmp.getKeys().iterator();
 			while (iter.hasNext()) {
 				String infoNode = iter.next();
-				info.put(infoNode, (ArrayList<String>) tmp.getStringList(infoNode, new ArrayList<String>()));
+				info.put(infoNode, tmp.getString(infoNode));
 			}
 		}
 		this.dirty = false;
