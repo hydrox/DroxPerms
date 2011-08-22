@@ -86,6 +86,10 @@ public interface IDataProvider {
 
 	public String[] getPlayerPermissions(String player, String world);
 
+	public boolean setPlayerInfo(CommandSender sender, String player, String node, String data);
+
+	public String getPlayerInfo(CommandSender sender, String player, String node);
+
 	public String[] getGroupSubgroups(String group);
 
 	public boolean addGroupSubgroup(CommandSender sender, String group, String subgroup);
@@ -98,6 +102,10 @@ public interface IDataProvider {
 			String node);
 
 	public String[] getGroupPermissions(String group, String world);
+
+	public boolean setGroupInfo(CommandSender sender, String group, String node, String data);
+
+	public String getGroupInfo(CommandSender sender, String group, String node);
 
 	public void save();
 }

@@ -203,6 +203,21 @@ public class User {
 		return false;
 	}
 
+	public boolean setInfo(String node, String data) {
+		if (info == null) {
+			info = new HashMap<String, String>();
+		}
+		info.put(node, data);
+		return true;
+	}
+
+	public String getInfo(String node) {
+		if (info == null) {
+			return null;
+		}
+		return info.get(node);
+	}
+
 	public static boolean addUser(User user) {
 		if (existUser(user.name.toLowerCase())) {
 			return false;

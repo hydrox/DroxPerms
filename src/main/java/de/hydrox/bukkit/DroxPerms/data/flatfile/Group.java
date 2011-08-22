@@ -169,7 +169,22 @@ public class Group {
 		}
 		return false;
 	}
-	
+
+	public boolean setInfo(String node, String data) {
+		if (info == null) {
+			info = new HashMap<String, String>();
+		}
+		info.put(node, data);
+		return true;
+	}
+
+	public String getInfo(String node) {
+		if (info == null) {
+			return null;
+		}
+		return info.get(node);
+	}
+
 	public boolean addWorld(String world) {
 		if (permissions.containsKey(world.toLowerCase())) {
 			return false;

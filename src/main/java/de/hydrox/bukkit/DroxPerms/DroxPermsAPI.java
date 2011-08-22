@@ -57,11 +57,11 @@ public class DroxPermsAPI {
 	}
 
 	public String getPlayerInfo(String player, String node) {
-		throw new UnsupportedOperationException();		
+		return plugin.dataProvider.getPlayerInfo(fakeCS, player, node);
 	}
 
 	public boolean setPlayerInfo(String player, String node, String data) {
-		throw new UnsupportedOperationException();		
+		return plugin.dataProvider.setPlayerInfo(fakeCS, player, node, data);
 	}
 
 	public String[] getGroupSubgroups(String group) {
@@ -94,11 +94,11 @@ public class DroxPermsAPI {
 	}
 	
 	public String getGroupInfo(String group, String node) {
-		throw new UnsupportedOperationException();		
+		return plugin.dataProvider.getGroupInfo(fakeCS, group, node);
 	}
 
 	public boolean setGroupInfo(String group, String node, String data) {
-		throw new UnsupportedOperationException();		
+		return plugin.dataProvider.setGroupInfo(fakeCS, group, node, data);
 	}
 }
 

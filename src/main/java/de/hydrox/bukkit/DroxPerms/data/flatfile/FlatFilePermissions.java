@@ -62,9 +62,6 @@ public class FlatFilePermissions implements IDataProvider {
 		if (!new File(plugin.getDataFolder(), "users.yml").exists()) {
 			plugin.getServer().getLogger().info("[DroxPerms] Generating default users.yml");
 			HashMap<String,Object> tmp = new HashMap<String,Object>();
-			tmp.put("mydrox", new User().toConfigurationNode());
-			tmp.put("tehbeard", new User().toConfigurationNode());
-
 			usersConfig.setProperty("users", tmp);
 			usersConfig.save();
 		}
@@ -225,6 +222,31 @@ public class FlatFilePermissions implements IDataProvider {
 		return user.getPermissions(Config.getRealWorld(world));
 	}
 
+	public boolean setPlayerInfo(CommandSender sender, String player, String node, String data) {
+		User user = getUser(player);
+		if (user != null) {
+			boolean result = user.setInfo(node, data);
+			if (result) {
+				sender.sendMessage("set info-node " + node + " of player " + player);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't set info-node of player " + player);
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	public String getPlayerInfo(CommandSender sender, String player, String node) {
+		User user = getUser(player);
+		if (user != null) {
+			return user.getInfo(node);
+		} else {
+			return null;
+		}
+	}
+
 	public boolean addGroupPermission(CommandSender sender, String group, String world, String node) {
 		if (Group.existGroup(group)) {
 			boolean result = Group.getGroup(group).addPermission(world, node);
@@ -299,7 +321,32 @@ public class FlatFilePermissions implements IDataProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public User getUser(String name) {
+	public boolean setGroupInfo(CommandSender sender, String group, String node, String data) {
+		if (Group.existGroup(group)) {
+			boolean result = Group.getGroup(group).setInfo(node, data);
+			if (result) {
+				sender.sendMessage("set info-node " + node + " for group " + group);
+				return true;
+			} else {
+				sender.sendMessage("Couldn't set info-node for group " + group);
+				return false;
+			}
+		} else {
+			sender.sendMessage("Group " + group + " doesn't exist.");
+			return false;
+		}
+	}
+
+	public String getGroupInfo(CommandSender sender, String group, String node) {
+		if (Group.existGroup(group)) {
+			return Group.getGroup(group).getInfo(node);
+		} else {
+			sender.sendMessage("Group " + group + " doesn't exist.");
+			return null;
+		}
+	}
+
+	private User getUser(String name) {
 		User user = null;
 		if (User.existUser(name)) {
 			user = User.getUser(name);
