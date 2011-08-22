@@ -27,6 +27,7 @@ public class DroxPerms extends JavaPlugin {
     private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
     private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
 	private HashMap<Player, PermissionAttachment> permissions = new HashMap<Player, PermissionAttachment>();
+	private DroxPermsAPI API = null;
 
 	private Logger logger;
 
@@ -52,6 +53,8 @@ public class DroxPerms extends JavaPlugin {
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
 			dataProvider = new FlatFilePermissions(this);
 		}
+		
+		API = new DroxPermsAPI(this);
 
         // Commands
         getCommand("changegroup").setExecutor(groupCommandExecutor);
@@ -68,6 +71,10 @@ public class DroxPerms extends JavaPlugin {
 			registerPlayer(p);
 		}
 		logger.info("[DroxPerms] Plugin loaded in " + (System.currentTimeMillis() - time) + "ms.");
+	}
+	
+	public DroxPermsAPI getAPI() {
+		return API;
 	}
 
 	protected void registerPlayer(Player player) {

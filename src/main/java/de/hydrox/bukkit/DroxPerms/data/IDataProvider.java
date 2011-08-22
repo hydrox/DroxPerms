@@ -48,7 +48,7 @@ public interface IDataProvider {
 	 * @param subgroup
 	 *            group to be set
 	 */
-	public boolean setPlayerGroup(CommandSender sender, String player, String subgroup);
+	public boolean setPlayerGroup(CommandSender sender, String player, String group);
 
 	/**
 	 * Returns the sub-groups of the Player
@@ -92,12 +92,12 @@ public interface IDataProvider {
 
 	public boolean removeGroupSubgroup(CommandSender sender, String group, String subgroup);
 
-	public boolean addGroupPermission(CommandSender sender, String player, String world, String node);
+	public boolean addGroupPermission(CommandSender sender, String group, String world, String node);
 
-	public boolean removeGroupPermission(CommandSender sender, String player, String world,
+	public boolean removeGroupPermission(CommandSender sender, String group, String world,
 			String node);
 
-	public String[] getGroupPermissions(String player, String world);
+	public String[] getGroupPermissions(String group, String world);
 
 	public void save();
 }
