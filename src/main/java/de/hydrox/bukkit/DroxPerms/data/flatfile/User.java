@@ -64,6 +64,10 @@ public class User {
 		return name;
 	}
 
+	public String getGroup() {
+		return group;
+	}
+
 	public HashMap<String, Object> toConfigurationNode() {
 		LinkedHashMap<String, Object> output = new LinkedHashMap<String, Object>();
 		output.put("group", group);
