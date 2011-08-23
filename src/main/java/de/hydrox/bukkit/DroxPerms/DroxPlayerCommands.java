@@ -20,7 +20,8 @@ public class DroxPlayerCommands implements CommandExecutor {
 		boolean result = false;
 		if (split.length == 0) {
 			return false;
-		} else if (caller != null && caller.getName().equalsIgnoreCase(split[1]) && !(sender.hasPermission("droxperms.player.self"))) {
+		} else if (caller != null && caller.getName().equalsIgnoreCase(split[1])
+				&& !(sender.hasPermission("droxperms.players.self"))) {
 			sender.sendMessage("You don't have permission to modify your Permissions.");
 			return true;			
 		} else if (!(sender.hasPermission("droxperms.players.others"))) {
@@ -78,6 +79,18 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			return result;
+		}
+
+		// set group
+		if (split[0].equalsIgnoreCase("has")) {
+			if (split.length == 3) {
+				result = plugin.getServer().getPlayer(split[1]).hasPermission(split[2]);
+				if (result) {
+					sender.sendMessage(split[1] + " has permission for " + split[2]);
+				} else {
+					sender.sendMessage(split[1] + " doesn't have permission for " + split[2]);
+				}
+			}
 		}
 		return true;
 	}

@@ -22,6 +22,7 @@ commands:
         /<command> addsub player subgroup - adds a subgroup to a player
         /<command> remsub player subgroup - removes a subgroup from a player
         /<command> setgroup player group - set the group of a player
+        /<command> has player permission - shows if player has a certain permission
 permissions:
   droxperms.*:
     description: Allows use of all PermissionsBukkit administration commands.
