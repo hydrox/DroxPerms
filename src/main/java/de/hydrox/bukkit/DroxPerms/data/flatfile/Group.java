@@ -195,12 +195,18 @@ public class Group {
 	}
 
 	public ArrayList<String> getSubgroups() {
+		if (subgroups == null) {
+			subgroups = new ArrayList<String>();
+		}
 		return subgroups;
 	}
 
 	public void updatePermissions() {
 		bukkitPermissions = new HashMap<String, Permission>();
 		//create Permission for default world
+		if (subgroups == null) {
+			subgroups = new ArrayList<String>();
+		}
 		if (!permissions.containsKey(Config.getDefaultWorld())) {
 			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
 			for (String subgroup : subgroups) {

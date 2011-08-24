@@ -223,6 +223,9 @@ public class User {
 	}
 
 	public ArrayList<String> getSubgroups() {
+		if (subgroups == null) {
+			subgroups = new ArrayList<String>();
+		}
 		return subgroups;
 	}
 
