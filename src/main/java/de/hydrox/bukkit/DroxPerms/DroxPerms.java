@@ -48,6 +48,7 @@ public class DroxPerms extends JavaPlugin {
 
 	public void onEnable() {
 		long time = System.currentTimeMillis();
+		logger.info("[DroxPerms] Activating Plugin.");
 		logger = getServer().getLogger();
 		config = new Config(this);
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
@@ -70,7 +71,7 @@ public class DroxPerms extends JavaPlugin {
 		for (Player p : getServer().getOnlinePlayers()) {
 			registerPlayer(p);
 		}
-		logger.info("[DroxPerms] Plugin loaded in " + (System.currentTimeMillis() - time) + "ms.");
+		logger.info("[DroxPerms] Plugin activated in " + (System.currentTimeMillis() - time) + "ms.");
 	}
 	
 	public DroxPermsAPI getAPI() {
@@ -113,10 +114,10 @@ public class DroxPerms extends JavaPlugin {
 		for (String entry : dataProvider.getPlayerPermissions(player.getName().toLowerCase(), player.getWorld().getName())) {
 			if (entry.startsWith("-")) {
 				attachment.setPermission(entry, false);
-				logger.info("[DroxPerms] Setting " + entry + " to false for player " + player.getName());
+				logger.fine("[DroxPerms] Setting " + entry + " to false for player " + player.getName());
 			} else {
 				attachment.setPermission(entry, true);
-				logger.info("[DroxPerms] Setting " + entry + " to true for player " + player.getName());
+				logger.fine("[DroxPerms] Setting " + entry + " to true for player " + player.getName());
 			}
 		}
 
