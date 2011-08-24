@@ -194,6 +194,10 @@ public class Group {
 		return true;
 	}
 
+	public ArrayList<String> getSubgroups() {
+		return subgroups;
+	}
+
 	public void updatePermissions() {
 		bukkitPermissions = new HashMap<String, Permission>();
 		//create Permission for default world

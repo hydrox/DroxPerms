@@ -1,6 +1,7 @@
 package de.hydrox.bukkit.DroxPerms.data.flatfile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -147,9 +148,36 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public String[] getPlayerSubgroups(String player) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public ArrayList<String> getPlayerSubgroups(String player) {
+		User user = getUser(player);
+		if (user != null) {
+			ArrayList<String> result = calculateSubgroups(user.getSubgroups());
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	private ArrayList<String> calculateSubgroups(ArrayList<String> input) {
+		boolean dirty = true;
+		ArrayList<String> result = new ArrayList<String>(input);
+		ArrayList<String> toTest = new ArrayList<String>(input);
+
+		while(dirty) {
+			dirty = false;
+			for (String string : toTest) {
+				ArrayList<String> subgroups = Group.getGroup(string).getSubgroups();
+				for (String string2 : subgroups) {
+					if (!result.contains(string2)) {
+						result.add(string2);
+						toTest.add(string2);
+						toTest.remove(string);
+						dirty = true;
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	public boolean addPlayerSubgroup(CommandSender sender, String player, String subgroup) {
@@ -165,7 +193,8 @@ public class FlatFilePermissions implements IDataProvider {
 			}
 		} else {
 			return false;
-		}	}
+		}
+	}
 
 	public boolean removePlayerSubgroup(CommandSender sender, String player, String subgroup) {
 		User user = getUser(player);
@@ -283,9 +312,14 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public String[] getGroupSubgroups(String group) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public ArrayList<String> getGroupSubgroups(String groupName) {
+		Group group = Group.getGroup(groupName);
+		if (group != null) {
+			ArrayList<String> result = calculateSubgroups(group.getSubgroups());
+			return result;
+		} else {
+			return null;
+		}
 	}
 
 	public boolean addGroupSubgroup(CommandSender sender, String group, String subgroup) {

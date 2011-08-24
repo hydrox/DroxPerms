@@ -1,5 +1,6 @@
 package de.hydrox.bukkit.DroxPerms;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import org.bukkit.Server;
@@ -49,7 +50,7 @@ public class DroxPermsAPI {
 	 *            Player to be queried
 	 * @return Array of Subgroup-Strings
 	 */
-	public String[] getPlayerSubgroups(String player) {
+	public ArrayList<String> getPlayerSubgroups(String player) {
 		return plugin.dataProvider.getPlayerSubgroups(player);
 	}
 
@@ -174,7 +175,7 @@ public class DroxPermsAPI {
 	 *            Group to be queried
 	 * @return Array of Subgroup-Strings
 	 */
-	public String[] getGroupSubgroups(String group) {
+	public ArrayList<String> getGroupSubgroups(String group) {
 		return plugin.dataProvider.getGroupSubgroups(group);
 	}
 

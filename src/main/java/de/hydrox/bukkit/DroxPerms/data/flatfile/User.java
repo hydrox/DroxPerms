@@ -222,6 +222,10 @@ public class User {
 		return info.get(node);
 	}
 
+	public ArrayList<String> getSubgroups() {
+		return subgroups;
+	}
+
 	public static boolean addUser(User user) {
 		if (existUser(user.name.toLowerCase())) {
 			return false;
