@@ -26,7 +26,7 @@ public class DroxPerms extends JavaPlugin {
 	private DroxPlayerListener playerListener = new DroxPlayerListener(this);
     private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
     private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
-    private DroxTestCommands testCommandExecutor = new DroxTestCommands(this);
+    private DroxTestCommands testCommandExecutor = new DroxTestCommands();
 	private HashMap<Player, PermissionAttachment> permissions = new HashMap<Player, PermissionAttachment>();
 	private DroxPermsAPI API = null;
 
