@@ -24,9 +24,6 @@ public class DroxPlayerCommands implements CommandExecutor {
 				&& !(sender.hasPermission("droxperms.players.self"))) {
 			sender.sendMessage("You don't have permission to modify your Permissions.");
 			return true;			
-		} else if (!(sender.hasPermission("droxperms.players.others"))) {
-			sender.sendMessage("You don't have permission to modify other Players Permissions.");
-			return true;
 		}
 		// add permission
 		if (split[0].equalsIgnoreCase("addperm")) {

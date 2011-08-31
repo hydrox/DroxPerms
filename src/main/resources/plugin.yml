@@ -7,6 +7,7 @@ commands:
   changegroup:
     aliases: [cg]
     description: Commands for manipulating groups.
+    permission: droxperms.groups
     usage: |
         /<command> addperm group permission [world] - adds a permission to a group
         /<command> remperm group permission [world] - removes a permission from a group
@@ -16,6 +17,7 @@ commands:
   changeplayer:
     aliases: [cp]
     description: Commands for manipulating groups.
+    permission: droxperms.players
     usage: |
         /<command> addperm player permission [world] - adds a permission to a player
         /<command> remperm player permission [world] - removes a permission from a player
@@ -32,14 +34,14 @@ permissions:
   droxperms.players.*:
     description: Allows to modify all Players.
     children:
-      droxperms.players.others: true
+      droxperms.players: true
       droxperms.players.self: true
-  droxperms.players.others:
+  droxperms.players:
     description: Allows to modify other Players.
     default: op
   droxperms.players.self:
     description: Allows to modify the own Players.
     default: op
-  dropperms.groups:
+  droxperms.groups:
     description: Allows to modify groups.
     default: op
