@@ -110,8 +110,12 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean createPlayer(String name) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (User.existUser(name)) {
+			return false;
+		} else {
+			User.addUser(new User(name));
+			return true;
+		}
 	}
 
 	public boolean createGroup(CommandSender sender, String name) {
@@ -354,9 +358,15 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public String[] getGroupPermissions(String group, String world) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public String[] getGroupPermissions(String groupName, String world) {
+		Group group = Group.getGroup(groupName);
+		if (group == null) {
+			plugin.getServer().getLogger().info("[DroxPerms] User " + groupName + " doesn't exist yet. Creating ...");
+			group = new Group(groupName);
+			Group.addGroup(group);
+			return group.getPermissions(Config.getRealWorld(world));
+		}
+		return group.getPermissions(Config.getRealWorld(world));
 	}
 
 	public boolean setGroupInfo(CommandSender sender, String group, String node, String data) {

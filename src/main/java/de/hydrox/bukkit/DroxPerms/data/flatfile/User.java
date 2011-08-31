@@ -115,7 +115,9 @@ public class User {
 		}
 		//add world permissions
 		if (permissions != null) {
-			perms.addAll(permissions.get(world));
+			if (permissions.get(Config.getRealWorld(world)) != null) {
+				perms.addAll(permissions.get(Config.getRealWorld(world)));
+			}
 		}
 		return perms.toArray(new String[0]);
 	}

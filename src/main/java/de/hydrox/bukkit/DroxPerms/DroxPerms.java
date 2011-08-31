@@ -26,10 +26,11 @@ public class DroxPerms extends JavaPlugin {
 	private DroxPlayerListener playerListener = new DroxPlayerListener(this);
     private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
     private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
+    private DroxTestCommands testCommandExecutor = new DroxTestCommands(this);
 	private HashMap<Player, PermissionAttachment> permissions = new HashMap<Player, PermissionAttachment>();
 	private DroxPermsAPI API = null;
 
-	private Logger logger;
+	private Logger logger = Logger.getLogger("Minecraft");
 
 	public void onDisable() {
 		long time = System.currentTimeMillis();
@@ -60,6 +61,7 @@ public class DroxPerms extends JavaPlugin {
         // Commands
         getCommand("changegroup").setExecutor(groupCommandExecutor);
         getCommand("changeplayer").setExecutor(playerCommandExecutor);
+        getCommand("testdroxperms").setExecutor(testCommandExecutor);
 
 		// Events
 		PluginManager pm = getServer().getPluginManager();

@@ -79,6 +79,30 @@ public class Group {
 		return output;
 	}
 
+	public String[] getPermissions(String world) {
+		ArrayList<String> perms = new ArrayList<String>();
+		//add group permissions
+		perms.add("droxperms.meta.group." + name);
+		//add subgroup permissions
+		if (subgroups != null) {
+			for (Iterator<String> iterator = subgroups.iterator(); iterator.hasNext();) {
+				String subgroup = iterator.next();
+				perms.add("droxperms.meta.group." + subgroup);
+			}
+		}
+		//add global permissions
+		if (globalPermissions != null) {
+			perms.addAll(globalPermissions);
+		}
+		//add world permissions
+		if (permissions != null) {
+			if (permissions.get(Config.getRealWorld(world)) != null) {
+				perms.addAll(permissions.get(Config.getRealWorld(world)));
+			}
+		}
+		return perms.toArray(new String[0]);
+	}
+
 	public boolean addPermission(String world, String permission) {
 		if (world == null) {
 			if (globalPermissions == null) {
