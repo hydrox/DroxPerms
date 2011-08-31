@@ -95,7 +95,7 @@ public class Group {
 			perms.addAll(globalPermissions);
 		}
 		//add world permissions
-		if (permissions != null) {
+		if (world != null && permissions != null) {
 			if (permissions.get(Config.getRealWorld(world)) != null) {
 				perms.addAll(permissions.get(Config.getRealWorld(world)));
 			}

@@ -260,34 +260,67 @@ public class TestFlatFilePermissions extends TestClassTemplate{
 		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
 	}
 
-	public void testGetPlayerPermissions() {
-		throw new UnsupportedOperationException();
+	public void testGetPlayerPermissions() throws TestClassException {
+		ffp.createPlayer("test1");
+		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 1);
+		ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test1");
+		ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test2");
+		ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test3");
+		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 4);
+		ffp.addPlayerPermission(fakeCS, "test1", null, "test.global.test1");
+		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 5);
+		assertEquals(ffp.getPlayerPermissions("test1", null).length, 2);
+		ffp.createGroup(fakeCS, "testsubgroup1");
+		ffp.addPlayerSubgroup(fakeCS, "test1", "testsubgroup1");
+		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 6);
 	}
 
 	public void testAddGroupPermission() throws TestClassException {
 		assertFalse(ffp.addGroupPermission(fakeCS, "test1", "world", "test.test1"));
+		assertFalse(ffp.addGroupPermission(fakeCS, "test1", null, "test.test1"));
 
 		ffp.createGroup(fakeCS, "test1");
-		assertTrue(ffp.getGroupPermissions("test1", "world").length == 1);
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 1);
 		assertTrue(ffp.addGroupPermission(fakeCS, "test1", "world", "test.test1"));
-		assertTrue(ffp.getGroupPermissions("test1", "world").length == 2);
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 2);
 		assertFalse(ffp.addGroupPermission(fakeCS, "test1", "world", "test.test1"));
-		assertTrue(ffp.getGroupPermissions("test1", "world").length == 2);
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 2);
 		assertTrue(ffp.addGroupPermission(fakeCS, "test1", "world", "test.test2"));
-		assertTrue(ffp.getGroupPermissions("test1", "world").length == 3);
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 3);
 
 		ffp.createGroup(fakeCS, "test2");
-		assertTrue(ffp.getGroupPermissions("test2", "world").length == 1);
-		assertTrue(ffp.getGroupPermissions("test1", "world").length == 3);
+		assertEquals(ffp.getGroupPermissions("test2", "world").length, 1);
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 3);
 		assertTrue(ffp.addGroupPermission(fakeCS, "test2", "world", "test.test1"));
-		assertTrue(ffp.getGroupPermissions("test2", "world").length == 2);
-		assertTrue(ffp.getGroupPermissions("test1", "world").length == 3);
+		assertEquals(ffp.getGroupPermissions("test2", "world").length, 2);
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 3);
 		assertFalse(ffp.addGroupPermission(fakeCS, "test2", "world", "test.test1"));
-		assertTrue(ffp.getGroupPermissions("test2", "world").length == 2);
-		assertTrue(ffp.getGroupPermissions("test1", "world").length == 3);
+		assertEquals(ffp.getGroupPermissions("test2", "world").length, 2);
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 3);
 		assertTrue(ffp.addGroupPermission(fakeCS, "test2", "world", "test.test3"));
-		assertTrue(ffp.getGroupPermissions("test2", "world").length == 3);
-		assertTrue(ffp.getGroupPermissions("test1", "world").length == 3);
+		assertEquals(ffp.getGroupPermissions("test2", "world").length, 3);
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 3);
+
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 1);
+		assertTrue(ffp.addGroupPermission(fakeCS, "test1", null, "test.test1"));
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 2);
+		assertFalse(ffp.addGroupPermission(fakeCS, "test1", null, "test.test1"));
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 2);
+		assertTrue(ffp.addGroupPermission(fakeCS, "test1", null, "test.test2"));
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 3);
+
+		assertEquals(ffp.getGroupPermissions("test2", null).length, 1);
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 3);
+		assertTrue(ffp.addGroupPermission(fakeCS, "test2", null, "test.test1"));
+		assertEquals(ffp.getGroupPermissions("test2", null).length, 2);
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 3);
+		assertFalse(ffp.addGroupPermission(fakeCS, "test2", null, "test.test1"));
+		assertEquals(ffp.getGroupPermissions("test2", null).length, 2);
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 3);
+		assertTrue(ffp.addGroupPermission(fakeCS, "test2", null, "test.test3"));
+		assertEquals(ffp.getGroupPermissions("test2", null).length, 3);
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 3);
+
 	}
 
 	public void testRemoveGroupPermission() throws TestClassException {
@@ -447,8 +480,19 @@ public class TestFlatFilePermissions extends TestClassTemplate{
 		assertTrue(ffp.getGroupSubgroups("test1").size() == 1);
 	}
 
-	public void testGetGroupPermissions() {
-		throw new UnsupportedOperationException();
+	public void testGetGroupPermissions() throws TestClassException {
+		ffp.createGroup(fakeCS, "test1");
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 1);
+		ffp.addGroupPermission(fakeCS, "test1", "world", "test.test1");
+		ffp.addGroupPermission(fakeCS, "test1", "world", "test.test2");
+		ffp.addGroupPermission(fakeCS, "test1", "world", "test.test3");
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 4);
+		ffp.addGroupPermission(fakeCS, "test1", null, "test.global.test1");
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 5);
+		assertEquals(ffp.getGroupPermissions("test1", null).length, 2);
+		ffp.createGroup(fakeCS, "testsubgroup1");
+		ffp.addGroupSubgroup(fakeCS, "test1", "testsubgroup1");
+		assertEquals(ffp.getGroupPermissions("test1", "world").length, 6);
 	}
 }
 

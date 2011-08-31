@@ -254,9 +254,9 @@ public class FlatFilePermissions implements IDataProvider {
 			plugin.getServer().getLogger().info("[DroxPerms] User " + player + " doesn't exist yet. Creating ...");
 			user = new User(player);
 			User.addUser(user);
-			return user.getPermissions(Config.getRealWorld(world));
+			return user.getPermissions(world);
 		}
-		return user.getPermissions(Config.getRealWorld(world));
+		return user.getPermissions(world);
 	}
 
 	public boolean setPlayerInfo(CommandSender sender, String player, String node, String data) {
@@ -364,9 +364,9 @@ public class FlatFilePermissions implements IDataProvider {
 			plugin.getServer().getLogger().info("[DroxPerms] User " + groupName + " doesn't exist yet. Creating ...");
 			group = new Group(groupName);
 			Group.addGroup(group);
-			return group.getPermissions(Config.getRealWorld(world));
+			return group.getPermissions(world);
 		}
-		return group.getPermissions(Config.getRealWorld(world));
+		return group.getPermissions(world);
 	}
 
 	public boolean setGroupInfo(CommandSender sender, String group, String node, String data) {
