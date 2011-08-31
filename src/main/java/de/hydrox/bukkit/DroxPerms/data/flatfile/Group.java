@@ -67,10 +67,10 @@ public class Group {
 		if (subgroups != null && subgroups.size() != 0) {
 			output.put("subgroups", subgroups);
 		}
-		if (permissions.size() != 0) {
+		if (permissions != null && permissions.size() != 0) {
 			output.put("permissions", permissions);
 		}
-		if (info.size() != 0) {
+		if (info != null && info.size() != 0) {
 			output.put("info", info);
 		}
 		if (globalPermissions != null && globalPermissions.size() != 0) {
