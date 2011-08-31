@@ -11,7 +11,9 @@ import de.hydrox.bukkit.DroxPerms.data.Config;
 
 public class Group {
 	private static HashMap<String, Group> groups = new HashMap<String, Group>();
-	
+	private static HashMap<String, Group> backupGroups = new HashMap<String, Group>();
+	private static boolean testmode = false;
+
 	private String name;
 	private HashMap<String, ArrayList<String>> permissions;
 	private HashMap<String, String> info;
@@ -315,5 +317,20 @@ public class Group {
 	
 	public static Iterator<Group> iter() {
 		return groups.values().iterator();
+	}
+
+	public static void setTestMode() {
+		if (!testmode) {
+			backupGroups = groups;
+			groups = new HashMap<String, Group>();
+			testmode = true;
+		}
+	}
+
+	public static void setNormalMode() {
+		if (testmode) {
+			groups = backupGroups;
+			testmode = false;
+		}
 	}
 }

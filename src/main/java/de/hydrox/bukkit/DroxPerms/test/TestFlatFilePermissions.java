@@ -22,26 +22,14 @@ public class TestFlatFilePermissions extends TestClassTemplate{
 	protected void setUp() throws Exception {
 		super.setUp();
 		ffp = new FlatFilePermissions();
-		Group.clearGroups();
-		User.clearUsers();
 		this.fakeCS = new FakeCommandSender();
+		Group.setTestMode();
+		User.setTestMode();
 	}
 
-	protected void tearDown() throws Exception {
-		Iterator<User> iter = User.iter();
-		while (iter.hasNext()) {
-			User user = iter.next();
-			if (user.getName().toLowerCase().startsWith("test")) {
-				User.removeUser(user.getName());
-			}
-		}
-		Iterator<Group> iter2 = Group.iter();
-		while (iter.hasNext()) {
-			Group group = iter2.next();
-			if (group.getName().toLowerCase().startsWith("test")) {
-				Group.removeGroup(group.getName());
-			}
-		}
+	protected void tearDown(){
+		Group.setNormalMode();
+		User.setNormalMode();
 	}
 
 	public void testCreatePlayer() throws TestClassException {

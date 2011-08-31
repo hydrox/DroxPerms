@@ -30,7 +30,7 @@ public class FlatFilePermissions implements IDataProvider {
 
 	public FlatFilePermissions() {
 		groupsConfig = new Configuration(new File("groupsConfig.yml"));
-		usersConfig = new Configuration(new File("users.yml"));
+		usersConfig = new Configuration(new File("usersConfig.yml"));
 	}
 
 	public FlatFilePermissions(Plugin plugin) {

@@ -8,7 +8,7 @@ public class TestClassTemplate {
 	protected void setUp() throws Exception {	
 	}
 
-	protected void tearDown() throws Exception {
+	protected void tearDown() {
 	}
 
 	protected void assertTrue(boolean result) throws TestClassException {
@@ -57,6 +57,7 @@ public class TestClassTemplate {
 				Logger.getLogger("Minecraft").info("[DroxPerms] Test " + method.getName() + " of Class " + toTest.getClass().getName() + " passed!");
 				passed++;
 			}
+			toTest.tearDown();
 		}
 		Logger.getLogger("Minecraft").info("[DroxPerms] Test of Class " + toTest.getClass().getName() + " complete. Passed: " + passed + " Failed: " + failed);
 	}

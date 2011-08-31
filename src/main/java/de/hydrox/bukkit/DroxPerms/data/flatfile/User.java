@@ -11,6 +11,8 @@ import de.hydrox.bukkit.DroxPerms.data.Config;
 
 public class User {
 	private static HashMap<String, User> users = new HashMap<String, User>();
+	private static HashMap<String, User> backupUsers = new HashMap<String, User>();
+	private static boolean testmode = false;
 
 	private String name;
 	private String group;
@@ -264,5 +266,20 @@ public class User {
 	
 	public static Iterator<User> iter() {
 		return users.values().iterator();
+	}
+
+	public static void setTestMode() {
+		if (!testmode) {
+			backupUsers = users;
+			users = new HashMap<String, User>();
+			testmode = true;
+		}
+	}
+
+	public static void setNormalMode() {
+		if (testmode) {
+			users = backupUsers;
+			testmode = false;
+		}
 	}
 }
