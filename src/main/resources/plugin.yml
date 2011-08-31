@@ -25,6 +25,9 @@ commands:
         /<command> remsub player subgroup - removes a subgroup from a player
         /<command> setgroup player group - set the group of a player
         /<command> has player permission - shows if player has a certain permission
+   testdroxperms:
+     description: Commands to test the correct functioning of DroxPerms methods
+     permission: droxperms.test
 permissions:
   droxperms.*:
     description: Allows use of all PermissionsBukkit administration commands.
@@ -44,4 +47,7 @@ permissions:
     default: op
   droxperms.groups:
     description: Allows to modify groups.
+    default: op
+  droxperms.test:
+    description: Allows usage of the test-commands.
     default: op
