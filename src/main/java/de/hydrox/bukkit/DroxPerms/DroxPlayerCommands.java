@@ -13,6 +13,10 @@ public class DroxPlayerCommands implements CommandExecutor {
         this.plugin = plugin;
     }
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
+		if (!(sender.hasPermission("droxperms.players"))) {
+			sender.sendMessage("You don't have permission to modify Players.");
+			return true;
+		}
 		Player caller = null;
 		if (sender instanceof Player) {
 			caller = (Player) sender;
@@ -61,7 +65,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 
 		// remove subgroup
-		if (split[0].equalsIgnoreCase("remperm")) {
+		if (split[0].equalsIgnoreCase("remsub")) {
 			if (split.length == 3) {
 				result = plugin.dataProvider.removePlayerSubgroup(sender, split[1],split[2]);
 			}

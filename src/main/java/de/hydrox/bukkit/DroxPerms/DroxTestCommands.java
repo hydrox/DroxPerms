@@ -11,8 +11,12 @@ public class DroxTestCommands implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (!(sender.hasPermission("droxperms.test"))) {
+			sender.sendMessage("You don't have permission to run the TestSuite.");
+			return true;
+		}
 		TestClassTemplate.runTests(new TestFlatFilePermissions());
-		return false;
+		return true;
 	}
 
 }
