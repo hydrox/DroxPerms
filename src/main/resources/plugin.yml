@@ -50,4 +50,4 @@ permissions:
     default: op
   droxperms.test:
     description: Allows usage of the test-commands.
-    default: op
+    default: false
