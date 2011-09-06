@@ -1,5 +1,7 @@
 package de.hydrox.bukkit.DroxPerms.data;
 
+import java.util.ArrayList;
+
 import org.bukkit.command.CommandSender;
 
 /**
@@ -61,7 +63,7 @@ public interface IDataProvider {
 	 *            player to be queried
 	 * @return array of sub-groups
 	 */
-	public String[] getPlayerSubgroups(String player);
+	public ArrayList<String> getPlayerSubgroups(String player);
 
 	/**
 	 * Adds a Sub-group to a Player.
@@ -162,7 +164,7 @@ public interface IDataProvider {
 	 *            Group to be queried
 	 * @return Array of Subgroup-Strings
 	 */
-	public String[] getGroupSubgroups(String group);
+	public ArrayList<String> getGroupSubgroups(String group);
 
 	/**
 	 * Adds a Subgroup to a given Group.

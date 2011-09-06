@@ -11,6 +11,8 @@ import de.hydrox.bukkit.DroxPerms.data.Config;
 
 public class User {
 	private static HashMap<String, User> users = new HashMap<String, User>();
+	private static HashMap<String, User> backupUsers = new HashMap<String, User>();
+	private static boolean testmode = false;
 
 	private String name;
 	private String group;
@@ -114,8 +116,10 @@ public class User {
 			perms.addAll(globalPermissions);
 		}
 		//add world permissions
-		if (permissions != null) {
-			perms.addAll(permissions.get(world));
+		if (world != null && permissions != null) {
+			if (permissions.get(Config.getRealWorld(world)) != null) {
+				perms.addAll(permissions.get(Config.getRealWorld(world)));
+			}
 		}
 		return perms.toArray(new String[0]);
 	}
@@ -222,6 +226,13 @@ public class User {
 		return info.get(node);
 	}
 
+	public ArrayList<String> getSubgroups() {
+		if (subgroups == null) {
+			subgroups = new ArrayList<String>();
+		}
+		return subgroups;
+	}
+
 	public static boolean addUser(User user) {
 		if (existUser(user.name.toLowerCase())) {
 			return false;
@@ -255,5 +266,20 @@ public class User {
 	
 	public static Iterator<User> iter() {
 		return users.values().iterator();
+	}
+
+	public static void setTestMode() {
+		if (!testmode) {
+			backupUsers = users;
+			users = new HashMap<String, User>();
+			testmode = true;
+		}
+	}
+
+	public static void setNormalMode() {
+		if (testmode) {
+			users = backupUsers;
+			testmode = false;
+		}
 	}
 }

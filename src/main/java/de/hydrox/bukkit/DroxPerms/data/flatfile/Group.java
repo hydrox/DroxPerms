@@ -11,7 +11,9 @@ import de.hydrox.bukkit.DroxPerms.data.Config;
 
 public class Group {
 	private static HashMap<String, Group> groups = new HashMap<String, Group>();
-	
+	private static HashMap<String, Group> backupGroups = new HashMap<String, Group>();
+	private static boolean testmode = false;
+
 	private String name;
 	private HashMap<String, ArrayList<String>> permissions;
 	private HashMap<String, String> info;
@@ -67,16 +69,40 @@ public class Group {
 		if (subgroups != null && subgroups.size() != 0) {
 			output.put("subgroups", subgroups);
 		}
-		if (permissions.size() != 0) {
+		if (permissions != null && permissions.size() != 0) {
 			output.put("permissions", permissions);
 		}
-		if (info.size() != 0) {
+		if (info != null && info.size() != 0) {
 			output.put("info", info);
 		}
 		if (globalPermissions != null && globalPermissions.size() != 0) {
 			output.put("globalpermissions", globalPermissions);
 		}
 		return output;
+	}
+
+	public String[] getPermissions(String world) {
+		ArrayList<String> perms = new ArrayList<String>();
+		//add group permissions
+		perms.add("droxperms.meta.group." + name);
+		//add subgroup permissions
+		if (subgroups != null) {
+			for (Iterator<String> iterator = subgroups.iterator(); iterator.hasNext();) {
+				String subgroup = iterator.next();
+				perms.add("droxperms.meta.group." + subgroup);
+			}
+		}
+		//add global permissions
+		if (globalPermissions != null) {
+			perms.addAll(globalPermissions);
+		}
+		//add world permissions
+		if (world != null && permissions != null) {
+			if (permissions.get(Config.getRealWorld(world)) != null) {
+				perms.addAll(permissions.get(Config.getRealWorld(world)));
+			}
+		}
+		return perms.toArray(new String[0]);
 	}
 
 	public boolean addPermission(String world, String permission) {
@@ -194,9 +220,19 @@ public class Group {
 		return true;
 	}
 
+	public ArrayList<String> getSubgroups() {
+		if (subgroups == null) {
+			subgroups = new ArrayList<String>();
+		}
+		return subgroups;
+	}
+
 	public void updatePermissions() {
 		bukkitPermissions = new HashMap<String, Permission>();
 		//create Permission for default world
+		if (subgroups == null) {
+			subgroups = new ArrayList<String>();
+		}
 		if (!permissions.containsKey(Config.getDefaultWorld())) {
 			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
 			for (String subgroup : subgroups) {
@@ -281,5 +317,20 @@ public class Group {
 	
 	public static Iterator<Group> iter() {
 		return groups.values().iterator();
+	}
+
+	public static void setTestMode() {
+		if (!testmode) {
+			backupGroups = groups;
+			groups = new HashMap<String, Group>();
+			testmode = true;
+		}
+	}
+
+	public static void setNormalMode() {
+		if (testmode) {
+			groups = backupGroups;
+			testmode = false;
+		}
 	}
 }

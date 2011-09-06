@@ -13,6 +13,10 @@ public class DroxPlayerCommands implements CommandExecutor {
         this.plugin = plugin;
     }
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
+		if (!(sender.hasPermission("droxperms.players"))) {
+			sender.sendMessage("You don't have permission to modify Players.");
+			return true;
+		}
 		Player caller = null;
 		if (sender instanceof Player) {
 			caller = (Player) sender;
@@ -20,12 +24,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 		boolean result = false;
 		if (split.length == 0) {
 			return false;
-		} else if (caller != null && caller.getName().equalsIgnoreCase(split[1]) && !(sender.hasPermission("droxperms.player.self"))) {
+		} else if (caller != null && caller.getName().equalsIgnoreCase(split[1])
+				&& !(sender.hasPermission("droxperms.players.self"))) {
 			sender.sendMessage("You don't have permission to modify your Permissions.");
 			return true;			
-		} else if (!(sender.hasPermission("droxperms.players.others"))) {
-			sender.sendMessage("You don't have permission to modify other Players Permissions.");
-			return true;
 		}
 		// add permission
 		if (split[0].equalsIgnoreCase("addperm")) {
@@ -63,7 +65,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 
 		// remove subgroup
-		if (split[0].equalsIgnoreCase("remperm")) {
+		if (split[0].equalsIgnoreCase("remsub")) {
 			if (split.length == 3) {
 				result = plugin.dataProvider.removePlayerSubgroup(sender, split[1],split[2]);
 			}
@@ -78,6 +80,18 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			return result;
+		}
+
+		// set group
+		if (split[0].equalsIgnoreCase("has")) {
+			if (split.length == 3) {
+				result = plugin.getServer().getPlayer(split[1]).hasPermission(split[2]);
+				if (result) {
+					sender.sendMessage(split[1] + " has permission for " + split[2]);
+				} else {
+					sender.sendMessage(split[1] + " doesn't have permission for " + split[2]);
+				}
+			}
 		}
 		return true;
 	}

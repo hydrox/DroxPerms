@@ -12,6 +12,10 @@ public class DroxGroupCommands implements CommandExecutor {
         this.plugin = plugin;
     }
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
+		if (!(sender.hasPermission("droxperms.groups"))) {
+			sender.sendMessage("You don't have permission to modify Groups.");
+			return true;
+		}
 		boolean result = false;
 		if (split.length == 0) {
 			// display help

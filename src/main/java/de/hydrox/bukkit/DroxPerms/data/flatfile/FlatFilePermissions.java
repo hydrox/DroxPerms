@@ -1,6 +1,7 @@
 package de.hydrox.bukkit.DroxPerms.data.flatfile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class FlatFilePermissions implements IDataProvider {
 
 	public FlatFilePermissions() {
 		groupsConfig = new Configuration(new File("groupsConfig.yml"));
-		usersConfig = new Configuration(new File("users.yml"));
+		usersConfig = new Configuration(new File("usersConfig.yml"));
 	}
 
 	public FlatFilePermissions(Plugin plugin) {
@@ -109,8 +110,12 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean createPlayer(String name) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		if (User.existUser(name)) {
+			return false;
+		} else {
+			User.addUser(new User(name));
+			return true;
+		}
 	}
 
 	public boolean createGroup(CommandSender sender, String name) {
@@ -147,9 +152,34 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public String[] getPlayerSubgroups(String player) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public ArrayList<String> getPlayerSubgroups(String player) {
+		User user = getUser(player);
+		if (user != null) {
+			ArrayList<String> result = calculateSubgroups(user.getSubgroups());
+			return result;
+		} else {
+			return null;
+		}
+	}
+
+	private ArrayList<String> calculateSubgroups(ArrayList<String> input) {
+		boolean dirty = true;
+		ArrayList<String> result = new ArrayList<String>(input);
+		ArrayList<String> toTest = new ArrayList<String>(input);
+
+		while (toTest.size()!=0) {
+			String string = toTest.get(0);
+			ArrayList<String> subgroups = Group.getGroup(string).getSubgroups();
+			for (String string2 : subgroups) {
+				if (!result.contains(string2)) {
+					result.add(string2);
+					toTest.add(string2);
+					dirty = true;
+				}
+			}
+			toTest.remove(string);
+		}
+		return result;
 	}
 
 	public boolean addPlayerSubgroup(CommandSender sender, String player, String subgroup) {
@@ -165,7 +195,8 @@ public class FlatFilePermissions implements IDataProvider {
 			}
 		} else {
 			return false;
-		}	}
+		}
+	}
 
 	public boolean removePlayerSubgroup(CommandSender sender, String player, String subgroup) {
 		User user = getUser(player);
@@ -221,9 +252,9 @@ public class FlatFilePermissions implements IDataProvider {
 			plugin.getServer().getLogger().info("[DroxPerms] User " + player + " doesn't exist yet. Creating ...");
 			user = new User(player);
 			User.addUser(user);
-			return user.getPermissions(Config.getRealWorld(world));
+			return user.getPermissions(world);
 		}
-		return user.getPermissions(Config.getRealWorld(world));
+		return user.getPermissions(world);
 	}
 
 	public boolean setPlayerInfo(CommandSender sender, String player, String node, String data) {
@@ -283,9 +314,14 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public String[] getGroupSubgroups(String group) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public ArrayList<String> getGroupSubgroups(String groupName) {
+		Group group = Group.getGroup(groupName);
+		if (group != null) {
+			ArrayList<String> result = calculateSubgroups(group.getSubgroups());
+			return result;
+		} else {
+			return null;
+		}
 	}
 
 	public boolean addGroupSubgroup(CommandSender sender, String group, String subgroup) {
@@ -320,9 +356,15 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public String[] getGroupPermissions(String group, String world) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public String[] getGroupPermissions(String groupName, String world) {
+		Group group = Group.getGroup(groupName);
+		if (group == null) {
+			plugin.getServer().getLogger().info("[DroxPerms] User " + groupName + " doesn't exist yet. Creating ...");
+			group = new Group(groupName);
+			Group.addGroup(group);
+			return group.getPermissions(world);
+		}
+		return group.getPermissions(world);
 	}
 
 	public boolean setGroupInfo(CommandSender sender, String group, String node, String data) {
