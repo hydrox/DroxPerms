@@ -167,19 +167,17 @@ public class FlatFilePermissions implements IDataProvider {
 		ArrayList<String> result = new ArrayList<String>(input);
 		ArrayList<String> toTest = new ArrayList<String>(input);
 
-		while(dirty) {
-			dirty = false;
-			for (String string : toTest) {
-				ArrayList<String> subgroups = Group.getGroup(string).getSubgroups();
-				for (String string2 : subgroups) {
-					if (!result.contains(string2)) {
-						result.add(string2);
-						toTest.add(string2);
-						toTest.remove(string);
-						dirty = true;
-					}
+		while (toTest.size()!=0) {
+			String string = toTest.get(0);
+			ArrayList<String> subgroups = Group.getGroup(string).getSubgroups();
+			for (String string2 : subgroups) {
+				if (!result.contains(string2)) {
+					result.add(string2);
+					toTest.add(string2);
+					dirty = true;
 				}
 			}
+			toTest.remove(string);
 		}
 		return result;
 	}
