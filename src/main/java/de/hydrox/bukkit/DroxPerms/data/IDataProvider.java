@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
  * and Groups and calculating the final Player-Permissions.
  * 
  * @author Matthias Söhnholz
+ * @since 0.1.0
  * 
  */
 public interface IDataProvider {
@@ -21,6 +22,7 @@ public interface IDataProvider {
 	 * @param name
 	 *            name of the Player
 	 * @return returns true if the Player could be created.
+	 * @since 0.1.0
 	 */
 	public boolean createPlayer(String name);
 
@@ -31,6 +33,7 @@ public interface IDataProvider {
 	 *            name of the Group
 	 * 
 	 * @return returns true if the Group could be created.
+	 * @since 0.1.0
 	 */
 	public boolean createGroup(CommandSender sender, String name);
 
@@ -38,9 +41,9 @@ public interface IDataProvider {
 	 * Returns the main-group of the Player.
 	 * 
 	 * @param player
-	 *            player to be queried. sender
+	 *            player to be queried.
 	 * 
-	 * @return main group of the Player
+	 * @return main group of the Player, or "" if player doesn't exist
 	 */
 	public String getPlayerGroup(String player);
 
@@ -50,8 +53,9 @@ public interface IDataProvider {
 	 * @param sender
 	 * @param player
 	 *            player to be modified
-	 * @param subgroup
+	 * @param group
 	 *            group to be set
+	 * @return success of operation
 	 */
 	public boolean setPlayerGroup(CommandSender sender, String player,
 			String group);
@@ -60,8 +64,8 @@ public interface IDataProvider {
 	 * Returns the sub-groups of the Player.
 	 * 
 	 * @param player
-	 *            player to be queried
-	 * @return array of sub-groups
+	 *            Player to be queried
+	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
 	 */
 	public ArrayList<String> getPlayerSubgroups(String player);
 
@@ -72,6 +76,7 @@ public interface IDataProvider {
 	 *            Player to be modified
 	 * @param subgroup
 	 *            sub-group to be added
+	 * @return success of operation
 	 */
 	public boolean addPlayerSubgroup(CommandSender sender, String player,
 			String subgroup);
@@ -83,6 +88,7 @@ public interface IDataProvider {
 	 *            Player to be modified
 	 * @param subgroup
 	 *            sub-group to be removed
+	 * @return success of operation
 	 */
 	public boolean removePlayerSubgroup(CommandSender sender, String player,
 			String subgroup);
@@ -97,7 +103,7 @@ public interface IDataProvider {
 	 *            World the Permission belongs to
 	 * @param node
 	 *            Permission-node to add
-	 * @return
+	 * @return success of operation
 	 */
 	public boolean addPlayerPermission(CommandSender sender, String player,
 			String world, String node);
@@ -113,7 +119,7 @@ public interface IDataProvider {
 	 *            World the Permission belongs to
 	 * @param node
 	 *            Permission-node to remove
-	 * @return
+	 * @return success of operation
 	 */
 	public boolean removePlayerPermission(CommandSender sender, String player,
 			String world, String node);
@@ -126,7 +132,7 @@ public interface IDataProvider {
 	 *            Player to be queried.
 	 * @param world
 	 *            World to be queried.
-	 * @return
+	 * @return array of String containing the players permissions
 	 */
 	public String[] getPlayerPermissions(String player, String world);
 
@@ -140,7 +146,7 @@ public interface IDataProvider {
 	 *            Info-node to be set.
 	 * @param data
 	 *            Data to be written.
-	 * @return
+	 * @return success of operation
 	 */
 	public boolean setPlayerInfo(CommandSender sender, String player,
 			String node, String data);
@@ -153,7 +159,7 @@ public interface IDataProvider {
 	 *            Player to be queried
 	 * @param node
 	 *            Info-node to be read
-	 * @return Info-node
+	 * @return Info-node, is null if Player or Info-node doesn't exist
 	 */
 	public String getPlayerInfo(CommandSender sender, String player, String node);
 
@@ -162,7 +168,7 @@ public interface IDataProvider {
 	 * 
 	 * @param group
 	 *            Group to be queried
-	 * @return Array of Subgroup-Strings
+	 * @return ArrayList<String> containing the subgroups, null if Group doesn't exist
 	 */
 	public ArrayList<String> getGroupSubgroups(String group);
 
@@ -231,7 +237,7 @@ public interface IDataProvider {
 	 *            Group to be queried.
 	 * @param world
 	 *            World to be queried.
-	 * @return
+	 * @return array of String containing the Groups Permissions
 	 */
 	public String[] getGroupPermissions(String group, String world);
 
@@ -245,7 +251,7 @@ public interface IDataProvider {
 	 *            Info-node to be set.
 	 * @param data
 	 *            Data to be written.
-	 * @return
+	 * @return success of operation
 	 */
 	public boolean setGroupInfo(CommandSender sender, String group,
 			String node, String data);
@@ -258,7 +264,7 @@ public interface IDataProvider {
 	 *            Group to be queried
 	 * @param node
 	 *            Info-node to be read
-	 * @return Info-node
+	 * @return Info-node, is null if Player or Info-node doesn't exist
 	 */
 	public String getGroupInfo(CommandSender sender, String group, String node);
 
