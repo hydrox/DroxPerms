@@ -98,6 +98,15 @@ public class Group {
 		}
 		//add world permissions
 		if (world != null && permissions != null) {
+			//add group permissions
+			perms.add("droxperms.meta.group." + name + "." + Config.getRealWorld(world));
+			//add subgroup permissions
+			if (subgroups != null) {
+				for (Iterator<String> iterator = subgroups.iterator(); iterator.hasNext();) {
+					String subgroup = iterator.next();
+					perms.add("droxperms.meta.group." + subgroup + "." + Config.getRealWorld(world));
+				}
+			}
 			if (permissions.get(Config.getRealWorld(world)) != null) {
 				perms.addAll(permissions.get(Config.getRealWorld(world)));
 			}
