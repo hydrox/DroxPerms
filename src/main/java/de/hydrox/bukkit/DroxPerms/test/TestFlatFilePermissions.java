@@ -189,26 +189,26 @@ public class TestFlatFilePermissions extends TestClassTemplate{
 		assertFalse(ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test1"));
 
 		ffp.createPlayer("test1");
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 1);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
 		assertTrue(ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test1"));
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
-		assertFalse(ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test1"));
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
-		assertTrue(ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test2"));
 		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
+		assertFalse(ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test1"));
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
+		assertTrue(ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test2"));
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 4);
 
 		ffp.createPlayer("test2");
-		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 1);
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
+		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 2);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 4);
 		assertTrue(ffp.addPlayerPermission(fakeCS, "test2", "world", "test.test1"));
-		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 2);
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
-		assertFalse(ffp.addPlayerPermission(fakeCS, "test2", "world", "test.test1"));
-		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 2);
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
-		assertTrue(ffp.addPlayerPermission(fakeCS, "test2", "world", "test.test3"));
 		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 3);
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 4);
+		assertFalse(ffp.addPlayerPermission(fakeCS, "test2", "world", "test.test1"));
+		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 3);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 4);
+		assertTrue(ffp.addPlayerPermission(fakeCS, "test2", "world", "test.test3"));
+		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 4);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 4);
 	}
 
 	public void testRemovePlayerPermission() throws TestClassException {
@@ -222,45 +222,45 @@ public class TestFlatFilePermissions extends TestClassTemplate{
 		ffp.addPlayerPermission(fakeCS, "test1", "world", "testsubgroup1");
 		ffp.addPlayerPermission(fakeCS, "test1", "world", "testsubgroup2");
 		ffp.addPlayerPermission(fakeCS, "test1", "world", "testsubgroup3");
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 4);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 5);
 
 		assertTrue(ffp.removePlayerPermission(fakeCS, "test1", "world", "testsubgroup2"));
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 4);
 		assertTrue(ffp.removePlayerPermission(fakeCS, "test1", "world", "testsubgroup3"));
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
 
 		ffp.createPlayer("test2");
 		assertFalse(ffp.removePlayerPermission(fakeCS, "test2", "world", "testunknown"));
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
 		assertFalse(ffp.removePlayerPermission(fakeCS, "test2", "world", "testsubgroup1"));
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
 
 		ffp.addPlayerPermission(fakeCS, "test2", "world", "testsubgroup1");
 		ffp.addPlayerPermission(fakeCS, "test2", "world", "testsubgroup2");
 		ffp.addPlayerPermission(fakeCS, "test2", "world", "testsubgroup3");
-		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 4);
+		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 5);
 
 		ffp.removePlayerPermission(fakeCS, "test2", "world", "testsubgroup2");
-		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 3);
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
+		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 4);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
 		ffp.removePlayerPermission(fakeCS, "test2", "world", "testsubgroup1");
-		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 2);
-		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 2);
+		assertTrue(ffp.getPlayerPermissions("test2", "world").length == 3);
+		assertTrue(ffp.getPlayerPermissions("test1", "world").length == 3);
 	}
 
 	public void testGetPlayerPermissions() throws TestClassException {
 		ffp.createPlayer("test1");
-		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 1);
+		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 2);
 		ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test1");
 		ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test2");
 		ffp.addPlayerPermission(fakeCS, "test1", "world", "test.test3");
-		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 4);
-		ffp.addPlayerPermission(fakeCS, "test1", null, "test.global.test1");
 		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 5);
+		ffp.addPlayerPermission(fakeCS, "test1", null, "test.global.test1");
+		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 6);
 		assertEquals(ffp.getPlayerPermissions("test1", null).length, 2);
 		ffp.createGroup(fakeCS, "testsubgroup1");
 		ffp.addPlayerSubgroup(fakeCS, "test1", "testsubgroup1");
-		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 6);
+		assertEquals(ffp.getPlayerPermissions("test1", "world").length, 8);
 	}
 
 	public void testAddGroupPermission() throws TestClassException {

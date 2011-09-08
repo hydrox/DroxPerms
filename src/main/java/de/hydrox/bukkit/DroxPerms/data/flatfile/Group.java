@@ -270,6 +270,10 @@ public class Group {
 		}
 
 		HashMap<String, Boolean> children = new HashMap<String, Boolean>();
+		for (String subgroup : subgroups) {
+			children.put("droxperms.meta.group." + subgroup, true);
+		}
+
 		for (String permission : globalPermissions) {
 			if (permission.startsWith("-")) {
 				children.put(permission, false);
