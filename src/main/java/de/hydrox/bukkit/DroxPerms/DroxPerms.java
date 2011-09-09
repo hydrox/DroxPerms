@@ -117,7 +117,7 @@ public class DroxPerms extends JavaPlugin {
 	private void calculateAttachment(Player player) {
 		PermissionAttachment attachment = permissions.get(player);
 
-		for (String entry : dataProvider.getPlayerPermissions(player.getName().toLowerCase(), player.getWorld().getName())) {
+		for (String entry : dataProvider.getPlayerPermissions(player.getName(), player.getWorld().getName())) {
 			if (entry.startsWith("-")) {
 				attachment.setPermission(entry, false);
 				logger.fine("[DroxPerms] Setting " + entry + " to false for player " + player.getName());
