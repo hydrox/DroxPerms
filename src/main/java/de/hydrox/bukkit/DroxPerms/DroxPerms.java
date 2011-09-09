@@ -52,24 +52,28 @@ public class DroxPerms extends JavaPlugin {
 		logger.info("[DroxPerms] Activating Plugin.");
 		logger = getServer().getLogger();
 		config = new Config(this);
+		logger.info("[DroxPerms] Loading DataProvider");
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
 			dataProvider = new FlatFilePermissions(this);
 		}
 		
 		API = new DroxPermsAPI(this);
 
-        // Commands
-        getCommand("changegroup").setExecutor(groupCommandExecutor);
-        getCommand("changeplayer").setExecutor(playerCommandExecutor);
-        getCommand("testdroxperms").setExecutor(testCommandExecutor);
+		// Commands
+		logger.info("[DroxPerms] Setting CommandExecutors");
+		getCommand("changegroup").setExecutor(groupCommandExecutor);
+		getCommand("changeplayer").setExecutor(playerCommandExecutor);
+		getCommand("testdroxperms").setExecutor(testCommandExecutor);
 
 		// Events
+		logger.info("[DroxPerms] Registering Events");
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
 		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
 		pm.registerEvent(Type.PLAYER_KICK, playerListener, Priority.Normal, this);
 
 		// Register everyone online right now
+		logger.info("[DroxPerms] Register online players");
 		for (Player p : getServer().getOnlinePlayers()) {
 			registerPlayer(p);
 		}
