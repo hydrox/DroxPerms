@@ -1,6 +1,7 @@
 package de.hydrox.bukkit.DroxPerms.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.command.CommandSender;
 
@@ -134,7 +135,7 @@ public interface IDataProvider {
 	 *            World to be queried.
 	 * @return array of String containing the players permissions
 	 */
-	public String[] getPlayerPermissions(String player, String world);
+	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world);
 
 	/**
 	 * Sets Data in the Players Info-node.
@@ -239,7 +240,7 @@ public interface IDataProvider {
 	 *            World to be queried.
 	 * @return array of String containing the Groups Permissions
 	 */
-	public String[] getGroupPermissions(String group, String world);
+	public HashMap<String, ArrayList<String>> getGroupPermissions(String group, String world);
 
 	/**
 	 * Sets Data in the Groups Info-node.
