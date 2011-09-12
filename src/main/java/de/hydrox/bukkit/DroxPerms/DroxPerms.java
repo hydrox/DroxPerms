@@ -89,9 +89,9 @@ public class DroxPerms extends JavaPlugin {
 		HashMap<String, PermissionAttachment> attachments = new HashMap<String, PermissionAttachment>();
 
 		PermissionAttachment attachment = player.addAttachment(this);
-		attachments.put("group", attachment);
-		attachment = player.addAttachment(this);
 		attachments.put("subgroups", attachment);
+		attachment = player.addAttachment(this);
+		attachments.put("group", attachment);
 		attachment = player.addAttachment(this);
 		attachments.put("global", attachment);
 		attachment = player.addAttachment(this);
