@@ -1,0 +1,53 @@
+name: DroxPerms
+main: de.hydrox.bukkit.DroxPerms.DroxPerms
+author: Matthias Soehnholz
+website: https://github.com/hydrox/DroxPerms
+version: 0.1.0
+commands:
+  changegroup:
+    aliases: [cg]
+    description: Commands for manipulating groups.
+    permission: droxperms.groups
+    usage: |
+        /<command> addperm group permission [world] - adds a permission to a group
+        /<command> remperm group permission [world] - removes a permission from a group
+        /<command> addsub group subgroup - adds a subgroup to a group
+        /<command> remsub group subgroup - removes a subgroup from a group
+        /<command> new group - creates a new group
+  changeplayer:
+    aliases: [cp]
+    description: Commands for manipulating groups.
+    permission: droxperms.players
+    usage: |
+        /<command> addperm player permission [world] - adds a permission to a player
+        /<command> remperm player permission [world] - removes a permission from a player
+        /<command> addsub player subgroup - adds a subgroup to a player
+        /<command> remsub player subgroup - removes a subgroup from a player
+        /<command> setgroup player group - set the group of a player
+        /<command> has player permission - shows if player has a certain permission
+  testdroxperms:
+    description: Commands to test the correct functioning of DroxPerms methods
+    permission: droxperms.test
+permissions:
+  droxperms.*:
+    description: Allows use of all PermissionsBukkit administration commands.
+    children:
+      droxperms.players.*: true
+      droxperms.groups: true
+  droxperms.players.*:
+    description: Allows to modify all Players.
+    children:
+      droxperms.players: true
+      droxperms.players.self: true
+  droxperms.players:
+    description: Allows to modify other Players.
+    default: op
+  droxperms.players.self:
+    description: Allows to modify the own Players.
+    default: op
+  droxperms.groups:
+    description: Allows to modify groups.
+    default: op
+  droxperms.test:
+    description: Allows usage of the test-commands.
+    default: false
