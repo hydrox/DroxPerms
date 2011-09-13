@@ -1,5 +1,6 @@
 package de.hydrox.bukkit.DroxPerms;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public class DroxPerms extends JavaPlugin {
     private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
     private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
     private DroxTestCommands testCommandExecutor = new DroxTestCommands();
-	private HashMap<Player, PermissionAttachment> permissions = new HashMap<Player, PermissionAttachment>();
+	private HashMap<Player, HashMap<String,PermissionAttachment>> permissions = new HashMap<Player, HashMap<String,PermissionAttachment>>();
 	private DroxPermsAPI API = null;
 
 	private Logger logger = Logger.getLogger("Minecraft");
@@ -52,24 +53,28 @@ public class DroxPerms extends JavaPlugin {
 		logger.info("[DroxPerms] Activating Plugin.");
 		logger = getServer().getLogger();
 		config = new Config(this);
+		logger.info("[DroxPerms] Loading DataProvider");
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
 			dataProvider = new FlatFilePermissions(this);
 		}
 		
 		API = new DroxPermsAPI(this);
 
-        // Commands
-        getCommand("changegroup").setExecutor(groupCommandExecutor);
-        getCommand("changeplayer").setExecutor(playerCommandExecutor);
-        getCommand("testdroxperms").setExecutor(testCommandExecutor);
+		// Commands
+		logger.info("[DroxPerms] Setting CommandExecutors");
+		getCommand("changegroup").setExecutor(groupCommandExecutor);
+		getCommand("changeplayer").setExecutor(playerCommandExecutor);
+		getCommand("testdroxperms").setExecutor(testCommandExecutor);
 
 		// Events
+		logger.info("[DroxPerms] Registering Events");
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
 		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
 		pm.registerEvent(Type.PLAYER_KICK, playerListener, Priority.Normal, this);
 
 		// Register everyone online right now
+		logger.info("[DroxPerms] Register online players");
 		for (Player p : getServer().getOnlinePlayers()) {
 			registerPlayer(p);
 		}
@@ -81,13 +86,26 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void registerPlayer(Player player) {
+		HashMap<String, PermissionAttachment> attachments = new HashMap<String, PermissionAttachment>();
+
 		PermissionAttachment attachment = player.addAttachment(this);
-		permissions.put(player, attachment);
+		attachments.put("subgroups", attachment);
+		attachment = player.addAttachment(this);
+		attachments.put("group", attachment);
+		attachment = player.addAttachment(this);
+		attachments.put("global", attachment);
+		attachment = player.addAttachment(this);
+		attachments.put("world", attachment);
+
+		permissions.put(player, attachments);
 		calculateAttachment(player);
 	}
 
 	protected void unregisterPlayer(Player player) {
-		player.removeAttachment(permissions.get(player));
+		HashMap<String, PermissionAttachment> attachments = permissions.get(player);
+		for (PermissionAttachment attachment : attachments.values()) {
+			player.removeAttachment(attachment);
+		}
 		permissions.remove(player);
 	}
 
@@ -102,27 +120,89 @@ public class DroxPerms extends JavaPlugin {
 		if (player == null) {
 			return;
 		}
-		PermissionAttachment attachment = permissions.get(player);
-		for (String key : attachment.getPermissions().keySet()) {
-			attachment.unsetPermission(key);
+		HashMap<String, PermissionAttachment> attachments = permissions.get(player);
+		for (PermissionAttachment attachment : attachments.values()) {
+			for (String key : attachment.getPermissions().keySet()) {
+				attachment.unsetPermission(key);
+			}
 		}
 
 		calculateAttachment(player);
 	}
 
 	private void calculateAttachment(Player player) {
-		PermissionAttachment attachment = permissions.get(player);
+		HashMap<String, PermissionAttachment> attachments = permissions
+				.get(player);
 
-		for (String entry : dataProvider.getPlayerPermissions(player.getName().toLowerCase(), player.getWorld().getName())) {
-			if (entry.startsWith("-")) {
-				attachment.setPermission(entry, false);
-				logger.fine("[DroxPerms] Setting " + entry + " to false for player " + player.getName());
-			} else {
-				attachment.setPermission(entry, true);
-				logger.fine("[DroxPerms] Setting " + entry + " to true for player " + player.getName());
+		PermissionAttachment attachment = attachments.get("group");
+		HashMap<String, ArrayList<String>> playerPermissions = dataProvider
+				.getPlayerPermissions(player.getName(), player.getWorld()
+						.getName());
+		ArrayList<String> perms = playerPermissions.get("group");
+		if (perms != null)
+			for (String entry : playerPermissions.get("group")) {
+				if (entry.startsWith("-")) {
+					entry = entry.substring(1);
+					attachment.setPermission(entry, false);
+					logger.fine("[DroxPerms] Setting " + entry
+							+ " to false for player " + player.getName());
+				} else {
+					attachment.setPermission(entry, true);
+					logger.fine("[DroxPerms] Setting " + entry
+							+ " to true for player " + player.getName());
+				}
 			}
-		}
+		player.recalculatePermissions();
 
+		attachment = attachments.get("subgroups");
+		perms = playerPermissions.get("subgroups");
+		if (perms != null)
+			for (String entry : perms) {
+				if (entry.startsWith("-")) {
+					entry = entry.substring(1);
+					attachment.setPermission(entry, false);
+					logger.fine("[DroxPerms] Setting " + entry
+							+ " to false for player " + player.getName());
+				} else {
+					attachment.setPermission(entry, true);
+					logger.fine("[DroxPerms] Setting " + entry
+							+ " to true for player " + player.getName());
+				}
+			}
+		player.recalculatePermissions();
+
+		attachment = attachments.get("global");
+		perms = playerPermissions.get("global");
+		if (perms != null)
+			for (String entry : perms) {
+				if (entry.startsWith("-")) {
+					entry = entry.substring(1);
+					attachment.setPermission(entry, false);
+					logger.fine("[DroxPerms] Setting " + entry
+							+ " to false for player " + player.getName());
+				} else {
+					attachment.setPermission(entry, true);
+					logger.fine("[DroxPerms] Setting " + entry
+							+ " to true for player " + player.getName());
+				}
+			}
+		player.recalculatePermissions();
+
+		attachment = attachments.get("world");
+		perms = playerPermissions.get("world");
+		if (perms != null)
+			for (String entry : perms) {
+				if (entry.startsWith("-")) {
+					entry = entry.substring(1);
+					attachment.setPermission(entry, false);
+					logger.fine("[DroxPerms] Setting " + entry
+							+ " to false for player " + player.getName());
+				} else {
+					attachment.setPermission(entry, true);
+					logger.fine("[DroxPerms] Setting " + entry
+							+ " to true for player " + player.getName());
+				}
+			}
 		player.recalculatePermissions();
 	}
 }

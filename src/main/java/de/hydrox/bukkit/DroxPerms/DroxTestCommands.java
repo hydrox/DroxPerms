@@ -18,5 +18,4 @@ public class DroxTestCommands implements CommandExecutor {
 		TestClassTemplate.runTests(new TestFlatFilePermissions());
 		return true;
 	}
-
 }
