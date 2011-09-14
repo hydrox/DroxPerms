@@ -103,6 +103,7 @@ public class DroxPerms extends JavaPlugin {
 
 	protected void unregisterPlayer(Player player) {
 		HashMap<String, PermissionAttachment> attachments = permissions.get(player);
+		if (attachments != null)
 		for (PermissionAttachment attachment : attachments.values()) {
 			player.removeAttachment(attachment);
 		}
