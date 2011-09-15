@@ -1,0 +1,9 @@
+v0.1.2
+fix permission change on world change
+fix negative Group-permissions
+
+v0.1.1
+fix NPE on kick
+
+v0.1.0
+first release

@@ -85,11 +85,16 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// set group
 		if (split[0].equalsIgnoreCase("has")) {
 			if (split.length == 3) {
-				result = plugin.getServer().getPlayer(split[1]).hasPermission(split[2]);
-				if (result) {
-					sender.sendMessage(split[1] + " has permission for " + split[2]);
+				Player player = plugin.getServer().getPlayer(split[1]);
+				if (player == null) {
+					sender.sendMessage(split[1] + " is not online");
 				} else {
-					sender.sendMessage(split[1] + " doesn't have permission for " + split[2]);
+					result = player.hasPermission(split[2]);
+					if (result) {
+						sender.sendMessage(split[1] + " has permission for " + split[2]);
+					} else {
+						sender.sendMessage(split[1] + " doesn't have permission for " + split[2]);
+					}
 				}
 			}
 		}
