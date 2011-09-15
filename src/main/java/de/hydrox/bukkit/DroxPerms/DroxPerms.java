@@ -238,7 +238,7 @@ public class DroxPerms extends JavaPlugin {
 			try {
 				scheduler.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
 				scheduler.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
-				scheduler.shutdown();
+				scheduler.shutdownNow();
 			} catch (Exception e) {
 			}
 			scheduler = null;
