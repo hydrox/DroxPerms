@@ -321,6 +321,14 @@ public class DroxPermsAPI {
 	public boolean setGroupInfo(String group, String node, String data) {
 		return plugin.dataProvider.setGroupInfo(fakeCS, group, node, data);
 	}
+
+	/**
+	 * Tells the DataProvider to save all changes.
+	 * @since 0.2.0
+	 */
+	public void save() {
+		plugin.dataProvider.save();
+	}
 }
 
 class FakeCommandSender implements CommandSender {

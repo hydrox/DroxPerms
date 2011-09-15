@@ -2,6 +2,8 @@ package de.hydrox.bukkit.DroxPerms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.bukkit.World;
@@ -32,7 +34,10 @@ public class DroxPerms extends JavaPlugin {
 	private HashMap<Player, HashMap<String,PermissionAttachment>> permissions = new HashMap<Player, HashMap<String,PermissionAttachment>>();
 	private DroxPermsAPI API = null;
 
-	private Logger logger = Logger.getLogger("Minecraft");
+	private Runnable commiter;
+	private ScheduledThreadPoolExecutor scheduler;
+
+	public Logger logger = Logger.getLogger("Minecraft");
 
 	public void onDisable() {
 		long time = System.currentTimeMillis();
@@ -79,6 +84,9 @@ public class DroxPerms extends JavaPlugin {
 		for (Player p : getServer().getOnlinePlayers()) {
 			registerPlayer(p);
 		}
+
+		enableScheduler();
+
 		logger.info("[DroxPerms] Plugin activated in " + (System.currentTimeMillis() - time) + "ms.");
 	}
 	
@@ -213,5 +221,27 @@ public class DroxPerms extends JavaPlugin {
 				}
 			}
 		player.recalculatePermissions();
+	}
+
+	private void enableScheduler() {
+		disableScheduler();
+		commiter = new DroxSaveThread(this);
+		scheduler = new ScheduledThreadPoolExecutor(1);
+		int minutes = Config.getSaveInterval();
+		scheduler.scheduleAtFixedRate(commiter, minutes, minutes, TimeUnit.MINUTES);
+		logger.info("[DroxPerms] Saving changes every " + minutes + " minutes!");
+	}
+
+	private void disableScheduler() {
+		if (scheduler != null) {
+			try {
+				scheduler.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
+				scheduler.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+				scheduler.shutdown();
+			} catch (Exception e) {
+			}
+			scheduler = null;
+			logger.info("[DroxPerms] Deactivated Save-Thread.");
+		}
 	}
 }
