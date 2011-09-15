@@ -47,6 +47,7 @@ public class DroxPerms extends JavaPlugin {
 		for (Player p : getServer().getOnlinePlayers()) {
 			unregisterPlayer(p);
 		}
+		disableScheduler();
 
 		// Safe data
 		logger.info("[DroxPerms] safe configs");
