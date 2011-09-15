@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
@@ -51,7 +52,6 @@ public class DroxPerms extends JavaPlugin {
 	public void onEnable() {
 		long time = System.currentTimeMillis();
 		logger.info("[DroxPerms] Activating Plugin.");
-		logger = getServer().getLogger();
 		config = new Config(this);
 		logger.info("[DroxPerms] Loading DataProvider");
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
@@ -69,9 +69,10 @@ public class DroxPerms extends JavaPlugin {
 		// Events
 		logger.info("[DroxPerms] Registering Events");
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-		pm.registerEvent(Type.PLAYER_KICK, playerListener, Priority.Normal, this);
+		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
 
 		// Register everyone online right now
 		logger.info("[DroxPerms] Register online players");
@@ -86,6 +87,10 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void registerPlayer(Player player) {
+		registerPlayer(player, player.getWorld());
+	}
+
+	protected void registerPlayer(Player player, World world) {
 		HashMap<String, PermissionAttachment> attachments = new HashMap<String, PermissionAttachment>();
 
 		PermissionAttachment attachment = player.addAttachment(this);
@@ -98,7 +103,7 @@ public class DroxPerms extends JavaPlugin {
 		attachments.put("world", attachment);
 
 		permissions.put(player, attachments);
-		calculateAttachment(player);
+		calculateAttachment(player, world);
 	}
 
 	protected void unregisterPlayer(Player player) {
@@ -118,6 +123,10 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void refreshPlayer(Player player) {
+		refreshPlayer(player, player.getWorld());
+	}
+
+	protected void refreshPlayer(Player player, World world) {
 		if (player == null) {
 			return;
 		}
@@ -128,17 +137,16 @@ public class DroxPerms extends JavaPlugin {
 			}
 		}
 
-		calculateAttachment(player);
+		calculateAttachment(player, world);
 	}
 
-	private void calculateAttachment(Player player) {
+	private void calculateAttachment(Player player, World world) {
 		HashMap<String, PermissionAttachment> attachments = permissions
 				.get(player);
 
 		PermissionAttachment attachment = attachments.get("group");
 		HashMap<String, ArrayList<String>> playerPermissions = dataProvider
-				.getPlayerPermissions(player.getName(), player.getWorld()
-						.getName());
+				.getPlayerPermissions(player.getName(), world.getName());
 		ArrayList<String> perms = playerPermissions.get("group");
 		if (perms != null)
 			for (String entry : playerPermissions.get("group")) {

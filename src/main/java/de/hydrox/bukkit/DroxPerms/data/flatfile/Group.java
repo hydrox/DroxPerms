@@ -267,6 +267,7 @@ public class Group {
 
 			for (String permission : permissions.get(world)) {
 				if (permission.startsWith("-")) {
+					permission = permission.substring(1);
 					children.put(permission, false);
 				} else {
 					children.put(permission, true);
@@ -288,6 +289,7 @@ public class Group {
 
 		for (String permission : globalPermissions) {
 			if (permission.startsWith("-")) {
+				permission = permission.substring(1);
 				children.put(permission, false);
 			} else {
 				children.put(permission, true);
