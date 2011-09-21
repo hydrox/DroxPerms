@@ -40,7 +40,7 @@ public class FlatFilePermissions implements IDataProvider {
 
 		groupsConfig = new Configuration(new File(plugin.getDataFolder(), "groups.yml"));
 		usersConfig = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
-		tracksConfig = new Configuration(new File(plugin.getDataFolder(), "tracks1.yml"));
+		tracksConfig = new Configuration(new File(plugin.getDataFolder(), "tracks.yml"));
 		if (!new File(plugin.getDataFolder(), "groups.yml").exists()) {
 			plugin.getServer().getLogger().info("[DroxPerms] Generating default groups.yml");
 			HashMap<String,Object> tmp = new HashMap<String,Object>();
