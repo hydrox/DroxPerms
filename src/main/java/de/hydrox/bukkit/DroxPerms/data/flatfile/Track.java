@@ -14,6 +14,7 @@ public class Track {
 	private HashMap<String, String> mapping;
 
 	public Track(String name, ConfigurationNode node) {
+		mapping = new HashMap<String, String>();
 		Map<String, Object> tmp = node.getAll();
 		Set<String> keys = tmp.keySet();
 		for (String key : keys) {
