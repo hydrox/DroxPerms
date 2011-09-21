@@ -32,12 +32,21 @@ commands:
   testdroxperms:
     description: Commands to test the correct functioning of DroxPerms methods
     permission: droxperms.test
+  droxstats:
+    description: Commands to print out certain stats within DroxPerms
+    permission: droxperms.stats
+    usage: |
+        /<command> groupnumbers - prints out the number of Players of all groups
+        /<command> subgroupmembers - prints out the number of Players of all subgroups
+        /<command> groupmembers - prints out the all Players of all groups (use with caution) 
+        /<command> subgroupmembers - prints out the all Players of all subgroups (use with caution)
 permissions:
   droxperms.*:
     description: Allows use of all PermissionsBukkit administration commands.
     children:
       droxperms.players.*: true
       droxperms.groups: true
+      droxperms.stats: true
   droxperms.players.*:
     description: Allows to modify all Players.
     children:
@@ -55,3 +64,6 @@ permissions:
   droxperms.test:
     description: Allows usage of the test-commands.
     default: false
+  droxperms.stats:
+    description: Allows usage of stats-commandsj
+    default: op

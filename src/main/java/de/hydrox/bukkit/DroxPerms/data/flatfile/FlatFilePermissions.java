@@ -79,7 +79,7 @@ public class FlatFilePermissions implements IDataProvider {
 			iter = users.keySet().iterator();
 			while (iter.hasNext()) {
 				String key = iter.next();
-				plugin.getServer().getLogger().fine("load user: " + key);
+				plugin.getServer().getLogger().info("load user: " + key);
 				ConfigurationNode conf = users.get(key);
 				User newUser = new User(key, conf);
 				newUser.dirty();
@@ -460,5 +460,48 @@ public class FlatFilePermissions implements IDataProvider {
 			sender.sendMessage("Could not find User " + player + ".");
 			return false;
 		}
+	}
+
+	@Override
+	public HashMap<String, ArrayList<String>> getGroupMembers() {
+		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+		Iterator<Group> groups = Group.iter();
+		while (groups.hasNext()) {
+			Group group = (Group) groups.next();
+			result.put(group.getName(), new ArrayList<String>());
+		}
+
+		Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
+		Iterator<String> iter = users.keySet().iterator();
+		while (iter.hasNext()) {
+			String key = iter.next();
+			ConfigurationNode conf = users.get(key);
+			User user = new User(key, conf);
+			result.get(user.getGroup()).add(user.getName());
+		}
+		return result;
+	}
+
+	@Override
+	public HashMap<String, ArrayList<String>> getSubgroupMembers() {
+		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+		Iterator<Group> groups = Group.iter();
+		while (groups.hasNext()) {
+			Group group = (Group) groups.next();
+			result.put(group.getName(), new ArrayList<String>());
+		}
+
+		Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
+		Iterator<String> iter = users.keySet().iterator();
+		while (iter.hasNext()) {
+			String key = iter.next();
+			ConfigurationNode conf = users.get(key);
+			User user = new User(key, conf);
+			ArrayList<String> subgroups = user.getSubgroups();
+			for (String subgroup : subgroups) {
+				result.get(subgroup).add(user.getName());
+			}
+		}
+		return result;
 	}
 }
