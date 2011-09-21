@@ -269,5 +269,29 @@ public interface IDataProvider {
 	 */
 	public String getGroupInfo(CommandSender sender, String group, String node);
 
+	/**
+	 * Promotes a Player along a given Track.
+	 * 
+	 * @param sender
+	 * @param player
+	 *            Player to be promoted
+	 * @param track
+	 *            Track to be used
+	 * @return true if Player has been promoted, false if not
+	 */
+	public boolean promotePlayer(CommandSender sender, String player, String track);
+
+	/**
+	 * Demotes a Player along a given Track.
+	 * 
+	 * @param sender
+	 * @param player
+	 *            Player to be demoted
+	 * @param track
+	 *            Track to be used
+	 * @return true if Player has been demoted, false if not
+	 */
+	public boolean demotePlayer(CommandSender sender, String player, String track);
+
 	public void save();
 }
