@@ -26,7 +26,7 @@ public class FlatFilePermissions implements IDataProvider {
 	private Configuration groupsConfig;
 	private Configuration usersConfig;
 	private Configuration tracksConfig;
-	
+
 
 	public FlatFilePermissions() {
 		groupsConfig = new Configuration(new File("groupsConfig.yml"));
@@ -36,8 +36,8 @@ public class FlatFilePermissions implements IDataProvider {
 
 	public FlatFilePermissions(Plugin plugin) {
 		FlatFilePermissions.plugin = plugin;
-        // Write some default configuration
-		
+		// Write some default configuration
+
 		groupsConfig = new Configuration(new File(plugin.getDataFolder(), "groups.yml"));
 		usersConfig = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
 		tracksConfig = new Configuration(new File(plugin.getDataFolder(), "tracks1.yml"));
@@ -51,7 +51,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 
 		groupsConfig.load();
-//		System.out.println(groupsConfig.getKeys().toString());
+		//		System.out.println(groupsConfig.getKeys().toString());
 		Map<String, ConfigurationNode> groups = groupsConfig.getNodes("groups");
 		Iterator<String> iter = groups.keySet().iterator();
 		while (iter.hasNext()) {
@@ -70,7 +70,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 
 		usersConfig.load();
-//		System.out.println(usersConfig.getKeys().toString());
+		//		System.out.println(usersConfig.getKeys().toString());
 		String fileVersion = usersConfig.getString("fileversion");
 		if (fileVersion == null || !fileVersion.equals(plugin.getDescription().getVersion())) {
 			plugin.getServer().getLogger().info("[DroxPerms] users.yml-version to old or unknown. Doing full conversion");
@@ -89,13 +89,15 @@ public class FlatFilePermissions implements IDataProvider {
 
 		tracksConfig.load();
 		Map<String, ConfigurationNode> tracks = tracksConfig.getNodes("tracks");
-		iter = tracks.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			plugin.getServer().getLogger().fine("load track: " + key);
-			ConfigurationNode conf = tracks.get(key);
-			Track newTrack = new Track(key, conf);
-			Track.addTrack(newTrack);
+		if(tracks !=null){
+			iter = tracks.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				plugin.getServer().getLogger().fine("load track: " + key);
+				ConfigurationNode conf = tracks.get(key);
+				Track newTrack = new Track(key, conf);
+				Track.addTrack(newTrack);
+			}
 		}
 	}
 
