@@ -145,7 +145,25 @@ public class DroxPlayerCommands implements CommandExecutor {
 				}
 			}
 		}
+
+		// promote
+		if (split[0].equalsIgnoreCase("promote")) {
+			if (split.length == 3) {
+				result = dp.promotePlayer(sender, split[1], split[2]);
+			}
+			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
+			return result;
+		}
+
+		// demote
+		if (split[0].equalsIgnoreCase("demote")) {
+			if (split.length == 3) {
+				result = dp.demotePlayer(sender, split[1], split[2]);
+			}
+			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
+			return result;
+		}
+
 		return true;
 	}
-
 }
