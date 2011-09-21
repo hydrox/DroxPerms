@@ -11,13 +11,19 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 /**
- * This Class is the API of DroxPerms for external Plug-ins.
- * <br> To use it, use the following code-snippet in your plugin-class.
- * <p><pre> DroxPermsAPI API = null;
- * DroxPerms droxPerms = ((DroxPerms) this.getServer().getPluginManager().getPlugin("DroxPerms"));
+ * This Class is the API of DroxPerms for external Plug-ins. <br>
+ * To use it, use the following code-snippet in your plugin-class.
+ * <p>
+ * 
+ * <pre>
+ * DroxPermsAPI API = null;
+ * DroxPerms droxPerms = ((DroxPerms) this.getServer().getPluginManager()
+ * 		.getPlugin(&quot;DroxPerms&quot;));
  * if (droxPerms != null) {
  * 	DroxPermsAPI API = APIdroxPerms.getAPI();
- * }</pre>
+ * }
+ * </pre>
+ * 
  * @author Matthias Söhnholz
  * @since 0.1.0
  */
@@ -53,7 +59,10 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean setPlayerGroup(String player, String group) {
-		return plugin.dataProvider.setPlayerGroup(fakeCS, player, group);
+		boolean result = plugin.dataProvider.setPlayerGroup(fakeCS, player,
+				group);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
 	}
 
 	/**
@@ -61,7 +70,8 @@ public class DroxPermsAPI {
 	 * 
 	 * @param player
 	 *            Player to be queried
-	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
+	 * @return ArrayList<String> containing the subgroups, null if Player
+	 *         doesn't exist
 	 * @since 0.1.0
 	 */
 	public ArrayList<String> getPlayerSubgroups(String player) {
@@ -79,7 +89,10 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean addPlayerSubgroup(String player, String subgroup) {
-		return plugin.dataProvider.addPlayerSubgroup(fakeCS, player, subgroup);
+		boolean result = plugin.dataProvider.addPlayerSubgroup(fakeCS, player,
+				subgroup);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
 	}
 
 	/**
@@ -93,8 +106,10 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean removePlayerSubgroup(String player, String subgroup) {
-		return plugin.dataProvider.removePlayerSubgroup(fakeCS, player,
-				subgroup);
+		boolean result = plugin.dataProvider.removePlayerSubgroup(fakeCS,
+				player, subgroup);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
 	}
 
 	/**
@@ -108,7 +123,9 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean addPlayerPermission(String player, String node) {
-		return addPlayerPermission(player, null, node);
+		boolean result = addPlayerPermission(player, null, node);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
 	}
 
 	/**
@@ -124,8 +141,10 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean addPlayerPermission(String player, String world, String node) {
-		return plugin.dataProvider.addPlayerPermission(fakeCS, player, world,
-				node);
+		boolean result = plugin.dataProvider.addPlayerPermission(fakeCS,
+				player, world, node);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
 	}
 
 	/**
@@ -139,7 +158,9 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean removePlayerPermission(String player, String node) {
-		return removeGroupPermission(player, null, node);
+		boolean result = removeGroupPermission(player, null, node);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
 	}
 
 	/**
@@ -156,8 +177,10 @@ public class DroxPermsAPI {
 	 */
 	public boolean removePlayerPermission(String player, String world,
 			String node) {
-		return plugin.dataProvider.removePlayerPermission(fakeCS, player,
-				world, node);
+		boolean result = plugin.dataProvider.removePlayerPermission(fakeCS,
+				player, world, node);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
 	}
 
 	/**
@@ -195,7 +218,8 @@ public class DroxPermsAPI {
 	 * 
 	 * @param group
 	 *            Group to be queried
-	 * @return ArrayList<String> containing the subgroups, null if Group doesn't exist
+	 * @return ArrayList<String> containing the subgroups, null if Group doesn't
+	 *         exist
 	 * @since 0.1.0
 	 */
 	public ArrayList<String> getGroupSubgroups(String group) {
@@ -213,7 +237,10 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean addGroupSubgroup(String group, String subgroup) {
-		return plugin.dataProvider.addGroupSubgroup(fakeCS, group, subgroup);
+		boolean result = plugin.dataProvider.addGroupSubgroup(fakeCS, group,
+				subgroup);
+		plugin.refreshPermissions();
+		return result;
 	}
 
 	/**
@@ -227,7 +254,10 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean removeGroupSubgroup(String group, String subgroup) {
-		return plugin.dataProvider.removeGroupSubgroup(fakeCS, group, subgroup);
+		boolean result = plugin.dataProvider.removeGroupSubgroup(fakeCS, group,
+				subgroup);
+		plugin.refreshPermissions();
+		return result;
 	}
 
 	/**
@@ -241,7 +271,9 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean addGroupPermission(String group, String node) {
-		return addGroupPermission(group, null, node);
+		boolean result = addGroupPermission(group, null, node);
+		plugin.refreshPermissions();
+		return result;
 	}
 
 	/**
@@ -257,8 +289,10 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean addGroupPermission(String group, String world, String node) {
-		return plugin.dataProvider.addGroupPermission(fakeCS, group, world,
-				node);
+		boolean result = plugin.dataProvider.addGroupPermission(fakeCS, group,
+				world, node);
+		plugin.refreshPermissions();
+		return result;
 	}
 
 	/**
@@ -272,7 +306,9 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean removeGroupPermission(String group, String node) {
-		return removeGroupPermission(group, null, node);
+		boolean result = removeGroupPermission(group, null, node);
+		plugin.refreshPermissions();
+		return result;
 	}
 
 	/**
@@ -288,8 +324,10 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public boolean removeGroupPermission(String group, String world, String node) {
-		return plugin.dataProvider.removeGroupPermission(fakeCS, group, world,
-				node);
+		boolean result = plugin.dataProvider.removeGroupPermission(fakeCS,
+				group, world, node);
+		plugin.refreshPermissions();
+		return result;
 	}
 
 	/**
