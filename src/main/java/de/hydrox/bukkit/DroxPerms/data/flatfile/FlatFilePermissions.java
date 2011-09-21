@@ -11,7 +11,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
 
-import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
 /**
@@ -26,19 +25,22 @@ public class FlatFilePermissions implements IDataProvider {
 
 	private Configuration groupsConfig;
 	private Configuration usersConfig;
-	
+	private Configuration tracksConfig;
+
 
 	public FlatFilePermissions() {
 		groupsConfig = new Configuration(new File("groupsConfig.yml"));
 		usersConfig = new Configuration(new File("usersConfig.yml"));
+		tracksConfig = new Configuration(new File("tracksConfig.yml"));
 	}
 
 	public FlatFilePermissions(Plugin plugin) {
 		FlatFilePermissions.plugin = plugin;
-        // Write some default configuration
-		
+		// Write some default configuration
+
 		groupsConfig = new Configuration(new File(plugin.getDataFolder(), "groups.yml"));
 		usersConfig = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
+		tracksConfig = new Configuration(new File(plugin.getDataFolder(), "tracks.yml"));
 		if (!new File(plugin.getDataFolder(), "groups.yml").exists()) {
 			plugin.getServer().getLogger().info("[DroxPerms] Generating default groups.yml");
 			HashMap<String,Object> tmp = new HashMap<String,Object>();
@@ -49,7 +51,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 
 		groupsConfig.load();
-//		System.out.println(groupsConfig.getKeys().toString());
+		//		System.out.println(groupsConfig.getKeys().toString());
 		Map<String, ConfigurationNode> groups = groupsConfig.getNodes("groups");
 		Iterator<String> iter = groups.keySet().iterator();
 		while (iter.hasNext()) {
@@ -68,7 +70,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 
 		usersConfig.load();
-//		System.out.println(usersConfig.getKeys().toString());
+		//		System.out.println(usersConfig.getKeys().toString());
 		String fileVersion = usersConfig.getString("fileversion");
 		if (fileVersion == null || !fileVersion.equals(plugin.getDescription().getVersion())) {
 			plugin.getServer().getLogger().info("[DroxPerms] users.yml-version to old or unknown. Doing full conversion");
@@ -84,7 +86,20 @@ public class FlatFilePermissions implements IDataProvider {
 				User.addUser(newUser);
 			}
 		}
-    }
+
+		tracksConfig.load();
+		Map<String, ConfigurationNode> tracks = tracksConfig.getNodes("tracks");
+		if(tracks !=null){
+			iter = tracks.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = iter.next();
+				plugin.getServer().getLogger().fine("load track: " + key);
+				ConfigurationNode conf = tracks.get(key);
+				Track newTrack = new Track(key, conf);
+				Track.addTrack(newTrack);
+			}
+		}
+	}
 
 	public void save() {
 		HashMap<String,Object> tmp = new HashMap<String,Object>();
@@ -401,5 +416,49 @@ public class FlatFilePermissions implements IDataProvider {
 			}
 		}
 		return user;
+	}
+
+	@Override
+	public boolean promotePlayer(CommandSender sender, String player,
+			String track) {
+		Track selectedTrack = Track.getTrack(track);
+		if (selectedTrack == null) {
+			sender.sendMessage("Could not find Track " + track + ".");
+			return false;
+		}
+		User user = getUser(player);
+		if (user != null) {
+			String newGroup = selectedTrack.getPromoteGroup(user.getGroup());
+			if (newGroup == null) {
+				sender.sendMessage("Could not promote on Track " + track + ".");
+				return false;
+			}
+			return setPlayerGroup(sender, player, newGroup);
+		} else {
+			sender.sendMessage("Could not find User " + player + ".");
+			return false;
+		}
+	}
+
+	@Override
+	public boolean demotePlayer(CommandSender sender, String player,
+			String track) {
+		Track selectedTrack = Track.getTrack(track);
+		if (selectedTrack == null) {
+			sender.sendMessage("Could not find Track " + track + ".");
+			return false;
+		}
+		User user = getUser(player);
+		if (user != null) {
+			String newGroup = selectedTrack.getDemoteGroup(user.getGroup());
+			if (newGroup == null) {
+				sender.sendMessage("Could not demote on Track " + track + ".");
+				return false;
+			}
+			return setPlayerGroup(sender, player, newGroup);
+		} else {
+			sender.sendMessage("Could not find User " + player + ".");
+			return false;
+		}
 	}
 }

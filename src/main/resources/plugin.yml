@@ -26,6 +26,8 @@ commands:
         /<command> remsub player subgroup - removes a subgroup from a player
         /<command> setgroup player group - set the group of a player
         /<command> has player permission - shows if player has a certain permission
+        /<command> promote player track - moves player up on the selected track
+        /<command> demote player track - moves player down on the selected track
         /<command> listperms player - list permissions for given player
   testdroxperms:
     description: Commands to test the correct functioning of DroxPerms methods
