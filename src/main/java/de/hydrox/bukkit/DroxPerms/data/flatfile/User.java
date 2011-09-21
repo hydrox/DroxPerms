@@ -100,28 +100,40 @@ public class User {
 		dirty = true;
 	}
 
-	public String[] getPermissions(String world) {
-		ArrayList<String> perms = new ArrayList<String>();
+	public HashMap<String, ArrayList<String>> getPermissions(String world) {
+		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+		ArrayList<String> groupperms = new ArrayList<String>();
 		//add group permissions
-		perms.add("droxperms.meta.group." + group);
+		groupperms.add("droxperms.meta.group." + group);
+		if (world != null) {
+			groupperms.add("droxperms.meta.group." + group + "." + Config.getRealWorld(world));
+		}
+		result.put("group", groupperms);
 		//add subgroup permissions
 		if (subgroups != null) {
+			ArrayList<String> subgroupperms = new ArrayList<String>();
 			for (Iterator<String> iterator = subgroups.iterator(); iterator.hasNext();) {
 				String subgroup = iterator.next();
-				perms.add("droxperms.meta.group." + subgroup);
+				subgroupperms.add("droxperms.meta.group." + subgroup);
+				if (world != null) {
+					subgroupperms.add("droxperms.meta.group." + subgroup + "." + Config.getRealWorld(world));
+				}
 			}
+			result.put("subgroups", subgroupperms);
 		}
 		//add global permissions
 		if (globalPermissions != null) {
-			perms.addAll(globalPermissions);
+			result.put("global", globalPermissions);
 		}
 		//add world permissions
 		if (world != null && permissions != null) {
+			ArrayList<String> worldperms = new ArrayList<String>();
 			if (permissions.get(Config.getRealWorld(world)) != null) {
-				perms.addAll(permissions.get(Config.getRealWorld(world)));
+				worldperms.addAll(permissions.get(Config.getRealWorld(world)));
 			}
+			result.put("world", worldperms);
 		}
-		return perms.toArray(new String[0]);
+		return result;
 	}
 
 	public boolean setGroup(String newGroup) {

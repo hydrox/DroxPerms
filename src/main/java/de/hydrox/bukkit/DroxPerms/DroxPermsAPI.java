@@ -10,6 +10,17 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
+/**
+ * This Class is the API of DroxPerms for external Plug-ins.
+ * <br> To use it, use the following code-snippet in your plugin-class.
+ * <p><pre> DroxPermsAPI API = null;
+ * DroxPerms droxPerms = ((DroxPerms) this.getServer().getPluginManager().getPlugin("DroxPerms"));
+ * if (droxPerms != null) {
+ * 	DroxPermsAPI API = APIdroxPerms.getAPI();
+ * }</pre>
+ * @author Matthias Söhnholz
+ * @since 0.1.0
+ */
 public class DroxPermsAPI {
 	DroxPerms plugin = null;
 	FakeCommandSender fakeCS = null;
@@ -24,7 +35,8 @@ public class DroxPermsAPI {
 	 * 
 	 * @param player
 	 *            Player to be queried
-	 * @return Group-name
+	 * @return main group of the Player, or "" if player doesn't exist
+	 * @since 0.1.0
 	 */
 	public String getPlayerGroup(String player) {
 		return plugin.dataProvider.getPlayerGroup(player);
@@ -38,17 +50,19 @@ public class DroxPermsAPI {
 	 * @param group
 	 *            Group to be set
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean setPlayerGroup(String player, String group) {
 		return plugin.dataProvider.setPlayerGroup(fakeCS, player, group);
 	}
 
 	/**
-	 * Returns all Subgroups of a given Player.
+	 * Returns the sub-groups of the Player.
 	 * 
 	 * @param player
 	 *            Player to be queried
-	 * @return Array of Subgroup-Strings
+	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
+	 * @since 0.1.0
 	 */
 	public ArrayList<String> getPlayerSubgroups(String player) {
 		return plugin.dataProvider.getPlayerSubgroups(player);
@@ -62,6 +76,7 @@ public class DroxPermsAPI {
 	 * @param subgroup
 	 *            Subgroup to be added
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean addPlayerSubgroup(String player, String subgroup) {
 		return plugin.dataProvider.addPlayerSubgroup(fakeCS, player, subgroup);
@@ -75,6 +90,7 @@ public class DroxPermsAPI {
 	 * @param subgroup
 	 *            Subgroup to be removed
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean removePlayerSubgroup(String player, String subgroup) {
 		return plugin.dataProvider.removePlayerSubgroup(fakeCS, player,
@@ -89,6 +105,7 @@ public class DroxPermsAPI {
 	 * @param node
 	 *            Permission-node to be added
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean addPlayerPermission(String player, String node) {
 		return addPlayerPermission(player, null, node);
@@ -104,6 +121,7 @@ public class DroxPermsAPI {
 	 * @param node
 	 *            Permission-node to be added
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean addPlayerPermission(String player, String world, String node) {
 		return plugin.dataProvider.addPlayerPermission(fakeCS, player, world,
@@ -118,6 +136,7 @@ public class DroxPermsAPI {
 	 * @param node
 	 *            Permission-node to be removed
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean removePlayerPermission(String player, String node) {
 		return removeGroupPermission(player, null, node);
@@ -133,6 +152,7 @@ public class DroxPermsAPI {
 	 * @param node
 	 *            Permission-node to be removed
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean removePlayerPermission(String player, String world,
 			String node) {
@@ -147,7 +167,8 @@ public class DroxPermsAPI {
 	 *            Player to be queried
 	 * @param node
 	 *            Info-node to be read
-	 * @return Info-node
+	 * @return Info-node, is null if Player or Info-node doesn't exist
+	 * @since 0.1.0
 	 */
 	public String getPlayerInfo(String player, String node) {
 		return plugin.dataProvider.getPlayerInfo(fakeCS, player, node);
@@ -162,7 +183,8 @@ public class DroxPermsAPI {
 	 *            Info-node to be set.
 	 * @param data
 	 *            Data to be written.
-	 * @return
+	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean setPlayerInfo(String player, String node, String data) {
 		return plugin.dataProvider.setPlayerInfo(fakeCS, player, node, data);
@@ -173,7 +195,8 @@ public class DroxPermsAPI {
 	 * 
 	 * @param group
 	 *            Group to be queried
-	 * @return Array of Subgroup-Strings
+	 * @return ArrayList<String> containing the subgroups, null if Group doesn't exist
+	 * @since 0.1.0
 	 */
 	public ArrayList<String> getGroupSubgroups(String group) {
 		return plugin.dataProvider.getGroupSubgroups(group);
@@ -187,6 +210,7 @@ public class DroxPermsAPI {
 	 * @param subgroup
 	 *            Subgroup to be added
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean addGroupSubgroup(String group, String subgroup) {
 		return plugin.dataProvider.addGroupSubgroup(fakeCS, group, subgroup);
@@ -200,6 +224,7 @@ public class DroxPermsAPI {
 	 * @param subgroup
 	 *            Subgroup to be removed
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean removeGroupSubgroup(String group, String subgroup) {
 		return plugin.dataProvider.removeGroupSubgroup(fakeCS, group, subgroup);
@@ -213,6 +238,7 @@ public class DroxPermsAPI {
 	 * @param node
 	 *            Permission-node to add
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean addGroupPermission(String group, String node) {
 		return addGroupPermission(group, null, node);
@@ -228,6 +254,7 @@ public class DroxPermsAPI {
 	 * @param node
 	 *            Permission-node to add
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean addGroupPermission(String group, String world, String node) {
 		return plugin.dataProvider.addGroupPermission(fakeCS, group, world,
@@ -242,6 +269,7 @@ public class DroxPermsAPI {
 	 * @param node
 	 *            Permission-node to remove
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean removeGroupPermission(String group, String node) {
 		return removeGroupPermission(group, null, node);
@@ -257,6 +285,7 @@ public class DroxPermsAPI {
 	 * @param node
 	 *            Permission-node to remove
 	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean removeGroupPermission(String group, String world, String node) {
 		return plugin.dataProvider.removeGroupPermission(fakeCS, group, world,
@@ -270,7 +299,8 @@ public class DroxPermsAPI {
 	 *            Group to be queried
 	 * @param node
 	 *            Info-node to be read
-	 * @return Info-node
+	 * @return Info-node, is null if Player or Info-node doesn't exist
+	 * @since 0.1.0
 	 */
 	public String getGroupInfo(String group, String node) {
 		return plugin.dataProvider.getGroupInfo(fakeCS, group, node);
@@ -285,10 +315,19 @@ public class DroxPermsAPI {
 	 *            Info-node to be set.
 	 * @param data
 	 *            Data to be written.
-	 * @return
+	 * @return success of operation
+	 * @since 0.1.0
 	 */
 	public boolean setGroupInfo(String group, String node, String data) {
 		return plugin.dataProvider.setGroupInfo(fakeCS, group, node, data);
+	}
+
+	/**
+	 * Tells the DataProvider to save all changes.
+	 * @since 0.2.0
+	 */
+	public void save() {
+		plugin.dataProvider.save();
 	}
 }
 
@@ -350,5 +389,9 @@ class FakeCommandSender implements CommandSender {
 	}
 
 	public void sendMessage(String arg0) {
+	}
+
+	public String getName() {
+		return null;
 	}
 }

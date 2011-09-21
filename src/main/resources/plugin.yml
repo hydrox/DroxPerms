@@ -2,7 +2,7 @@ name: DroxPerms
 main: de.hydrox.bukkit.DroxPerms.DroxPerms
 author: Matthias Soehnholz
 website: https://github.com/hydrox/DroxPerms
-version: 0.1.0-SNAPSHOT
+version: 0.1.3-SNAPSHOT
 commands:
   changegroup:
     aliases: [cg]
@@ -14,6 +14,7 @@ commands:
         /<command> addsub group subgroup - adds a subgroup to a group
         /<command> remsub group subgroup - removes a subgroup from a group
         /<command> new group - creates a new group
+        /<command> listperms group - list permissions for given group
   changeplayer:
     aliases: [cp]
     description: Commands for manipulating groups.
@@ -27,6 +28,7 @@ commands:
         /<command> has player permission - shows if player has a certain permission
         /<command> promote player track - moves player up on the selected track
         /<command> demote player track - moves player down on the selected track
+        /<command> listperms player - list permissions for given player
   testdroxperms:
     description: Commands to test the correct functioning of DroxPerms methods
     permission: droxperms.test
