@@ -293,5 +293,9 @@ public interface IDataProvider {
 	 */
 	public boolean demotePlayer(CommandSender sender, String player, String track);
 
+	public HashMap<String, ArrayList<String>> getGroupMembers();
+
+	public HashMap<String, ArrayList<String>> getSubgroupMembers();
+
 	public void save();
 }

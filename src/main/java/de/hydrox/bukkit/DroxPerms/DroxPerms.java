@@ -31,6 +31,7 @@ public class DroxPerms extends JavaPlugin {
     private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
     private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
     private DroxTestCommands testCommandExecutor = new DroxTestCommands();
+    private DroxStatsCommands statsCommandExecutor = new DroxStatsCommands(this);
 	private HashMap<Player, HashMap<String,PermissionAttachment>> permissions = new HashMap<Player, HashMap<String,PermissionAttachment>>();
 	private DroxPermsAPI API = null;
 
@@ -71,6 +72,7 @@ public class DroxPerms extends JavaPlugin {
 		getCommand("changegroup").setExecutor(groupCommandExecutor);
 		getCommand("changeplayer").setExecutor(playerCommandExecutor);
 		getCommand("testdroxperms").setExecutor(testCommandExecutor);
+		getCommand("droxstats").setExecutor(statsCommandExecutor);
 
 		// Events
 		logger.info("[DroxPerms] Registering Events");
