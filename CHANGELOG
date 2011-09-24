@@ -1,9 +1,15 @@
-v0.1.2
+v0.1.4 RB 1060
+* fix NPE while changing offline players
+
+v0.1.3 RB 1060
+* fix permissions not updating when using the API
+
+v0.1.2 RB 1060
 fix permission change on world change
 fix negative Group-permissions
 
-v0.1.1
+v0.1.1 RB 1060
 fix NPE on kick
 
-v0.1.0
+v0.1.0 RB 1060
 first release
