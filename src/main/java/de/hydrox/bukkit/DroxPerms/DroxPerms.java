@@ -123,6 +123,9 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void refreshPlayer(Player player) {
+		if (player == null) {
+			return;
+		}
 		refreshPlayer(player, player.getWorld());
 	}
 
