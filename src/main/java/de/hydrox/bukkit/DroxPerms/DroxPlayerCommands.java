@@ -108,12 +108,14 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 
 		if (split[0].equalsIgnoreCase("listperms")) {
-			if (split.length == 2) {
+			if (split.length >= 2) {
 				HashMap<String, ArrayList<String>> permissions = null;
 				if (split.length == 3) {
 					permissions = dp.getPlayerPermissions(split[1], split[2]);
-				} else {
+				} else if (split.length == 2) {
 					permissions = dp.getPlayerPermissions(split[1], null);
+				} else {
+					return false;
 				}
 				sender.sendMessage(split[1] + " has permission from group: " + dp.getPlayerGroup(split[1]));
 				ArrayList<String> subgroups = dp.getPlayerSubgroups(split[1]);
@@ -138,8 +140,8 @@ public class DroxPlayerCommands implements CommandExecutor {
 				if (worldperms != null && worldperms.size() > 0) {
 					StringBuilder string = new StringBuilder();
 					string.append(split[1] + " has permission worldpermissions:");
-					for (String globalstring : worldperms) {
-						string.append(" " + globalstring);
+					for (String worldstring : worldperms) {
+						string.append(" " + worldstring);
 					}
 					sender.sendMessage(string.toString());
 				}

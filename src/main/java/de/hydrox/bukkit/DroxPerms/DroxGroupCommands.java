@@ -83,7 +83,7 @@ public class DroxGroupCommands implements CommandExecutor {
 		}
 
 		if (split[0].equalsIgnoreCase("listperms")) {
-			if (split.length == 2) {
+			if (split.length >= 2) {
 				HashMap<String, ArrayList<String>> permissions = null;
 				if (split.length == 3) {
 					permissions = dp.getGroupPermissions(split[1], split[2]);
