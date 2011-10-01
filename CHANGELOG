@@ -1,8 +1,11 @@
-v0.2.0 RB 1060
+v0.2.0 RB 1060, 1185
 * add listperms-commands
 * add auto-save
 * add tracks
 * add group-stats
+
+v0.1.5 RB 1060, 1185
+* fix users not getting the the right group
 
 v0.1.4 RB 1060
 * fix NPE while changing offline players
