@@ -166,6 +166,22 @@ public class DroxPlayerCommands implements CommandExecutor {
 			return result;
 		}
 
+		// set info-node
+		if (split[0].equalsIgnoreCase("setinfo")) {
+			if (split.length == 4) {
+				String data = split[3].replace("_", " ");
+				result = dp.setPlayerInfo(sender, split[1], split[2], data);
+			}
+			return result;
+		}
+
+		if (split[0].equalsIgnoreCase("unsetinfo")) {
+			if (split.length == 3) {
+				result = dp.setPlayerInfo(sender, split[1], split[2], null);
+			}
+			return result;
+		}
+
 		return true;
 	}
 }

@@ -121,6 +121,24 @@ public class DroxGroupCommands implements CommandExecutor {
 				}
 			}
 		}
+
+		// set info-node
+		if (split[0].equalsIgnoreCase("setinfo")) {
+			if (split.length == 4) {
+				String data = split[3].replace("_", " ");
+				result = dp.setGroupInfo(sender, split[1], split[2], data);
+			}
+			return result;
+		}
+
+		// unset info-node
+		if (split[0].equalsIgnoreCase("unsetinfo")) {
+			if (split.length == 3) {
+				result = dp.setGroupInfo(sender, split[1], split[2], null);
+			}
+			return result;
+		}
+
 		return true;
 	}
 
