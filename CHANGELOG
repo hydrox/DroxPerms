@@ -1,3 +1,6 @@
+v0.1.5 RB 1060, 1185
+* fix users not getting the the right group
+
 v0.1.4 RB 1060
 * fix NPE while changing offline players
 
