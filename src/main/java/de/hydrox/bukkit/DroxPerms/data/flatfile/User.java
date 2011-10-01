@@ -138,7 +138,7 @@ public class User {
 
 	public boolean setGroup(String newGroup) {
 		if (Group.existGroup(newGroup)) {
-			group = newGroup;
+			group = newGroup.toLowerCase();
 			dirty = true;
 			return true;
 		}
