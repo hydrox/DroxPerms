@@ -77,7 +77,7 @@ public class DroxPerms extends JavaPlugin {
 		// Events
 		logger.info("[DroxPerms] Registering Events");
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Lowest, this);
 		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Type.PLAYER_KICK, playerListener, Priority.Monitor, this);

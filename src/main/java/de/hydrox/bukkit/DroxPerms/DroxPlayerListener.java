@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -19,7 +20,7 @@ public class DroxPlayerListener extends PlayerListener {
 	}
 
 	@Override
-	public void onPlayerJoin(PlayerJoinEvent event) {
+	public void onPlayerLogin(PlayerLoginEvent event) {
 		plugin.registerPlayer(event.getPlayer());
 	}
 
