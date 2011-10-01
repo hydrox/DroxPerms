@@ -79,7 +79,7 @@ public class FlatFilePermissions implements IDataProvider {
 			iter = users.keySet().iterator();
 			while (iter.hasNext()) {
 				String key = iter.next();
-				plugin.getServer().getLogger().info("load user: " + key);
+				plugin.getServer().getLogger().fine("load user: " + key);
 				ConfigurationNode conf = users.get(key);
 				User newUser = new User(key, conf);
 				newUser.dirty();
