@@ -25,6 +25,11 @@ public class DroxPlayerListener extends PlayerListener {
 	}
 
 	@Override
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		plugin.registerPlayer(event.getPlayer());
+	}
+
+	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		plugin.unregisterPlayer(event.getPlayer());
 	}
