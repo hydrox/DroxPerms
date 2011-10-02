@@ -5,6 +5,9 @@ v0.2.0 RB 1060, 1185
 * add group-stats
 * add commands to set/unset info-nodes
 
+v0.1.6 RB 1060, 1185
+* fix getPlayerSubgroups ignoring maingroup
+
 v0.1.5 RB 1060, 1185
 * fix users not getting the the right group
 
