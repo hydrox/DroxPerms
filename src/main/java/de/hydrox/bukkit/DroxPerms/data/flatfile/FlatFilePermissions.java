@@ -170,7 +170,7 @@ public class FlatFilePermissions implements IDataProvider {
 	public ArrayList<String> getPlayerSubgroups(String player) {
 		User user = getUser(player);
 		if (user != null) {
-			ArrayList<String> result = user.getSubgroups();
+			ArrayList<String> result = new ArrayList<String>(user.getSubgroups());
 			result.add(user.getGroup());
 			result = calculateSubgroups(result);
 			result.remove(user.getGroup());

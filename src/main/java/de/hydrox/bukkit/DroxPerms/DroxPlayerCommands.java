@@ -2,11 +2,13 @@ package de.hydrox.bukkit.DroxPerms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
@@ -180,6 +182,17 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.setPlayerInfo(sender, split[1], split[2], null);
 			}
 			return result;
+		}
+
+		if (split[0].equalsIgnoreCase("debug")) {
+			if (split.length >= 2) {
+				Set<PermissionAttachmentInfo> tmp = plugin.getServer().getPlayer(split[1]).getEffectivePermissions();
+				for (PermissionAttachmentInfo permissionAttachmentInfo : tmp) {
+					if (split.length == 3 && !permissionAttachmentInfo.getPermission().startsWith(split[2]))
+							continue;
+					System.out.println(permissionAttachmentInfo.getPermission());
+				}
+			}
 		}
 
 		return true;
