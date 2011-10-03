@@ -151,7 +151,6 @@ public class DroxPerms extends JavaPlugin {
 				attachment.unsetPermission(key);
 			}
 		}
-
 		calculateAttachment(player, world);
 	}
 
@@ -176,7 +175,6 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
-		player.recalculatePermissions();
 
 		attachment = attachments.get("subgroups");
 		perms = playerPermissions.get("subgroups");
@@ -193,7 +191,6 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
-		player.recalculatePermissions();
 
 		attachment = attachments.get("global");
 		perms = playerPermissions.get("global");
@@ -210,7 +207,6 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
-		player.recalculatePermissions();
 
 		attachment = attachments.get("world");
 		perms = playerPermissions.get("world");

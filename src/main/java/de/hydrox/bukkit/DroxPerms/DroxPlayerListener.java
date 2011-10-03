@@ -21,11 +21,13 @@ public class DroxPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerLogin(PlayerLoginEvent event) {
+		plugin.unregisterPlayer(event.getPlayer());
 		plugin.registerPlayer(event.getPlayer());
 	}
 
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		plugin.unregisterPlayer(event.getPlayer());
 		plugin.registerPlayer(event.getPlayer());
 	}
 
