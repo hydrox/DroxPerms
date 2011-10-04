@@ -135,7 +135,7 @@ public interface IDataProvider {
 	 *            World to be queried.
 	 * @return array of String containing the players permissions
 	 */
-	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world);
+	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world, boolean partial);
 
 	/**
 	 * Sets Data in the Players Info-node.
@@ -297,5 +297,6 @@ public interface IDataProvider {
 
 	public HashMap<String, ArrayList<String>> getSubgroupMembers();
 
+	public String getUserNameFromPart(String partialName);
 	public void save();
 }

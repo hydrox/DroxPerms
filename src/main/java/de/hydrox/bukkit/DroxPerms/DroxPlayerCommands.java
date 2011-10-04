@@ -49,7 +49,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.addPlayerPermission(sender, split[1], split[3], split[2]);
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		// remove permission
@@ -62,7 +65,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.removePlayerPermission(sender, split[1], split[3], split[2]);
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		// add subgroup
@@ -71,7 +77,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.addPlayerSubgroup(sender, split[1], split[2]);
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		// remove subgroup
@@ -80,7 +89,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.removePlayerSubgroup(sender, split[1],split[2]);
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		// set group
@@ -89,7 +101,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.setPlayerGroup(sender, split[1],split[2]);
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		// set group
@@ -113,17 +128,22 @@ public class DroxPlayerCommands implements CommandExecutor {
 			if (split.length >= 2) {
 				HashMap<String, ArrayList<String>> permissions = null;
 				if (split.length == 3) {
-					permissions = dp.getPlayerPermissions(split[1], split[2]);
+					permissions = dp.getPlayerPermissions(split[1], split[2], true);
 				} else if (split.length == 2) {
-					permissions = dp.getPlayerPermissions(split[1], null);
+					permissions = dp.getPlayerPermissions(split[1], null, true);
 				} else {
 					return false;
 				}
-				sender.sendMessage(split[1] + " has permission from group: " + dp.getPlayerGroup(split[1]));
-				ArrayList<String> subgroups = dp.getPlayerSubgroups(split[1]);
+				if (permissions == null) {
+					sender.sendMessage("Could not find user matching input or found more then one user matching");
+					return true;
+				}
+				String player = dp.getUserNameFromPart(split[1]); 
+				sender.sendMessage(player + " has permission from group: " + dp.getPlayerGroup(player));
+				ArrayList<String> subgroups = dp.getPlayerSubgroups(player);
 				if (subgroups != null && subgroups.size() > 0) {
 					StringBuilder string = new StringBuilder();
-					string.append(split[1] + " has permission from subgroups:");
+					string.append(player + " has permission from subgroups:");
 					for (String subgroupstring : subgroups) {
 						string.append(" " + subgroupstring);
 					}
@@ -132,7 +152,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 				ArrayList<String> globalperms = permissions.get("global");
 				if (globalperms != null && globalperms.size() > 0) {
 					StringBuilder string = new StringBuilder();
-					string.append(split[1] + " has permission globalpermissions:");
+					string.append(player + " has permission globalpermissions:");
 					for (String globalstring : globalperms) {
 						string.append(" " + globalstring);
 					}
@@ -141,7 +161,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 				ArrayList<String> worldperms = permissions.get("world");
 				if (worldperms != null && worldperms.size() > 0) {
 					StringBuilder string = new StringBuilder();
-					string.append(split[1] + " has permission worldpermissions:");
+					string.append(player + " has permission worldpermissions:");
 					for (String worldstring : worldperms) {
 						string.append(" " + worldstring);
 					}
@@ -156,7 +176,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.promotePlayer(sender, split[1], split[2]);
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		// demote
@@ -165,7 +188,10 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.demotePlayer(sender, split[1], split[2]);
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		// set info-node
@@ -174,14 +200,20 @@ public class DroxPlayerCommands implements CommandExecutor {
 				String data = split[3].replace("_", " ");
 				result = dp.setPlayerInfo(sender, split[1], split[2], data);
 			}
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		if (split[0].equalsIgnoreCase("unsetinfo")) {
 			if (split.length == 3) {
 				result = dp.setPlayerInfo(sender, split[1], split[2], null);
 			}
-			return result;
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
 		}
 
 		if (split[0].equalsIgnoreCase("debug")) {
@@ -190,7 +222,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 				for (PermissionAttachmentInfo permissionAttachmentInfo : tmp) {
 					if (split.length == 3 && !permissionAttachmentInfo.getPermission().startsWith(split[2]))
 							continue;
-					System.out.println(permissionAttachmentInfo.getPermission());
+					sender.sendMessage(permissionAttachmentInfo.getPermission());
 				}
 			}
 		}

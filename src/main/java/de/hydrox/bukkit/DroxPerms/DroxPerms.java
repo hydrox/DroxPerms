@@ -160,7 +160,7 @@ public class DroxPerms extends JavaPlugin {
 
 		PermissionAttachment attachment = attachments.get("group");
 		HashMap<String, ArrayList<String>> playerPermissions = dataProvider
-				.getPlayerPermissions(player.getName(), world.getName());
+				.getPlayerPermissions(player.getName(), world.getName(), false);
 		ArrayList<String> perms = playerPermissions.get("group");
 		if (perms != null)
 			for (String entry : playerPermissions.get("group")) {

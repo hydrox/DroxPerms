@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.util.config.ConfigurationNode;
@@ -143,7 +145,7 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public String getPlayerGroup(String player) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			return user.getGroup();
 		} else {
@@ -152,14 +154,14 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean setPlayerGroup(CommandSender sender, String player, String group) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			boolean result = user.setGroup(group);
 			if (result) {
-				sender.sendMessage("Set group of player " + player + " to " + group);
+				sender.sendMessage("Set group of player " + user.getName() + " to " + group);
 				return true;
 			} else {
-				sender.sendMessage("Couldn't set group of player " + player);
+				sender.sendMessage("Couldn't set group of player " + user.getName());
 				return false;
 			}
 		} else {
@@ -168,7 +170,7 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public ArrayList<String> getPlayerSubgroups(String player) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			ArrayList<String> result = new ArrayList<String>(user.getSubgroups());
 			result.add(user.getGroup());
@@ -181,7 +183,6 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	private ArrayList<String> calculateSubgroups(ArrayList<String> input) {
-		boolean dirty = true;
 		ArrayList<String> result = new ArrayList<String>(input);
 		ArrayList<String> toTest = new ArrayList<String>(input);
 
@@ -192,7 +193,6 @@ public class FlatFilePermissions implements IDataProvider {
 				if (!result.contains(string2)) {
 					result.add(string2);
 					toTest.add(string2);
-					dirty = true;
 				}
 			}
 			toTest.remove(string);
@@ -201,14 +201,14 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean addPlayerSubgroup(CommandSender sender, String player, String subgroup) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			boolean result = user.addSubgroup(subgroup);
 			if (result) {
-				sender.sendMessage("Added " + subgroup + " to subgrouplist of player " + player);
+				sender.sendMessage("Added " + subgroup + " to subgrouplist of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't add subgroup to player " + player);
+				sender.sendMessage("Couldn't add subgroup to player " + user.getName());
 				return false;
 			}
 		} else {
@@ -217,14 +217,14 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean removePlayerSubgroup(CommandSender sender, String player, String subgroup) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			boolean result = user.removeSubgroup(subgroup);
 			if (result) {
-				sender.sendMessage("removed " + subgroup + " from subgrouplist of player " + player);
+				sender.sendMessage("removed " + subgroup + " from subgrouplist of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't remove subgroup from player " + player);
+				sender.sendMessage("Couldn't remove subgroup from player " + user.getName());
 				return false;
 			}
 		} else {
@@ -233,14 +233,14 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean addPlayerPermission(CommandSender sender, String player, String world, String node) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			boolean result = user.addPermission(world, node);
 			if (result) {
-				sender.sendMessage("Added " + node + " to permissionslist of player " + player);
+				sender.sendMessage("Added " + node + " to permissionslist of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't add permission to player " + player);
+				sender.sendMessage("Couldn't add permission to player " + user.getName());
 				return false;
 			}
 		} else {
@@ -249,14 +249,14 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean removePlayerPermission(CommandSender sender, String player, String world, String node) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			boolean result = user.removePermission(world, node);
 			if (result) {
-				sender.sendMessage("removed " + node + " from permissionslist of player " + player);
+				sender.sendMessage("removed " + node + " from permissionslist of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't remove permission from player " + player);
+				sender.sendMessage("Couldn't remove permission from player " + user.getName());
 				return false;
 			}
 		} else {
@@ -264,9 +264,12 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world) {
-		User user = getUser(player);
+	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world, boolean partialMatch) {
+		User user = getUser(player, partialMatch);
 		if (user == null) {
+			if (partialMatch) {
+				return null;
+			}
 			plugin.getServer().getLogger().info("[DroxPerms] User " + player + " doesn't exist yet. Creating ...");
 			user = new User(player);
 			User.addUser(user);
@@ -276,14 +279,14 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public boolean setPlayerInfo(CommandSender sender, String player, String node, String data) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			boolean result = user.setInfo(node, data);
 			if (result) {
-				sender.sendMessage("set info-node " + node + " of player " + player);
+				sender.sendMessage("set info-node " + node + " of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't set info-node of player " + player);
+				sender.sendMessage("Couldn't set info-node of player " + user.getName());
 				return false;
 			}
 		} else {
@@ -292,7 +295,7 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public String getPlayerInfo(CommandSender sender, String player, String node) {
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			return user.getInfo(node);
 		} else {
@@ -407,17 +410,75 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	private User getUser(String name) {
+	private User getUser(String name, boolean checkPartial) {
+		if (checkPartial) {
+			return getPartialUser(name);
+		}
+		return getExactUser(name);
+	}
+	private User getExactUser(String name) {
 		User user = null;
 		if (User.existUser(name)) {
 			user = User.getUser(name);
-		} else {
+		}
+		if (user == null) {
 			ConfigurationNode node = usersConfig.getNode("users." + name);
 			if (node != null) {
 				user = new User(name, node);
 				User.addUser(user);
+				return user;
 			}
 		}
+		return null;
+	}
+
+	private User getPartialUser(String name) {
+		boolean unsureOnline = false;
+		User user = null;
+		String onlineplayer = null;
+		Player player = plugin.getServer().getPlayer(name);
+		if (player != null) {
+			onlineplayer = player.getName();
+		}
+		if (onlineplayer != null && User.existUser(onlineplayer)) {
+			user = User.getUser(onlineplayer);
+		} else if (User.existUser(name)) {
+			user = User.getUser(name);
+		} else {
+			Iterator<User> iter = User.iter();
+			while (iter.hasNext()) {
+				User user2 = iter.next();
+				if (user2.getName().toLowerCase().contains(name.toLowerCase())) {
+					if (user == null) {
+						user = user2;
+					} else {
+						unsureOnline = true;;
+					}
+				}
+			}
+			if (user == null || unsureOnline) {
+				ConfigurationNode node = usersConfig.getNode("users." + name);
+				if (node != null) {
+					user = new User(name, node);
+					User.addUser(user);
+				} else {
+					List<String> users = usersConfig.getNode("users").getKeys();
+					for (String potentialUser : users) {
+						if(potentialUser.toLowerCase().contains(name.toLowerCase())) {
+							if (user == null) {
+								node = usersConfig.getNode("users." + potentialUser);
+								user = new User(potentialUser, node);
+								User.addUser(user);
+							} else {
+								return null;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (user == null)
+			return null;
 		return user;
 	}
 
@@ -429,7 +490,7 @@ public class FlatFilePermissions implements IDataProvider {
 			sender.sendMessage("Could not find Track " + track + ".");
 			return false;
 		}
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			String newGroup = selectedTrack.getPromoteGroup(user.getGroup());
 			if (newGroup == null) {
@@ -451,7 +512,7 @@ public class FlatFilePermissions implements IDataProvider {
 			sender.sendMessage("Could not find Track " + track + ".");
 			return false;
 		}
-		User user = getUser(player);
+		User user = getUser(player, true);
 		if (user != null) {
 			String newGroup = selectedTrack.getDemoteGroup(user.getGroup());
 			if (newGroup == null) {
@@ -506,5 +567,9 @@ public class FlatFilePermissions implements IDataProvider {
 			}
 		}
 		return result;
+	}
+
+	public String getUserNameFromPart(String partialName) {
+		return getUser(partialName, true).getName();
 	}
 }
