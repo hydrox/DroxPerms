@@ -420,8 +420,8 @@ public class FlatFilePermissions implements IDataProvider {
 		User user = null;
 		if (User.existUser(name)) {
 			user = User.getUser(name);
-		}
-		if (user == null) {
+			return user;
+		} else {
 			ConfigurationNode node = usersConfig.getNode("users." + name);
 			if (node != null) {
 				user = new User(name, node);
