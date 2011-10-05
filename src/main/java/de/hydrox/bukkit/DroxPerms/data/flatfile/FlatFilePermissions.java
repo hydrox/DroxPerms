@@ -599,6 +599,10 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public String getUserNameFromPart(String partialName) {
-		return getUser(partialName, true).getName();
+		User user = getUser(partialName, true);
+		if (user != null) {
+			return user.getName();
+		}
+		return null;
 	}
 }
