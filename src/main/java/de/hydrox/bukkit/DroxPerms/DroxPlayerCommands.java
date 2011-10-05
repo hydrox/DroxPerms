@@ -26,7 +26,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			sender.sendMessage("You don't have permission to modify Players.");
 			return true;
 		}
-        dp = plugin.dataProvider;
+		dp = plugin.dataProvider;
 		Player caller = null;
 		if (sender instanceof Player) {
 			caller = (Player) sender;
@@ -140,10 +140,20 @@ public class DroxPlayerCommands implements CommandExecutor {
 				}
 				String player = dp.getUserNameFromPart(split[1]); 
 				sender.sendMessage(player + " has permission from group: " + dp.getPlayerGroup(player));
-				ArrayList<String> subgroups = dp.getPlayerSubgroups(player);
-				if (subgroups != null && subgroups.size() > 0) {
+				ArrayList<String> subgroupssimple = dp.getPlayerSubgroupsSimple(player);
+				if (subgroupssimple != null && subgroupssimple.size() > 0) {
 					StringBuilder string = new StringBuilder();
 					string.append(player + " has permission from subgroups:");
+					for (String subgroupstring : subgroupssimple) {
+						string.append(" " + subgroupstring);
+					}
+					sender.sendMessage(string.toString());
+				}
+				ArrayList<String> subgroups = dp.getPlayerSubgroups(player);
+				subgroups.removeAll(subgroupssimple);
+				if (subgroups != null && subgroups.size() > 0) {
+					StringBuilder string = new StringBuilder();
+					string.append(player + " has permission from inherited subgroups:");
 					for (String subgroupstring : subgroups) {
 						string.append(" " + subgroupstring);
 					}

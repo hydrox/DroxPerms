@@ -81,6 +81,15 @@ public interface IDataProvider {
 	public ArrayList<String> getPlayerSubgroups(String player);
 
 	/**
+	 * Returns the sub-groups of the Player.
+	 * 
+	 * @param player
+	 *            Player to be queried
+	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
+	 */
+	public ArrayList<String> getPlayerSubgroupsSimple(String player);
+
+	/**
 	 * Adds a Sub-group to a Player.
 	 * 
 	 * @param player
