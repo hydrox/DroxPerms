@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,7 +37,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			return false;
 		} else if (caller != null && caller.getName().equalsIgnoreCase(split[1])
 				&& !(sender.hasPermission("droxperms.players.self"))) {
-			sender.sendMessage("You don't have permission to modify your Permissions.");
+			sender.sendMessage(ChatColor.RED + "You don't have permission to modify your Permissions.");
 			return true;			
 		}
 		// add permission
@@ -50,7 +51,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -66,7 +67,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -78,7 +79,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -90,7 +91,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -102,7 +103,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -135,7 +136,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 					return false;
 				}
 				if (permissions == null) {
-					sender.sendMessage("Could not find user matching input or found more then one user matching");
+					sender.sendMessage(ChatColor.RED + "Could not find user matching input or found more then one user matching");
 					return true;
 				}
 				String player = dp.getUserNameFromPart(split[1]); 
@@ -187,7 +188,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -199,7 +200,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -211,7 +212,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.setPlayerInfo(sender, split[1], split[2], data);
 			}
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -221,7 +222,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.setPlayerInfo(sender, split[1], split[2], null);
 			}
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
@@ -231,14 +232,19 @@ public class DroxPlayerCommands implements CommandExecutor {
 				result = dp.deletePlayer(sender, split[1]);
 			}
 			if (!result) {
-				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
 			return true;
 		}
 
 		if (split[0].equalsIgnoreCase("debug")) {
 			if (split.length >= 2) {
-				Set<PermissionAttachmentInfo> tmp = plugin.getServer().getPlayer(split[1]).getEffectivePermissions();
+				Player player = plugin.getServer().getPlayer(split[1]);
+				if (player == null) {
+					sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique username given or player not online?");
+					return true;
+				}
+				Set<PermissionAttachmentInfo> tmp = player.getEffectivePermissions();
 				for (PermissionAttachmentInfo permissionAttachmentInfo : tmp) {
 					if (split.length == 3 && !permissionAttachmentInfo.getPermission().startsWith(split[2]))
 							continue;
