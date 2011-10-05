@@ -15,6 +15,8 @@ commands:
         /<command> remsub group subgroup - removes a subgroup from a group
         /<command> new group - creates a new group
         /<command> listperms group - list permissions for given group
+        /<command> setinfo group node data - sets an info-node for given group
+        /<command> unsetinfo group node - unsets an info-node for given group
   changeplayer:
     aliases: [cp]
     description: Commands for manipulating groups.
@@ -29,6 +31,9 @@ commands:
         /<command> promote player track - moves player up on the selected track
         /<command> demote player track - moves player down on the selected track
         /<command> listperms player - list permissions for given player
+        /<command> setinfo player node data - sets an info-node for given player
+        /<command> unsetinfo player node - unsets an info-node for given player
+        /<command> delete player - deletes a player
   testdroxperms:
     description: Commands to test the correct functioning of DroxPerms methods
     permission: droxperms.test
