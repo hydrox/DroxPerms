@@ -1,3 +1,12 @@
+v0.2.0 RB 1240
+* add listperms-commands
+* add auto-save
+* add tracks
+* add group-stats
+* add commands to set/unset info-nodes
+* add auto-complete on usernames
+* add /cp delete <player>
+
 v0.1.6 RB 1060, 1185
 * fix getPlayerSubgroups ignoring maingroup
 

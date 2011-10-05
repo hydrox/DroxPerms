@@ -28,6 +28,16 @@ public interface IDataProvider {
 	public boolean createPlayer(String name);
 
 	/**
+	 * Deletes a Player
+	 * 
+	 * @param name
+	 *            name of the Player
+	 * @return returns true if the Player could be deleted.
+	 * @since 0.1.0
+	 */
+	public boolean deletePlayer(CommandSender sender, String name);
+
+	/**
 	 * 
 	 * @param sender
 	 * @param name
@@ -69,6 +79,15 @@ public interface IDataProvider {
 	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
 	 */
 	public ArrayList<String> getPlayerSubgroups(String player);
+
+	/**
+	 * Returns the sub-groups of the Player.
+	 * 
+	 * @param player
+	 *            Player to be queried
+	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
+	 */
+	public ArrayList<String> getPlayerSubgroupsSimple(String player);
 
 	/**
 	 * Adds a Sub-group to a Player.
@@ -135,7 +154,7 @@ public interface IDataProvider {
 	 *            World to be queried.
 	 * @return array of String containing the players permissions
 	 */
-	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world);
+	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world, boolean partial);
 
 	/**
 	 * Sets Data in the Players Info-node.
@@ -269,5 +288,34 @@ public interface IDataProvider {
 	 */
 	public String getGroupInfo(CommandSender sender, String group, String node);
 
+	/**
+	 * Promotes a Player along a given Track.
+	 * 
+	 * @param sender
+	 * @param player
+	 *            Player to be promoted
+	 * @param track
+	 *            Track to be used
+	 * @return true if Player has been promoted, false if not
+	 */
+	public boolean promotePlayer(CommandSender sender, String player, String track);
+
+	/**
+	 * Demotes a Player along a given Track.
+	 * 
+	 * @param sender
+	 * @param player
+	 *            Player to be demoted
+	 * @param track
+	 *            Track to be used
+	 * @return true if Player has been demoted, false if not
+	 */
+	public boolean demotePlayer(CommandSender sender, String player, String track);
+
+	public HashMap<String, ArrayList<String>> getGroupMembers();
+
+	public HashMap<String, ArrayList<String>> getSubgroupMembers();
+
+	public String getUserNameFromPart(String partialName);
 	public void save();
 }

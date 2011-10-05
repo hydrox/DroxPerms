@@ -212,6 +212,10 @@ public class Group {
 		if (info == null) {
 			info = new HashMap<String, String>();
 		}
+		if(data == null) {
+			info.remove(node);
+			return true;
+		}
 		info.put(node, data);
 		return true;
 	}
@@ -259,18 +263,20 @@ public class Group {
 		}
 
 		//create Permissions for other worlds
-		for (String world : permissions.keySet()) {
+		for (String world : Config.getWorlds()) {
 			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
 			for (String subgroup : subgroups) {
 				children.put("droxperms.meta.group." + subgroup + "." + world, true);
 			}
 
-			for (String permission : permissions.get(world)) {
-				if (permission.startsWith("-")) {
-					permission = permission.substring(1);
-					children.put(permission, false);
-				} else {
-					children.put(permission, true);
+			if(permissions.get(world) != null) {
+				for (String permission : permissions.get(world)) {
+					if (permission.startsWith("-")) {
+						permission = permission.substring(1);
+						children.put(permission, false);
+					} else {
+						children.put(permission, true);
+					}
 				}
 			}
 

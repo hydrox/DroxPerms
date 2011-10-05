@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bukkit.plugin.Plugin;
@@ -15,6 +16,7 @@ import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
 public class Config {
 	private static String dataProvider = null;
 	private static String defaultWorld = null;
+	private static int saveInterval;
 	private static HashMap<String, ArrayList<String>> worldMirrors= null;
 	private Configuration configuration = null;
 	private Logger logger;
@@ -34,6 +36,7 @@ public class Config {
             mirrors.put("hub", null);
             configuration.setProperty("DataProvider", FlatFilePermissions.NODE);
             configuration.setProperty("DefaultWorld", "world");
+            configuration.setProperty("SaveInterval", 5);
             configuration.setProperty("Mirrors", mirrors);
             configuration.save();
         }
@@ -44,6 +47,8 @@ public class Config {
 		logger.info("[DroxPerms] Using DataProvider: " + dataProvider);
 		defaultWorld = configuration.getString("DefaultWorld");
 		logger.info("[DroxPerms] Setting DefaultWorld: " + defaultWorld);
+		saveInterval = configuration.getInt("SaveInterval", 5);
+		logger.info("[DroxPerms] Setting SaveInterval: " + saveInterval + " minutes");
 		logger.info("[DroxPerms] Loading World-Mirrors");
 		worldMirrors = new HashMap<String, ArrayList<String>>();
 		ConfigurationNode tmp = configuration.getNode("Mirrors");
@@ -65,6 +70,10 @@ public class Config {
 		return defaultWorld;
 	}
 
+	public static Set<String> getWorlds() {
+		return worldMirrors.keySet();
+	}
+
 	public static String getRealWorld(String world) {
 		if (worldMirrors.containsKey(world)) {
 			return world;
@@ -79,5 +88,9 @@ public class Config {
 			}
 		}
 		return defaultWorld;
+	}
+
+	public static int getSaveInterval() {
+		return saveInterval;
 	}
 }

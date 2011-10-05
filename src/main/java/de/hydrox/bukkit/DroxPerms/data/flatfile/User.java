@@ -227,7 +227,13 @@ public class User {
 		if (info == null) {
 			info = new HashMap<String, String>();
 		}
+		if(data == null) {
+			info.remove(node);
+			dirty();
+			return true;
+		}
 		info.put(node, data);
+		dirty();
 		return true;
 	}
 

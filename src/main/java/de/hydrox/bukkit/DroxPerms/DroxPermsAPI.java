@@ -359,6 +359,46 @@ public class DroxPermsAPI {
 	public boolean setGroupInfo(String group, String node, String data) {
 		return plugin.dataProvider.setGroupInfo(fakeCS, group, node, data);
 	}
+
+	/**
+	 * Promotes a Player along a given Track.
+	 * 
+	 * @param player
+	 *            Player to be promoted
+	 * @param track
+	 *            Track to be used
+	 * @return true if Player has been promoted, false if not
+	 * @since 0.2.0
+	 */
+	public boolean promotePlayer(String player, String track) {
+		boolean result = plugin.dataProvider.promotePlayer(fakeCS, player, track);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
+	}
+
+	/**
+	 * Demotes a Player along a given Track.
+	 * 
+	 * @param player
+	 *            Player to be demoted
+	 * @param track
+	 *            Track to be used
+	 * @return true if Player has been demoted, false if not
+	 * @since 0.2.0
+	 */
+	public boolean demotePlayer(String player, String track) {
+		boolean result = plugin.dataProvider.demotePlayer(fakeCS, player, track);
+		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
+	}
+
+	/**
+	 * Tells the DataProvider to save all changes.
+	 * @since 0.2.0
+	 */
+	public void save() {
+		plugin.dataProvider.save();
+	}
 }
 
 class FakeCommandSender implements CommandSender {

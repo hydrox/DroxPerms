@@ -2,6 +2,8 @@ package de.hydrox.bukkit.DroxPerms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.bukkit.World;
@@ -29,10 +31,14 @@ public class DroxPerms extends JavaPlugin {
     private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
     private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
     private DroxTestCommands testCommandExecutor = new DroxTestCommands();
+    private DroxStatsCommands statsCommandExecutor = new DroxStatsCommands(this);
 	private HashMap<Player, HashMap<String,PermissionAttachment>> permissions = new HashMap<Player, HashMap<String,PermissionAttachment>>();
 	private DroxPermsAPI API = null;
 
-	private Logger logger = Logger.getLogger("Minecraft");
+	private Runnable commiter;
+	private ScheduledThreadPoolExecutor scheduler;
+
+	public Logger logger = Logger.getLogger("Minecraft");
 
 	public void onDisable() {
 		long time = System.currentTimeMillis();
@@ -42,6 +48,7 @@ public class DroxPerms extends JavaPlugin {
 		for (Player p : getServer().getOnlinePlayers()) {
 			unregisterPlayer(p);
 		}
+		disableScheduler();
 
 		// Safe data
 		logger.info("[DroxPerms] safe configs");
@@ -65,12 +72,14 @@ public class DroxPerms extends JavaPlugin {
 		getCommand("changegroup").setExecutor(groupCommandExecutor);
 		getCommand("changeplayer").setExecutor(playerCommandExecutor);
 		getCommand("testdroxperms").setExecutor(testCommandExecutor);
+		getCommand("droxstats").setExecutor(statsCommandExecutor);
 
 		// Events
 		logger.info("[DroxPerms] Registering Events");
 		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Lowest, this);
 		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_CHANGED_WORLD, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
 
@@ -79,6 +88,9 @@ public class DroxPerms extends JavaPlugin {
 		for (Player p : getServer().getOnlinePlayers()) {
 			registerPlayer(p);
 		}
+
+		enableScheduler();
+
 		logger.info("[DroxPerms] Plugin activated in " + (System.currentTimeMillis() - time) + "ms.");
 	}
 	
@@ -87,6 +99,7 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void registerPlayer(Player player) {
+		permissions.remove(player);
 		registerPlayer(player, player.getWorld());
 	}
 
@@ -139,7 +152,6 @@ public class DroxPerms extends JavaPlugin {
 				attachment.unsetPermission(key);
 			}
 		}
-
 		calculateAttachment(player, world);
 	}
 
@@ -149,7 +161,7 @@ public class DroxPerms extends JavaPlugin {
 
 		PermissionAttachment attachment = attachments.get("group");
 		HashMap<String, ArrayList<String>> playerPermissions = dataProvider
-				.getPlayerPermissions(player.getName(), world.getName());
+				.getPlayerPermissions(player.getName(), world.getName(), false);
 		ArrayList<String> perms = playerPermissions.get("group");
 		if (perms != null)
 			for (String entry : playerPermissions.get("group")) {
@@ -164,7 +176,6 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
-		player.recalculatePermissions();
 
 		attachment = attachments.get("subgroups");
 		perms = playerPermissions.get("subgroups");
@@ -181,7 +192,6 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
-		player.recalculatePermissions();
 
 		attachment = attachments.get("global");
 		perms = playerPermissions.get("global");
@@ -198,7 +208,6 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
-		player.recalculatePermissions();
 
 		attachment = attachments.get("world");
 		perms = playerPermissions.get("world");
@@ -216,5 +225,27 @@ public class DroxPerms extends JavaPlugin {
 				}
 			}
 		player.recalculatePermissions();
+	}
+
+	private void enableScheduler() {
+		disableScheduler();
+		commiter = new DroxSaveThread(this);
+		scheduler = new ScheduledThreadPoolExecutor(1);
+		int minutes = Config.getSaveInterval();
+		scheduler.scheduleAtFixedRate(commiter, minutes, minutes, TimeUnit.MINUTES);
+		logger.info("[DroxPerms] Saving changes every " + minutes + " minutes!");
+	}
+
+	private void disableScheduler() {
+		if (scheduler != null) {
+			try {
+				scheduler.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
+				scheduler.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+				scheduler.shutdownNow();
+			} catch (Exception e) {
+			}
+			scheduler = null;
+			logger.info("[DroxPerms] Deactivated Save-Thread.");
+		}
 	}
 }

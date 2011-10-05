@@ -2,7 +2,7 @@ name: DroxPerms
 main: de.hydrox.bukkit.DroxPerms.DroxPerms
 author: Matthias Soehnholz
 website: https://github.com/hydrox/DroxPerms
-version: 0.1.6
+version: 0.2.0
 commands:
   changegroup:
     aliases: [cg]
@@ -14,6 +14,9 @@ commands:
         /<command> addsub group subgroup - adds a subgroup to a group
         /<command> remsub group subgroup - removes a subgroup from a group
         /<command> new group - creates a new group
+        /<command> listperms group [world] - list permissions for given group
+        /<command> setinfo group node data - sets an info-node for given group
+        /<command> unsetinfo group node - unsets an info-node for given group
   changeplayer:
     aliases: [cp]
     description: Commands for manipulating groups.
@@ -25,15 +28,30 @@ commands:
         /<command> remsub player subgroup - removes a subgroup from a player
         /<command> setgroup player group - set the group of a player
         /<command> has player permission - shows if player has a certain permission
+        /<command> promote player track - moves player up on the selected track
+        /<command> demote player track - moves player down on the selected track
+        /<command> listperms player [world] - list permissions for given player
+        /<command> setinfo player node data - sets an info-node for given player
+        /<command> unsetinfo player node - unsets an info-node for given player
+        /<command> delete player - deletes a player
   testdroxperms:
     description: Commands to test the correct functioning of DroxPerms methods
     permission: droxperms.test
+  droxstats:
+    description: Commands to print out certain stats within DroxPerms
+    permission: droxperms.stats
+    usage: |
+        /<command> groupnumbers - prints out the number of Players of all groups
+        /<command> subgroupmembers - prints out the number of Players of all subgroups
+        /<command> groupmembers - prints out all Players of all groups (use with caution)
+        /<command> subgroupmembers - prints out all Players of all subgroups (use with caution)
 permissions:
   droxperms.*:
     description: Allows use of all PermissionsBukkit administration commands.
     children:
       droxperms.players.*: true
       droxperms.groups: true
+      droxperms.stats: true
   droxperms.players.*:
     description: Allows to modify all Players.
     children:
@@ -51,3 +69,6 @@ permissions:
   droxperms.test:
     description: Allows usage of the test-commands.
     default: false
+  droxperms.stats:
+    description: Allows usage of stats-commands.
+    default: op
