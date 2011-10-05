@@ -79,7 +79,7 @@ public class DroxPerms extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Lowest, this);
 		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-		pm.registerEvent(Type.PLAYER_TELEPORT, playerListener, Priority.Monitor, this);
+		pm.registerEvent(Type.PLAYER_CHANGED_WORLD, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
 		pm.registerEvent(Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
 
@@ -99,6 +99,7 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void registerPlayer(Player player) {
+		permissions.remove(player);
 		registerPlayer(player, player.getWorld());
 	}
 
