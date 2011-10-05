@@ -14,7 +14,7 @@ commands:
         /<command> addsub group subgroup - adds a subgroup to a group
         /<command> remsub group subgroup - removes a subgroup from a group
         /<command> new group - creates a new group
-        /<command> listperms group - list permissions for given group
+        /<command> listperms group [world] - list permissions for given group
         /<command> setinfo group node data - sets an info-node for given group
         /<command> unsetinfo group node - unsets an info-node for given group
   changeplayer:
@@ -30,7 +30,7 @@ commands:
         /<command> has player permission - shows if player has a certain permission
         /<command> promote player track - moves player up on the selected track
         /<command> demote player track - moves player down on the selected track
-        /<command> listperms player - list permissions for given player
+        /<command> listperms player [world] - list permissions for given player
         /<command> setinfo player node data - sets an info-node for given player
         /<command> unsetinfo player node - unsets an info-node for given player
         /<command> delete player - deletes a player
@@ -43,8 +43,8 @@ commands:
     usage: |
         /<command> groupnumbers - prints out the number of Players of all groups
         /<command> subgroupmembers - prints out the number of Players of all subgroups
-        /<command> groupmembers - prints out the all Players of all groups (use with caution) 
-        /<command> subgroupmembers - prints out the all Players of all subgroups (use with caution)
+        /<command> groupmembers - prints out all Players of all groups (use with caution)
+        /<command> subgroupmembers - prints out all Players of all subgroups (use with caution)
 permissions:
   droxperms.*:
     description: Allows use of all PermissionsBukkit administration commands.
@@ -70,5 +70,5 @@ permissions:
     description: Allows usage of the test-commands.
     default: false
   droxperms.stats:
-    description: Allows usage of stats-commandsj
+    description: Allows usage of stats-commands.
     default: op
