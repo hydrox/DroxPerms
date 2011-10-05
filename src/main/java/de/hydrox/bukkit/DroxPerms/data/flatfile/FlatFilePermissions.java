@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -138,17 +139,17 @@ public class FlatFilePermissions implements IDataProvider {
 	public boolean deletePlayer(CommandSender sender, String name) {
 		Player player = plugin.getServer().getPlayerExact(name);
 		if (player != null) {
-			sender.sendMessage("Can't delete online Player.");
+			sender.sendMessage(ChatColor.RED + "Can't delete online Player.");
 			return false;
 		}
 		User user = getExactUser(name);
 		if (user != null) {
 			User.removeUser(name);
 			usersConfig.getNode("users").removeProperty(name);
-			sender.sendMessage("Deleted Player " + name + ".");
+			sender.sendMessage(ChatColor.GREEN + "Deleted Player " + name + ".");
 			return true;
 		}
-		sender.sendMessage("No Player with this exact name found.");
+		sender.sendMessage(ChatColor.RED + "No Player with this exact name found.");
 
 		return false;
 	}
@@ -176,10 +177,10 @@ public class FlatFilePermissions implements IDataProvider {
 		if (user != null) {
 			boolean result = user.setGroup(group);
 			if (result) {
-				sender.sendMessage("Set group of player " + user.getName() + " to " + group);
+				sender.sendMessage(ChatColor.GREEN + "Set group of player " + user.getName() + " to " + group);
 				return true;
 			} else {
-				sender.sendMessage("Couldn't set group of player " + user.getName());
+				sender.sendMessage(ChatColor.RED + "Couldn't set group of player " + user.getName());
 				return false;
 			}
 		} else {
@@ -233,10 +234,10 @@ public class FlatFilePermissions implements IDataProvider {
 		if (user != null) {
 			boolean result = user.addSubgroup(subgroup);
 			if (result) {
-				sender.sendMessage("Added " + subgroup + " to subgrouplist of player " + user.getName());
+				sender.sendMessage(ChatColor.GREEN + "Added " + subgroup + " to subgrouplist of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't add subgroup to player " + user.getName());
+				sender.sendMessage(ChatColor.RED + "Couldn't add subgroup to player " + user.getName());
 				return false;
 			}
 		} else {
@@ -249,10 +250,10 @@ public class FlatFilePermissions implements IDataProvider {
 		if (user != null) {
 			boolean result = user.removeSubgroup(subgroup);
 			if (result) {
-				sender.sendMessage("removed " + subgroup + " from subgrouplist of player " + user.getName());
+				sender.sendMessage(ChatColor.GREEN + "removed " + subgroup + " from subgrouplist of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't remove subgroup from player " + user.getName());
+				sender.sendMessage(ChatColor.RED + "Couldn't remove subgroup from player " + user.getName());
 				return false;
 			}
 		} else {
@@ -265,10 +266,10 @@ public class FlatFilePermissions implements IDataProvider {
 		if (user != null) {
 			boolean result = user.addPermission(world, node);
 			if (result) {
-				sender.sendMessage("Added " + node + " to permissionslist of player " + user.getName());
+				sender.sendMessage(ChatColor.GREEN + "Added " + node + " to permissionslist of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't add permission to player " + user.getName());
+				sender.sendMessage(ChatColor.RED + "Couldn't add permission to player " + user.getName());
 				return false;
 			}
 		} else {
@@ -281,10 +282,10 @@ public class FlatFilePermissions implements IDataProvider {
 		if (user != null) {
 			boolean result = user.removePermission(world, node);
 			if (result) {
-				sender.sendMessage("removed " + node + " from permissionslist of player " + user.getName());
+				sender.sendMessage(ChatColor.GREEN + "removed " + node + " from permissionslist of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't remove permission from player " + user.getName());
+				sender.sendMessage(ChatColor.RED + "Couldn't remove permission from player " + user.getName());
 				return false;
 			}
 		} else {
@@ -311,10 +312,10 @@ public class FlatFilePermissions implements IDataProvider {
 		if (user != null) {
 			boolean result = user.setInfo(node, data);
 			if (result) {
-				sender.sendMessage("set info-node " + node + " of player " + user.getName());
+				sender.sendMessage(ChatColor.GREEN + "set info-node " + node + " of player " + user.getName());
 				return true;
 			} else {
-				sender.sendMessage("Couldn't set info-node of player " + user.getName());
+				sender.sendMessage(ChatColor.RED + "Couldn't set info-node of player " + user.getName());
 				return false;
 			}
 		} else {
@@ -335,14 +336,14 @@ public class FlatFilePermissions implements IDataProvider {
 		if (Group.existGroup(group)) {
 			boolean result = Group.getGroup(group).addPermission(world, node);
 			if (result) {
-				sender.sendMessage("Added " + node + " to permissionslist of group " + group);
+				sender.sendMessage(ChatColor.GREEN + "Added " + node + " to permissionslist of group " + group);
 				return true;
 			} else {
-				sender.sendMessage("Couldn't add permission to group " + group);
+				sender.sendMessage(ChatColor.RED + "Couldn't add permission to group " + group);
 				return false;
 			}
 		} else {
-			sender.sendMessage("Group " + group + " doesn't exist.");
+			sender.sendMessage(ChatColor.RED + "Group " + group + " doesn't exist.");
 			return false;
 		}
 	}
@@ -351,14 +352,14 @@ public class FlatFilePermissions implements IDataProvider {
 		if (Group.existGroup(group)) {
 			boolean result = Group.getGroup(group).removePermission(world, node);
 			if (result) {
-				sender.sendMessage("removed " + node + " from permissionslist of group " + group);
+				sender.sendMessage(ChatColor.GREEN + "removed " + node + " from permissionslist of group " + group);
 				return true;
 			} else {
-				sender.sendMessage("Couldn't remove permission from group " + group);
+				sender.sendMessage(ChatColor.RED + "Couldn't remove permission from group " + group);
 				return false;
 			}
 		} else {
-			sender.sendMessage("Group " + group + " doesn't exist.");
+			sender.sendMessage(ChatColor.RED + "Group " + group + " doesn't exist.");
 			return false;
 		}
 	}
@@ -377,14 +378,14 @@ public class FlatFilePermissions implements IDataProvider {
 		if (Group.existGroup(group)) {
 			boolean result = Group.getGroup(group).addSubgroup(subgroup);
 			if (result) {
-				sender.sendMessage("Added " + subgroup + " to subgrouplist of group " + group);
+				sender.sendMessage(ChatColor.GREEN + "Added " + subgroup + " to subgrouplist of group " + group);
 				return true;
 			} else {
-				sender.sendMessage("Couldn't add subgroup to group " + group);
+				sender.sendMessage(ChatColor.RED + "Couldn't add subgroup to group " + group);
 				return false;
 			}
 		} else {
-			sender.sendMessage("Group " + group + " doesn't exist.");
+			sender.sendMessage(ChatColor.RED + "Group " + group + " doesn't exist.");
 			return false;
 		}
 	}
@@ -393,14 +394,14 @@ public class FlatFilePermissions implements IDataProvider {
 		if (Group.existGroup(group)) {
 			boolean result = Group.getGroup(group).removeSubgroup(subgroup);
 			if (result) {
-				sender.sendMessage("removed " + subgroup + " from subgrouplist of group " + group);
+				sender.sendMessage(ChatColor.GREEN + "removed " + subgroup + " from subgrouplist of group " + group);
 				return true;
 			} else {
-				sender.sendMessage("Couldn't remove subgroup from group " + group);
+				sender.sendMessage(ChatColor.RED + "Couldn't remove subgroup from group " + group);
 				return false;
 			}
 		} else {
-			sender.sendMessage("Group " + group + " doesn't exist.");
+			sender.sendMessage(ChatColor.RED + "Group " + group + " doesn't exist.");
 			return false;
 		}
 	}
@@ -417,14 +418,14 @@ public class FlatFilePermissions implements IDataProvider {
 		if (Group.existGroup(group)) {
 			boolean result = Group.getGroup(group).setInfo(node, data);
 			if (result) {
-				sender.sendMessage("set info-node " + node + " for group " + group);
+				sender.sendMessage(ChatColor.GREEN + "set info-node " + node + " for group " + group);
 				return true;
 			} else {
-				sender.sendMessage("Couldn't set info-node for group " + group);
+				sender.sendMessage(ChatColor.RED + "Couldn't set info-node for group " + group);
 				return false;
 			}
 		} else {
-			sender.sendMessage("Group " + group + " doesn't exist.");
+			sender.sendMessage(ChatColor.RED + "Group " + group + " doesn't exist.");
 			return false;
 		}
 	}
@@ -433,7 +434,7 @@ public class FlatFilePermissions implements IDataProvider {
 		if (Group.existGroup(group)) {
 			return Group.getGroup(group).getInfo(node);
 		} else {
-			sender.sendMessage("Group " + group + " doesn't exist.");
+			sender.sendMessage(ChatColor.RED + "Group " + group + " doesn't exist.");
 			return null;
 		}
 	}
@@ -515,19 +516,19 @@ public class FlatFilePermissions implements IDataProvider {
 			String track) {
 		Track selectedTrack = Track.getTrack(track);
 		if (selectedTrack == null) {
-			sender.sendMessage("Could not find Track " + track + ".");
+			sender.sendMessage(ChatColor.RED + "Could not find Track " + track + ".");
 			return false;
 		}
 		User user = getUser(player, true);
 		if (user != null) {
 			String newGroup = selectedTrack.getPromoteGroup(user.getGroup());
 			if (newGroup == null) {
-				sender.sendMessage("Could not promote on Track " + track + ".");
+				sender.sendMessage(ChatColor.RED + "Could not promote on Track " + track + ".");
 				return false;
 			}
 			return setPlayerGroup(sender, player, newGroup);
 		} else {
-			sender.sendMessage("Could not find User " + player + ".");
+			sender.sendMessage(ChatColor.RED + "Could not find User " + player + ".");
 			return false;
 		}
 	}
@@ -537,19 +538,19 @@ public class FlatFilePermissions implements IDataProvider {
 			String track) {
 		Track selectedTrack = Track.getTrack(track);
 		if (selectedTrack == null) {
-			sender.sendMessage("Could not find Track " + track + ".");
+			sender.sendMessage(ChatColor.RED + "Could not find Track " + track + ".");
 			return false;
 		}
 		User user = getUser(player, true);
 		if (user != null) {
 			String newGroup = selectedTrack.getDemoteGroup(user.getGroup());
 			if (newGroup == null) {
-				sender.sendMessage("Could not demote on Track " + track + ".");
+				sender.sendMessage(ChatColor.RED + "Could not demote on Track " + track + ".");
 				return false;
 			}
 			return setPlayerGroup(sender, player, newGroup);
 		} else {
-			sender.sendMessage("Could not find User " + player + ".");
+			sender.sendMessage(ChatColor.RED + "Could not find User " + player + ".");
 			return false;
 		}
 	}
@@ -598,6 +599,10 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	public String getUserNameFromPart(String partialName) {
-		return getUser(partialName, true).getName();
+		User user = getUser(partialName, true);
+		if (user != null) {
+			return user.getName();
+		}
+		return null;
 	}
 }
