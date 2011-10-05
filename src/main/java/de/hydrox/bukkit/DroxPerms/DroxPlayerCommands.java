@@ -216,6 +216,16 @@ public class DroxPlayerCommands implements CommandExecutor {
 			return true;
 		}
 
+		if (split[0].equalsIgnoreCase("delete")) {
+			if (split.length == 2) {
+				result = dp.deletePlayer(sender, split[1]);
+			}
+			if (!result) {
+				sender.sendMessage("Operation unsuccessfull. non-unique/non-existant username given?");
+			}
+			return true;
+		}
+
 		if (split[0].equalsIgnoreCase("debug")) {
 			if (split.length >= 2) {
 				Set<PermissionAttachmentInfo> tmp = plugin.getServer().getPlayer(split[1]).getEffectivePermissions();

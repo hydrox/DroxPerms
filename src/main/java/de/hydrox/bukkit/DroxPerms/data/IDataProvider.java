@@ -28,6 +28,16 @@ public interface IDataProvider {
 	public boolean createPlayer(String name);
 
 	/**
+	 * Deletes a Player
+	 * 
+	 * @param name
+	 *            name of the Player
+	 * @return returns true if the Player could be deleted.
+	 * @since 0.1.0
+	 */
+	public boolean deletePlayer(CommandSender sender, String name);
+
+	/**
 	 * 
 	 * @param sender
 	 * @param name

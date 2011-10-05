@@ -135,6 +135,24 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
+	public boolean deletePlayer(CommandSender sender, String name) {
+		Player player = plugin.getServer().getPlayerExact(name);
+		if (player != null) {
+			sender.sendMessage("Can't delete online Player.");
+			return false;
+		}
+		User user = getExactUser(name);
+		if (user != null) {
+			User.removeUser(name);
+			usersConfig.getNode("users").removeProperty(name);
+			sender.sendMessage("Deleted Player " + name + ".");
+			return true;
+		}
+		sender.sendMessage("No Player with this exact name found.");
+
+		return false;
+	}
+
 	public boolean createGroup(CommandSender sender, String name) {
 		if (Group.existGroup(name)) {
 			return false;
