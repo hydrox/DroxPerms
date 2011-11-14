@@ -3,6 +3,7 @@ package de.hydrox.bukkit.DroxPerms;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -76,7 +77,13 @@ public class DroxGroupCommands implements CommandExecutor {
 		// add new group
 		if (split[0].equalsIgnoreCase("new")) {
 			if (split.length == 2) {
-				return dp.createGroup(sender, split[1]);
+				result = dp.createGroup(sender, split[1]);
+				if (!result) {
+					sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. Group already exists!");
+				} else {
+					sender.sendMessage(ChatColor.GREEN + "New Group created!");
+				}
+				return true;
 			} else {
 				return false;
 			}

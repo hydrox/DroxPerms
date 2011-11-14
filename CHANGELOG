@@ -1,3 +1,6 @@
+v0.2.1 RB 1240
+* fix /cp new group not telling about success of operation
+
 v0.2.0 RB 1240
 * add listperms-commands
 * add auto-save
