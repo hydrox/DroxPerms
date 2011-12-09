@@ -66,7 +66,7 @@ public class DroxGroupCommands implements CommandExecutor {
 		}
 
 		// remove subgroup
-		if (split[0].equalsIgnoreCase("remperm")) {
+		if (split[0].equalsIgnoreCase("remsub")) {
 			if (split.length == 3) {
 				result = dp.removeGroupSubgroup(sender, split[1],split[2]);
 			}
