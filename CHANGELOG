@@ -1,7 +1,7 @@
-v0.2.2 RB 1240
+v0.2.2 RB 1317, 1337, 1597
 * fix /cp remsub group not working
 
-v0.2.1 RB 1240
+v0.2.1 RB 1240, 1317, 1337
 * fix /cg new group not telling about success of operation
 
 v0.2.0 RB 1240
