@@ -37,8 +37,9 @@ public class DroxPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerKick(PlayerKickEvent event) {
-		if (event.isCancelled())
+		if (event.isCancelled()) {
 			return;
+		}
 		plugin.unregisterPlayer(event.getPlayer());
 	}
 

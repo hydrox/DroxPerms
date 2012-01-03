@@ -188,10 +188,10 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public ArrayList<String> getPlayerSubgroups(String player) {
+	public List<String> getPlayerSubgroups(String player) {
 		User user = getUser(player, true);
 		if (user != null) {
-			ArrayList<String> result = new ArrayList<String>(user.getSubgroups());
+			List<String> result = new ArrayList<String>(user.getSubgroups());
 			result.add(user.getGroup());
 			result = calculateSubgroups(result);
 			result.remove(user.getGroup());
@@ -201,25 +201,24 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public ArrayList<String> getPlayerSubgroupsSimple(String player) {
+	public List<String> getPlayerSubgroupsSimple(String player) {
 		User user = getUser(player, true);
 		if (user != null) {
-			ArrayList<String> result = new ArrayList<String>(user.getSubgroups());
-			return result;
+			return new ArrayList<String>(user.getSubgroups());
 		} else {
 			return null;
 		}
 	}
 
-	private ArrayList<String> calculateSubgroups(ArrayList<String> input) {
-		ArrayList<String> result = new ArrayList<String>(input);
-		ArrayList<String> toTest = new ArrayList<String>(input);
+	private List<String> calculateSubgroups(List<String> input) {
+		List<String> result = new ArrayList<String>(input);
+		List<String> toTest = new ArrayList<String>(input);
 
 		while (toTest.size()!=0) {
 			String string = toTest.get(0);
 			Group group = Group.getGroup(string);
 			if (group != null) {
-				ArrayList<String> subgroups = group.getSubgroups();
+				List<String> subgroups = group.getSubgroups();
 				for (String string2 : subgroups) {
 					if (!result.contains(string2)) {
 						result.add(string2);
@@ -296,7 +295,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world, boolean partialMatch) {
+	public Map<String, List<String>> getPlayerPermissions(String player, String world, boolean partialMatch) {
 		User user = getUser(player, partialMatch);
 		if (user == null) {
 			if (partialMatch) {
@@ -367,11 +366,10 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public ArrayList<String> getGroupSubgroups(String groupName) {
+	public List<String> getGroupSubgroups(String groupName) {
 		Group group = Group.getGroup(groupName);
 		if (group != null) {
-			ArrayList<String> result = calculateSubgroups(group.getSubgroups());
-			return result;
+			return calculateSubgroups(group.getSubgroups());
 		} else {
 			return null;
 		}
@@ -409,7 +407,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public HashMap<String, ArrayList<String>> getGroupPermissions(String groupName, String world) {
+	public Map<String, List<String>> getGroupPermissions(String groupName, String world) {
 		Group group = Group.getGroup(groupName);
 		if (group == null) {
 			return null;
@@ -484,7 +482,7 @@ public class FlatFilePermissions implements IDataProvider {
 					if (user == null) {
 						user = user2;
 					} else {
-						unsureOnline = true;;
+						unsureOnline = true;
 					}
 				}
 			}
@@ -509,8 +507,9 @@ public class FlatFilePermissions implements IDataProvider {
 				}
 			}
 		}
-		if (user == null)
+		if (user == null) {
 			return null;
+		}
 		return user;
 	}
 
@@ -559,8 +558,8 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	@Override
-	public HashMap<String, ArrayList<String>> getGroupMembers() {
-		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+	public Map<String, List<String>> getGroupMembers() {
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		Iterator<Group> groups = Group.iter();
 		while (groups.hasNext()) {
 			Group group = (Group) groups.next();
@@ -579,8 +578,8 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	@Override
-	public HashMap<String, ArrayList<String>> getSubgroupMembers() {
-		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+	public Map<String, List<String>> getSubgroupMembers() {
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		Iterator<Group> groups = Group.iter();
 		while (groups.hasNext()) {
 			Group group = (Group) groups.next();
@@ -593,7 +592,7 @@ public class FlatFilePermissions implements IDataProvider {
 			String key = iter.next();
 			ConfigurationNode conf = users.get(key);
 			User user = new User(key, conf);
-			ArrayList<String> subgroups = user.getSubgroups();
+			List<String> subgroups = user.getSubgroups();
 			for (String subgroup : subgroups) {
 				result.get(subgroup).add(user.getName());
 			}

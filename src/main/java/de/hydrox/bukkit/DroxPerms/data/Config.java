@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -17,15 +19,13 @@ public class Config {
 	private static String dataProvider = null;
 	private static String defaultWorld = null;
 	private static int saveInterval;
-	private static HashMap<String, ArrayList<String>> worldMirrors= null;
-	private Configuration configuration = null;
-	private Logger logger;
+	private static Map<String, List<String>> worldMirrors= null;
 	
 	
 	public Config(Plugin plugin) {
-		logger = plugin.getServer().getLogger();
+		Logger logger = plugin.getServer().getLogger();
 		logger.info("[DroxPerms] Setting up configuration");
-		configuration = plugin.getConfiguration();
+		Configuration configuration = plugin.getConfiguration();
         // Write some default configuration
         if (!new File(plugin.getDataFolder(), "config.yml").exists()) {
         	plugin.getServer().getLogger().info("[DroxPerms] Generating default configuration");
@@ -50,7 +50,7 @@ public class Config {
 		saveInterval = configuration.getInt("SaveInterval", 5);
 		logger.info("[DroxPerms] Setting SaveInterval: " + saveInterval + " minutes");
 		logger.info("[DroxPerms] Loading World-Mirrors");
-		worldMirrors = new HashMap<String, ArrayList<String>>();
+		worldMirrors = new HashMap<String, List<String>>();
 		ConfigurationNode tmp = configuration.getNode("Mirrors");
 		Iterator<String> iter = tmp.getKeys().iterator();
 		while (iter.hasNext()) {

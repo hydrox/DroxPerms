@@ -2,6 +2,8 @@ package de.hydrox.bukkit.DroxPerms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -89,43 +91,41 @@ public class DroxGroupCommands implements CommandExecutor {
 			}
 		}
 
-		if (split[0].equalsIgnoreCase("listperms")) {
-			if (split.length >= 2) {
-				HashMap<String, ArrayList<String>> permissions = null;
-				if (split.length == 3) {
-					permissions = dp.getGroupPermissions(split[1], split[2]);
-				} else if (split.length == 2) {
-					permissions = dp.getGroupPermissions(split[1], null);
-				} else {
-					return false;
+		if (split[0].equalsIgnoreCase("listperms") && split.length >= 2) {
+			Map<String, List<String>> permissions = null;
+			if (split.length == 3) {
+				permissions = dp.getGroupPermissions(split[1], split[2]);
+			} else if (split.length == 2) {
+				permissions = dp.getGroupPermissions(split[1], null);
+			} else {
+				return false;
+			}
+			List<String> subgroups = dp.getGroupSubgroups(split[1]);
+			if (subgroups != null && subgroups.size() > 0) {
+				StringBuilder string = new StringBuilder();
+				string.append(split[1] + " has permission from subgroups:");
+				for (String subgroupstring : subgroups) {
+					string.append(" " + subgroupstring);
 				}
-				ArrayList<String> subgroups = dp.getGroupSubgroups(split[1]);
-				if (subgroups != null && subgroups.size() > 0) {
-					StringBuilder string = new StringBuilder();
-					string.append(split[1] + " has permission from subgroups:");
-					for (String subgroupstring : subgroups) {
-						string.append(" " + subgroupstring);
-					}
-					sender.sendMessage(string.toString());
+				sender.sendMessage(string.toString());
+			}
+			List<String> globalperms = permissions.get("global");
+			if (globalperms != null && globalperms.size() > 0) {
+				StringBuilder string = new StringBuilder();
+				string.append(split[1] + " has permission globalpermissions:");
+				for (String globalstring : globalperms) {
+					string.append(" " + globalstring);
 				}
-				ArrayList<String> globalperms = permissions.get("global");
-				if (globalperms != null && globalperms.size() > 0) {
-					StringBuilder string = new StringBuilder();
-					string.append(split[1] + " has permission globalpermissions:");
-					for (String globalstring : globalperms) {
-						string.append(" " + globalstring);
-					}
-					sender.sendMessage(string.toString());
+				sender.sendMessage(string.toString());
+			}
+			List<String> worldperms = permissions.get("world");
+			if (worldperms != null && worldperms.size() > 0) {
+				StringBuilder string = new StringBuilder();
+				string.append(split[1] + " has permission worldpermissions:");
+				for (String globalstring : worldperms) {
+					string.append(" " + globalstring);
 				}
-				ArrayList<String> worldperms = permissions.get("world");
-				if (worldperms != null && worldperms.size() > 0) {
-					StringBuilder string = new StringBuilder();
-					string.append(split[1] + " has permission worldpermissions:");
-					for (String globalstring : worldperms) {
-						string.append(" " + globalstring);
-					}
-					sender.sendMessage(string.toString());
-				}
+				sender.sendMessage(string.toString());
 			}
 		}
 

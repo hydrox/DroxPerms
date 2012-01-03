@@ -1,7 +1,8 @@
 package de.hydrox.bukkit.DroxPerms;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -24,15 +25,14 @@ import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
  * @author Matthias Söhnholz
  */
 public class DroxPerms extends JavaPlugin {
-	protected Config config;
 	protected IDataProvider dataProvider;
 
 	private DroxPlayerListener playerListener = new DroxPlayerListener(this);
-    private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
-    private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
-    private DroxTestCommands testCommandExecutor = new DroxTestCommands();
-    private DroxStatsCommands statsCommandExecutor = new DroxStatsCommands(this);
-	private HashMap<Player, HashMap<String,PermissionAttachment>> permissions = new HashMap<Player, HashMap<String,PermissionAttachment>>();
+	private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
+	private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
+	private DroxTestCommands testCommandExecutor = new DroxTestCommands();
+	private DroxStatsCommands statsCommandExecutor = new DroxStatsCommands(this);
+	private Map<Player, Map<String, PermissionAttachment>> permissions = new HashMap<Player, Map<String, PermissionAttachment>>();
 	private DroxPermsAPI API = null;
 
 	private Runnable commiter;
@@ -59,12 +59,12 @@ public class DroxPerms extends JavaPlugin {
 	public void onEnable() {
 		long time = System.currentTimeMillis();
 		logger.info("[DroxPerms] Activating Plugin.");
-		config = new Config(this);
+		Config config = new Config(this);
 		logger.info("[DroxPerms] Loading DataProvider");
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
 			dataProvider = new FlatFilePermissions(this);
 		}
-		
+
 		API = new DroxPermsAPI(this);
 
 		// Commands
@@ -93,7 +93,7 @@ public class DroxPerms extends JavaPlugin {
 
 		logger.info("[DroxPerms] Plugin activated in " + (System.currentTimeMillis() - time) + "ms.");
 	}
-	
+
 	public DroxPermsAPI getAPI() {
 		return API;
 	}
@@ -120,10 +120,11 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void unregisterPlayer(Player player) {
-		HashMap<String, PermissionAttachment> attachments = permissions.get(player);
-		if (attachments != null)
-		for (PermissionAttachment attachment : attachments.values()) {
-			player.removeAttachment(attachment);
+		Map<String, PermissionAttachment> attachments = permissions.get(player);
+		if (attachments != null) {
+			for (PermissionAttachment attachment : attachments.values()) {
+				player.removeAttachment(attachment);
+			}
 		}
 		permissions.remove(player);
 	}
@@ -146,7 +147,7 @@ public class DroxPerms extends JavaPlugin {
 		if (player == null) {
 			return;
 		}
-		HashMap<String, PermissionAttachment> attachments = permissions.get(player);
+		Map<String, PermissionAttachment> attachments = permissions.get(player);
 		for (PermissionAttachment attachment : attachments.values()) {
 			for (String key : attachment.getPermissions().keySet()) {
 				attachment.unsetPermission(key);
@@ -156,14 +157,14 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	private void calculateAttachment(Player player, World world) {
-		HashMap<String, PermissionAttachment> attachments = permissions
+		Map<String, PermissionAttachment> attachments = permissions
 				.get(player);
 
 		PermissionAttachment attachment = attachments.get("group");
-		HashMap<String, ArrayList<String>> playerPermissions = dataProvider
+		Map<String, List<String>> playerPermissions = dataProvider
 				.getPlayerPermissions(player.getName(), world.getName(), false);
-		ArrayList<String> perms = playerPermissions.get("group");
-		if (perms != null)
+		List<String> perms = playerPermissions.get("group");
+		if (perms != null) {
 			for (String entry : playerPermissions.get("group")) {
 				if (entry.startsWith("-")) {
 					entry = entry.substring(1);
@@ -176,10 +177,10 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
-
+		}
 		attachment = attachments.get("subgroups");
 		perms = playerPermissions.get("subgroups");
-		if (perms != null)
+		if (perms != null) {
 			for (String entry : perms) {
 				if (entry.startsWith("-")) {
 					entry = entry.substring(1);
@@ -192,7 +193,7 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
-
+		}
 		attachment = attachments.get("global");
 		perms = playerPermissions.get("global");
 		if (perms != null)
@@ -211,7 +212,7 @@ public class DroxPerms extends JavaPlugin {
 
 		attachment = attachments.get("world");
 		perms = playerPermissions.get("world");
-		if (perms != null)
+		if (perms != null) {
 			for (String entry : perms) {
 				if (entry.startsWith("-")) {
 					entry = entry.substring(1);
@@ -224,6 +225,7 @@ public class DroxPerms extends JavaPlugin {
 							+ " to true for player " + player.getName());
 				}
 			}
+		}
 		player.recalculatePermissions();
 	}
 

@@ -8,10 +8,10 @@ import java.util.Set;
 import org.bukkit.util.config.ConfigurationNode;
 
 public class Track {
-	private static HashMap<String, Track> tracks = new HashMap<String, Track>();
+	private static Map<String, Track> tracks = new HashMap<String, Track>();
 
 	private String name;
-	private HashMap<String, String> mapping;
+	private Map<String, String> mapping;
 
 	public Track(String name, ConfigurationNode node) {
 		this.mapping = new HashMap<String, String>();

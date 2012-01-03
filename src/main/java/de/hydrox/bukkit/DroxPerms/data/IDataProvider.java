@@ -1,7 +1,7 @@
 package de.hydrox.bukkit.DroxPerms.data;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.bukkit.command.CommandSender;
 
@@ -25,7 +25,7 @@ public interface IDataProvider {
 	 * @return returns true if the Player could be created.
 	 * @since 0.1.0
 	 */
-	public boolean createPlayer(String name);
+	boolean createPlayer(String name);
 
 	/**
 	 * Deletes a Player
@@ -35,7 +35,7 @@ public interface IDataProvider {
 	 * @return returns true if the Player could be deleted.
 	 * @since 0.1.0
 	 */
-	public boolean deletePlayer(CommandSender sender, String name);
+	boolean deletePlayer(CommandSender sender, String name);
 
 	/**
 	 * 
@@ -46,7 +46,7 @@ public interface IDataProvider {
 	 * @return returns true if the Group could be created.
 	 * @since 0.1.0
 	 */
-	public boolean createGroup(CommandSender sender, String name);
+	boolean createGroup(CommandSender sender, String name);
 
 	/**
 	 * Returns the main-group of the Player.
@@ -56,7 +56,7 @@ public interface IDataProvider {
 	 * 
 	 * @return main group of the Player, or "" if player doesn't exist
 	 */
-	public String getPlayerGroup(String player);
+	String getPlayerGroup(String player);
 
 	/**
 	 * Sets the main-group of the Player.
@@ -68,7 +68,7 @@ public interface IDataProvider {
 	 *            group to be set
 	 * @return success of operation
 	 */
-	public boolean setPlayerGroup(CommandSender sender, String player,
+	boolean setPlayerGroup(CommandSender sender, String player,
 			String group);
 
 	/**
@@ -78,7 +78,7 @@ public interface IDataProvider {
 	 *            Player to be queried
 	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
 	 */
-	public ArrayList<String> getPlayerSubgroups(String player);
+	List<String> getPlayerSubgroups(String player);
 
 	/**
 	 * Returns the sub-groups of the Player.
@@ -87,7 +87,7 @@ public interface IDataProvider {
 	 *            Player to be queried
 	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
 	 */
-	public ArrayList<String> getPlayerSubgroupsSimple(String player);
+	List<String> getPlayerSubgroupsSimple(String player);
 
 	/**
 	 * Adds a Sub-group to a Player.
@@ -98,7 +98,7 @@ public interface IDataProvider {
 	 *            sub-group to be added
 	 * @return success of operation
 	 */
-	public boolean addPlayerSubgroup(CommandSender sender, String player,
+	boolean addPlayerSubgroup(CommandSender sender, String player,
 			String subgroup);
 
 	/**
@@ -110,7 +110,7 @@ public interface IDataProvider {
 	 *            sub-group to be removed
 	 * @return success of operation
 	 */
-	public boolean removePlayerSubgroup(CommandSender sender, String player,
+	boolean removePlayerSubgroup(CommandSender sender, String player,
 			String subgroup);
 
 	/**
@@ -125,7 +125,7 @@ public interface IDataProvider {
 	 *            Permission-node to add
 	 * @return success of operation
 	 */
-	public boolean addPlayerPermission(CommandSender sender, String player,
+	boolean addPlayerPermission(CommandSender sender, String player,
 			String world, String node);
 
 	/**
@@ -141,7 +141,7 @@ public interface IDataProvider {
 	 *            Permission-node to remove
 	 * @return success of operation
 	 */
-	public boolean removePlayerPermission(CommandSender sender, String player,
+	boolean removePlayerPermission(CommandSender sender, String player,
 			String world, String node);
 
 	/**
@@ -154,7 +154,7 @@ public interface IDataProvider {
 	 *            World to be queried.
 	 * @return array of String containing the players permissions
 	 */
-	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world, boolean partial);
+	Map<String, List<String>> getPlayerPermissions(String player, String world, boolean partial);
 
 	/**
 	 * Sets Data in the Players Info-node.
@@ -168,7 +168,7 @@ public interface IDataProvider {
 	 *            Data to be written.
 	 * @return success of operation
 	 */
-	public boolean setPlayerInfo(CommandSender sender, String player,
+	boolean setPlayerInfo(CommandSender sender, String player,
 			String node, String data);
 
 	/**
@@ -181,7 +181,7 @@ public interface IDataProvider {
 	 *            Info-node to be read
 	 * @return Info-node, is null if Player or Info-node doesn't exist
 	 */
-	public String getPlayerInfo(CommandSender sender, String player, String node);
+	String getPlayerInfo(CommandSender sender, String player, String node);
 
 	/**
 	 * Returns all Subgroups of a given Group.
@@ -190,7 +190,7 @@ public interface IDataProvider {
 	 *            Group to be queried
 	 * @return ArrayList<String> containing the subgroups, null if Group doesn't exist
 	 */
-	public ArrayList<String> getGroupSubgroups(String group);
+	List<String> getGroupSubgroups(String group);
 
 	/**
 	 * Adds a Subgroup to a given Group.
@@ -202,7 +202,7 @@ public interface IDataProvider {
 	 *            Subgroup to be added
 	 * @return success of operation
 	 */
-	public boolean addGroupSubgroup(CommandSender sender, String group,
+	boolean addGroupSubgroup(CommandSender sender, String group,
 			String subgroup);
 
 	/**
@@ -215,7 +215,7 @@ public interface IDataProvider {
 	 *            Subgroup to be removed
 	 * @return success of operation
 	 */
-	public boolean removeGroupSubgroup(CommandSender sender, String group,
+	boolean removeGroupSubgroup(CommandSender sender, String group,
 			String subgroup);
 
 	/**
@@ -230,7 +230,7 @@ public interface IDataProvider {
 	 *            Permission-node to add
 	 * @return success of operation
 	 */
-	public boolean addGroupPermission(CommandSender sender, String group,
+	boolean addGroupPermission(CommandSender sender, String group,
 			String world, String node);
 
 	/**
@@ -246,7 +246,7 @@ public interface IDataProvider {
 	 *            Permission-node to remove
 	 * @return success of operation
 	 */
-	public boolean removeGroupPermission(CommandSender sender, String group,
+	boolean removeGroupPermission(CommandSender sender, String group,
 			String world, String node);
 
 	/**
@@ -259,7 +259,7 @@ public interface IDataProvider {
 	 *            World to be queried.
 	 * @return array of String containing the Groups Permissions
 	 */
-	public HashMap<String, ArrayList<String>> getGroupPermissions(String group, String world);
+	Map<String, List<String>> getGroupPermissions(String group, String world);
 
 	/**
 	 * Sets Data in the Groups Info-node.
@@ -273,7 +273,7 @@ public interface IDataProvider {
 	 *            Data to be written.
 	 * @return success of operation
 	 */
-	public boolean setGroupInfo(CommandSender sender, String group,
+	boolean setGroupInfo(CommandSender sender, String group,
 			String node, String data);
 
 	/**
@@ -286,7 +286,7 @@ public interface IDataProvider {
 	 *            Info-node to be read
 	 * @return Info-node, is null if Player or Info-node doesn't exist
 	 */
-	public String getGroupInfo(CommandSender sender, String group, String node);
+	String getGroupInfo(CommandSender sender, String group, String node);
 
 	/**
 	 * Promotes a Player along a given Track.
@@ -298,7 +298,7 @@ public interface IDataProvider {
 	 *            Track to be used
 	 * @return true if Player has been promoted, false if not
 	 */
-	public boolean promotePlayer(CommandSender sender, String player, String track);
+	boolean promotePlayer(CommandSender sender, String player, String track);
 
 	/**
 	 * Demotes a Player along a given Track.
@@ -310,12 +310,12 @@ public interface IDataProvider {
 	 *            Track to be used
 	 * @return true if Player has been demoted, false if not
 	 */
-	public boolean demotePlayer(CommandSender sender, String player, String track);
+	boolean demotePlayer(CommandSender sender, String player, String track);
 
-	public HashMap<String, ArrayList<String>> getGroupMembers();
+	Map<String, List<String>> getGroupMembers();
 
-	public HashMap<String, ArrayList<String>> getSubgroupMembers();
+	Map<String, List<String>> getSubgroupMembers();
 
-	public String getUserNameFromPart(String partialName);
-	public void save();
+	String getUserNameFromPart(String partialName);
+	void save();
 }

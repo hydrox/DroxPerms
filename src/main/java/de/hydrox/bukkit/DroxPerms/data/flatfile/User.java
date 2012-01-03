@@ -4,22 +4,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.bukkit.util.config.ConfigurationNode;
 
 import de.hydrox.bukkit.DroxPerms.data.Config;
 
 public class User {
-	private static HashMap<String, User> users = new HashMap<String, User>();
-	private static HashMap<String, User> backupUsers = new HashMap<String, User>();
+	private static Map<String, User> users = new HashMap<String, User>();
+	private static Map<String, User> backupUsers = new HashMap<String, User>();
 	private static boolean testmode = false;
 
 	private String name;
 	private String group;
-	private ArrayList<String> subgroups;
-	private ArrayList<String> globalPermissions;
-	private HashMap<String, ArrayList<String>> permissions;
-	private HashMap<String, String> info;
+	private List<String> subgroups;
+	private List<String> globalPermissions;
+	private Map<String, ArrayList<String>> permissions;
+	private Map<String, String> info;
 	private boolean dirty;
 
 	public User() {
@@ -70,8 +72,8 @@ public class User {
 		return group;
 	}
 
-	public HashMap<String, Object> toConfigurationNode() {
-		LinkedHashMap<String, Object> output = new LinkedHashMap<String, Object>();
+	public Map<String, Object> toConfigurationNode() {
+		Map<String, Object> output = new LinkedHashMap<String, Object>();
 		output.put("group", group);
 		if (subgroups != null && subgroups.size() != 0) {
 			output.put("subgroups", subgroups);
@@ -100,9 +102,9 @@ public class User {
 		dirty = true;
 	}
 
-	public HashMap<String, ArrayList<String>> getPermissions(String world) {
-		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
-		ArrayList<String> groupperms = new ArrayList<String>();
+	public Map<String, List<String>> getPermissions(String world) {
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		List<String> groupperms = new ArrayList<String>();
 		//add group permissions
 		groupperms.add("droxperms.meta.group." + group);
 		if (world != null) {
@@ -244,7 +246,7 @@ public class User {
 		return info.get(node);
 	}
 
-	public ArrayList<String> getSubgroups() {
+	public List<String> getSubgroups() {
 		if (subgroups == null) {
 			subgroups = new ArrayList<String>();
 		}

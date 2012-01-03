@@ -2,6 +2,8 @@ package de.hydrox.bukkit.DroxPerms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
@@ -109,75 +111,71 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 
 		// set group
-		if (split[0].equalsIgnoreCase("has")) {
-			if (split.length == 3) {
-				Player player = plugin.getServer().getPlayer(split[1]);
-				if (player == null) {
-					sender.sendMessage(split[1] + " is not online");
+		if (split[0].equalsIgnoreCase("has") && (split.length == 3)) {
+			Player player = plugin.getServer().getPlayer(split[1]);
+			if (player == null) {
+				sender.sendMessage(split[1] + " is not online");
+			} else {
+				result = player.hasPermission(split[2]);
+				if (result) {
+					sender.sendMessage(split[1] + " has permission for " + split[2]);
 				} else {
-					result = player.hasPermission(split[2]);
-					if (result) {
-						sender.sendMessage(split[1] + " has permission for " + split[2]);
-					} else {
-						sender.sendMessage(split[1] + " doesn't have permission for " + split[2]);
-					}
+					sender.sendMessage(split[1] + " doesn't have permission for " + split[2]);
 				}
 			}
 		}
 
-		if (split[0].equalsIgnoreCase("listperms")) {
-			if (split.length >= 2) {
-				HashMap<String, ArrayList<String>> permissions = null;
-				if (split.length == 3) {
-					permissions = dp.getPlayerPermissions(split[1], split[2], true);
-				} else if (split.length == 2) {
-					permissions = dp.getPlayerPermissions(split[1], null, true);
-				} else {
-					return false;
+		if (split[0].equalsIgnoreCase("listperms") && split.length >= 2) {
+			Map<String, List<String>> permissions = null;
+			if (split.length == 3) {
+				permissions = dp.getPlayerPermissions(split[1], split[2], true);
+			} else if (split.length == 2) {
+				permissions = dp.getPlayerPermissions(split[1], null, true);
+			} else {
+				return false;
+			}
+			if (permissions == null) {
+				sender.sendMessage(ChatColor.RED + "Could not find user matching input or found more then one user matching");
+				return true;
+			}
+			String player = dp.getUserNameFromPart(split[1]); 
+			sender.sendMessage(player + " has permission from group: " + dp.getPlayerGroup(player));
+			List<String> subgroupssimple = dp.getPlayerSubgroupsSimple(player);
+			if (subgroupssimple != null && subgroupssimple.size() > 0) {
+				StringBuilder string = new StringBuilder();
+				string.append(player + " has permission from subgroups:");
+				for (String subgroupstring : subgroupssimple) {
+					string.append(" " + subgroupstring);
 				}
-				if (permissions == null) {
-					sender.sendMessage(ChatColor.RED + "Could not find user matching input or found more then one user matching");
-					return true;
+				sender.sendMessage(string.toString());
+			}
+			List<String> subgroups = dp.getPlayerSubgroups(player);
+			subgroups.removeAll(subgroupssimple);
+			if (subgroups != null && subgroups.size() > 0) {
+				StringBuilder string = new StringBuilder();
+				string.append(player + " has permission from inherited subgroups:");
+				for (String subgroupstring : subgroups) {
+					string.append(" " + subgroupstring);
 				}
-				String player = dp.getUserNameFromPart(split[1]); 
-				sender.sendMessage(player + " has permission from group: " + dp.getPlayerGroup(player));
-				ArrayList<String> subgroupssimple = dp.getPlayerSubgroupsSimple(player);
-				if (subgroupssimple != null && subgroupssimple.size() > 0) {
-					StringBuilder string = new StringBuilder();
-					string.append(player + " has permission from subgroups:");
-					for (String subgroupstring : subgroupssimple) {
-						string.append(" " + subgroupstring);
-					}
-					sender.sendMessage(string.toString());
+				sender.sendMessage(string.toString());
+			}
+			List<String> globalperms = permissions.get("global");
+			if (globalperms != null && globalperms.size() > 0) {
+				StringBuilder string = new StringBuilder();
+				string.append(player + " has permission globalpermissions:");
+				for (String globalstring : globalperms) {
+					string.append(" " + globalstring);
 				}
-				ArrayList<String> subgroups = dp.getPlayerSubgroups(player);
-				subgroups.removeAll(subgroupssimple);
-				if (subgroups != null && subgroups.size() > 0) {
-					StringBuilder string = new StringBuilder();
-					string.append(player + " has permission from inherited subgroups:");
-					for (String subgroupstring : subgroups) {
-						string.append(" " + subgroupstring);
-					}
-					sender.sendMessage(string.toString());
+				sender.sendMessage(string.toString());
+			}
+			List<String> worldperms = permissions.get("world");
+			if (worldperms != null && worldperms.size() > 0) {
+				StringBuilder string = new StringBuilder();
+				string.append(player + " has permission worldpermissions:");
+				for (String worldstring : worldperms) {
+					string.append(" " + worldstring);
 				}
-				ArrayList<String> globalperms = permissions.get("global");
-				if (globalperms != null && globalperms.size() > 0) {
-					StringBuilder string = new StringBuilder();
-					string.append(player + " has permission globalpermissions:");
-					for (String globalstring : globalperms) {
-						string.append(" " + globalstring);
-					}
-					sender.sendMessage(string.toString());
-				}
-				ArrayList<String> worldperms = permissions.get("world");
-				if (worldperms != null && worldperms.size() > 0) {
-					StringBuilder string = new StringBuilder();
-					string.append(player + " has permission worldpermissions:");
-					for (String worldstring : worldperms) {
-						string.append(" " + worldstring);
-					}
-					sender.sendMessage(string.toString());
-				}
+				sender.sendMessage(string.toString());
 			}
 		}
 
@@ -237,19 +235,18 @@ public class DroxPlayerCommands implements CommandExecutor {
 			return true;
 		}
 
-		if (split[0].equalsIgnoreCase("debug")) {
-			if (split.length >= 2) {
-				Player player = plugin.getServer().getPlayer(split[1]);
-				if (player == null) {
-					sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique username given or player not online?");
-					return true;
+		if (split[0].equalsIgnoreCase("debug") && split.length >= 2) {
+			Player player = plugin.getServer().getPlayer(split[1]);
+			if (player == null) {
+				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique username given or player not online?");
+				return true;
+			}
+			Set<PermissionAttachmentInfo> tmp = player.getEffectivePermissions();
+			for (PermissionAttachmentInfo permissionAttachmentInfo : tmp) {
+				if (split.length == 3 && !permissionAttachmentInfo.getPermission().startsWith(split[2])) {
+					continue;
 				}
-				Set<PermissionAttachmentInfo> tmp = player.getEffectivePermissions();
-				for (PermissionAttachmentInfo permissionAttachmentInfo : tmp) {
-					if (split.length == 3 && !permissionAttachmentInfo.getPermission().startsWith(split[2]))
-							continue;
-					sender.sendMessage(permissionAttachmentInfo.getPermission());
-				}
+				sender.sendMessage(permissionAttachmentInfo.getPermission());
 			}
 		}
 
