@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -77,11 +75,7 @@ public class DroxPerms extends JavaPlugin {
 		// Events
 		logger.info("[DroxPerms] Registering Events");
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Type.PLAYER_LOGIN, playerListener, Priority.Lowest, this);
-		pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-		pm.registerEvent(Type.PLAYER_CHANGED_WORLD, playerListener, Priority.Monitor, this);
-		pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
-		pm.registerEvent(Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
+		pm.registerEvents(playerListener, this);
 
 		// Register everyone online right now
 		logger.info("[DroxPerms] Register online players");
