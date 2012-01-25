@@ -2,6 +2,7 @@ v0.3.0 RB 1818
 * fix NPE while calculating subgroups
 * update Bukkit dependency to 1.1-R1
 * migrate to new Event-system
+* migrate to new Config-system
 
 v0.2.2 RB 1317, 1337, 1597
 * fix /cp remsub group not working
