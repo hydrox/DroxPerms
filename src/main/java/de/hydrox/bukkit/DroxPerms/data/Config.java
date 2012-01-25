@@ -1,7 +1,5 @@
 package de.hydrox.bukkit.DroxPerms.data;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,11 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
-
-import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
 
 public class Config {
 	private static String dataProvider = null;
@@ -25,23 +20,8 @@ public class Config {
 	public Config(Plugin plugin) {
 		Logger logger = plugin.getServer().getLogger();
 		logger.info("[DroxPerms] Setting up configuration");
-		Configuration configuration = plugin.getConfiguration();
-        // Write some default configuration
-        if (!new File(plugin.getDataFolder(), "config.yml").exists()) {
-        	plugin.getServer().getLogger().info("[DroxPerms] Generating default configuration");
-            HashMap<String, ArrayList<String>> mirrors = new HashMap<String, ArrayList<String>>();
-            ArrayList<String> defaultMirror = new ArrayList<String>();
-            defaultMirror.add("nether");
-            mirrors.put("world", defaultMirror);
-            mirrors.put("hub", null);
-            configuration.setProperty("DataProvider", FlatFilePermissions.NODE);
-            configuration.setProperty("DefaultWorld", "world");
-            configuration.setProperty("SaveInterval", 5);
-            configuration.setProperty("Mirrors", mirrors);
-            configuration.save();
-        }
-		logger.info("[DroxPerms] loading configuration");
-		configuration.load();
+		FileConfiguration configuration = plugin.getConfig();
+        logger.info("[DroxPerms] loading configuration");
 
 		dataProvider = configuration.getString("DataProvider");
 		logger.info("[DroxPerms] Using DataProvider: " + dataProvider);
@@ -51,11 +31,10 @@ public class Config {
 		logger.info("[DroxPerms] Setting SaveInterval: " + saveInterval + " minutes");
 		logger.info("[DroxPerms] Loading World-Mirrors");
 		worldMirrors = new HashMap<String, List<String>>();
-		ConfigurationNode tmp = configuration.getNode("Mirrors");
-		Iterator<String> iter = tmp.getKeys().iterator();
-		while (iter.hasNext()) {
-			String world = iter.next();
-			worldMirrors.put(world, (ArrayList<String>) tmp.getStringList(world, new ArrayList<String>()));
+		Set<String> worlds = configuration.getConfigurationSection("Mirrors.").getKeys(false);
+		for (String world : worlds) {
+			List<String> worldList = configuration.getStringList("Mirrors." + world);
+			worldMirrors.put(world, worldList);
 			logger.fine("mirrors for world "+world+": " + worldMirrors.get(world).size());
 		}
 		

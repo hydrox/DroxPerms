@@ -57,6 +57,8 @@ public class DroxPerms extends JavaPlugin {
 	public void onEnable() {
 		long time = System.currentTimeMillis();
 		logger.info("[DroxPerms] Activating Plugin.");
+		getConfig().options().copyDefaults(true);
+		saveConfig();
 		Config config = new Config(this);
 		logger.info("[DroxPerms] Loading DataProvider");
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
@@ -124,7 +126,6 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void refreshPermissions() {
-		getConfiguration().save();
 		for (Player player : permissions.keySet()) {
 			refreshPlayer(player);
 		}
