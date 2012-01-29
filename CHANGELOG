@@ -3,6 +3,7 @@ v0.3.0 RB 1818
 * update Bukkit dependency to 1.1-R1
 * migrate to new Event-system
 * migrate to new Config-system
+* add logging time of last login and quit
 
 v0.2.2 RB 1317, 1337, 1597
 * fix /cp remsub group not working
