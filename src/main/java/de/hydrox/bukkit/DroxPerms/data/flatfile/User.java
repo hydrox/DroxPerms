@@ -43,6 +43,7 @@ public class User {
 		this.group = node.getString("group");
 		this.subgroups = node.getStringList("subgroups");
 		this.globalPermissions = node.getStringList("globalpermissions");
+		this.permissions = new HashMap<String, List<String>>();
 		if(node.contains("permissions")) {
 			Set<String> worlds = node.getConfigurationSection("permissions.").getKeys(false);
 			for (String world : worlds) {
