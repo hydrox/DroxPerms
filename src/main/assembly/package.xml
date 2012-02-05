@@ -11,5 +11,8 @@
             <outputDirectory>/</outputDirectory>
             <destName>${project.artifactId}.jar</destName>
         </file>
+        <file>
+            <source>CHANGELOG</source>
+        </file>
     </files>
 </assembly>
