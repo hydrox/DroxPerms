@@ -1,6 +1,6 @@
-v0.3.0 RB 1818
+v0.3.0 RB 1846
 * fix NPE while calculating subgroups
-* update Bukkit dependency to 1.1-R1
+* update Bukkit dependency to 1.1-R3
 * migrate to new Event-system
 * migrate to new Config-system
 * add logging time of last login and quit
