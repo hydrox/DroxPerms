@@ -60,12 +60,15 @@ public class FlatFilePermissions implements IDataProvider {
 			Group.addGroup(newGroup);
 		}
 
-		Set<String> tracks = tracksConfig.getConfigurationSection("tracks.").getKeys(false);
-		for (String track : tracks) {
-			plugin.getServer().getLogger().fine("load track: " + track);
-			ConfigurationSection conf = tracksConfig.getConfigurationSection("tracks." + track);
-			Track newTrack = new Track(track, conf);
-			Track.addTrack(newTrack);
+		ConfigurationSection tracksSection = tracksConfig.getConfigurationSection("tracks.");
+		if (tracksSection != null) {
+			Set<String> tracks = tracksConfig.getConfigurationSection("tracks.").getKeys(false);
+			for (String track : tracks) {
+				plugin.getServer().getLogger().fine("load track: " + track);
+				ConfigurationSection conf = tracksConfig.getConfigurationSection("tracks." + track);
+				Track newTrack = new Track(track, conf);
+				Track.addTrack(newTrack);
+			}
 		}
 	}
 
