@@ -3,24 +3,27 @@ package de.hydrox.bukkit.DroxPerms.data.flatfile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
-import org.bukkit.util.config.ConfigurationNode;
 
 import de.hydrox.bukkit.DroxPerms.data.Config;
 
 public class Group {
-	private static HashMap<String, Group> groups = new HashMap<String, Group>();
-	private static HashMap<String, Group> backupGroups = new HashMap<String, Group>();
+	private static Map<String, Group> groups = new HashMap<String, Group>();
+	private static Map<String, Group> backupGroups = new HashMap<String, Group>();
 	private static boolean testmode = false;
 
 	private String name;
-	private HashMap<String, ArrayList<String>> permissions;
-	private HashMap<String, String> info;
-	private ArrayList<String> globalPermissions;
-	private ArrayList<String> subgroups;
+	private Map<String, List<String>> permissions;
+	private Map<String, String> info;
+	private List<String> globalPermissions;
+	private List<String> subgroups;
 
-	private HashMap<String, Permission> bukkitPermissions;
+	private Map<String, Permission> bukkitPermissions;
 
 	public Group() {
 		this("default");
@@ -30,30 +33,25 @@ public class Group {
 		this.name = name;
 		this.subgroups = new ArrayList<String>();
 		this.globalPermissions = new ArrayList<String>();
-		this.permissions = new HashMap<String, ArrayList<String>>();
+		this.permissions = new HashMap<String, List<String>>();
 	}
 
-	public Group(String name, ConfigurationNode node) {
+	public Group(String name, ConfigurationSection node) {
 		this.name = name;
-		this.subgroups = (ArrayList<String>) node.getStringList("subgroups", new ArrayList<String>());
-		this.globalPermissions = (ArrayList<String>) node.getStringList("globalpermissions", new ArrayList<String>());
-		this.permissions = new HashMap<String, ArrayList<String>>();
-		ConfigurationNode tmp = node.getNode("permissions");
-		if (tmp != null) {
-			Iterator<String> iter = tmp.getKeys().iterator();
-			while (iter.hasNext()) {
-				String world = iter.next();
-				permissions.put(world, (ArrayList<String>) tmp.getStringList(world, new ArrayList<String>()));
+		this.subgroups = node.getStringList("subgroups");
+		this.globalPermissions = node.getStringList("globalpermissions");
+		this.permissions = new HashMap<String, List<String>>();
+		if(node.contains("permissions")) {
+			Set<String> worlds = node.getConfigurationSection("permissions.").getKeys(false);
+			for (String world : worlds) {
+				permissions.put(world, node.getStringList("permissions." + world));
 			}
 		}
-		tmp = null;
-		tmp = node.getNode("info");
-		if(tmp != null) {
+		if(node.contains("info")) {
 			this.info = new HashMap<String, String>();
-			Iterator<String> iter = tmp.getKeys().iterator();
-			while (iter.hasNext()) {
-				String infoNode = iter.next();
-				info.put(infoNode, tmp.getString(infoNode));
+			Set<String> infoNodes = node.getConfigurationSection("info.").getKeys(false);
+			for (String infoNode : infoNodes) {
+				info.put(infoNode, node.getString("info." + infoNode));
 			}
 		}
 
@@ -64,8 +62,8 @@ public class Group {
 		return name;
 	}
 
-	public HashMap<String, Object> toConfigurationNode() {
-		HashMap<String, Object> output = new HashMap<String, Object>();
+	public Map<String, Object> toConfigurationNode() {
+		Map<String, Object> output = new HashMap<String, Object>();
 		if (subgroups != null && subgroups.size() != 0) {
 			output.put("subgroups", subgroups);
 		}
@@ -81,9 +79,9 @@ public class Group {
 		return output;
 	}
 
-	public HashMap<String, ArrayList<String>> getPermissions(String world) {
-		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
-		ArrayList<String> groupperms = new ArrayList<String>();
+	public Map<String, List<String>> getPermissions(String world) {
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		List<String> groupperms = new ArrayList<String>();
 		//add group permissions
 		groupperms.add("droxperms.meta.group." + name);
 		if (world != null) {
@@ -130,7 +128,7 @@ public class Group {
 			return true;
 		}
 
-		ArrayList<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
+		List<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
 		if (permArray == null) {
 			permArray = new ArrayList<String>();
 			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
@@ -153,7 +151,7 @@ public class Group {
 			return false;
 		}
 
-		ArrayList<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
+		List<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
 		if (permArray == null) {
 			permArray = new ArrayList<String>();
 			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
@@ -191,18 +189,15 @@ public class Group {
 	}
 
 	public boolean hasPermission(String world, String permission) {
-		ArrayList<String> permArray = permissions.get(world.toLowerCase());
-		if (permArray != null) {
-			if (permArray.contains(permission)) {
-				return true;
-			}
+		List<String> permArray = permissions.get(world.toLowerCase());
+		if (permArray != null && permArray.contains(permission)) {
+			return true;
 		}
 
 		for (String subgroup : subgroups) {
-			if (Group.getGroup(subgroup) != null) {
-				if (Group.getGroup(subgroup).hasPermission(world.toLowerCase(), permission)) {
-					return true;
-				}
+			if (Group.getGroup(subgroup) != null &&
+					Group.getGroup(subgroup).hasPermission(world.toLowerCase(), permission)) {
+				return true;
 			}
 		}
 		return false;
@@ -236,7 +231,7 @@ public class Group {
 		return true;
 	}
 
-	public ArrayList<String> getSubgroups() {
+	public List<String> getSubgroups() {
 		if (subgroups == null) {
 			subgroups = new ArrayList<String>();
 		}

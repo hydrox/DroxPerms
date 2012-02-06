@@ -1,7 +1,7 @@
 package de.hydrox.bukkit.DroxPerms;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.command.Command;
@@ -23,7 +23,7 @@ public class DroxStatsCommands implements CommandExecutor {
 		}
 		
 		if (args[0].equalsIgnoreCase("groupnumbers")) {
-			HashMap<String, ArrayList<String>> groupmembers = plugin.dataProvider.getGroupMembers();
+			Map<String, List<String>> groupmembers = plugin.dataProvider.getGroupMembers();
 			plugin.logger.info("[DroxPerms] Group Stats:");
 			Set<String> keys = groupmembers.keySet();
 			for (String group : keys) {
@@ -33,7 +33,7 @@ public class DroxStatsCommands implements CommandExecutor {
 		}
 
 		if (args[0].equalsIgnoreCase("subgroupnumbers")) {
-			HashMap<String, ArrayList<String>> subgroupmembers = plugin.dataProvider.getSubgroupMembers();
+			Map<String, List<String>> subgroupmembers = plugin.dataProvider.getSubgroupMembers();
 			plugin.logger.info("[DroxPerms] Subgroup Stats:");
 			Set<String> keys = subgroupmembers.keySet();
 			for (String group : keys) {
@@ -43,11 +43,11 @@ public class DroxStatsCommands implements CommandExecutor {
 		}
 
 		if (args[0].equalsIgnoreCase("groupmembers")) {
-			HashMap<String, ArrayList<String>> groupmembers = plugin.dataProvider.getGroupMembers();
+			Map<String, List<String>> groupmembers = plugin.dataProvider.getGroupMembers();
 			plugin.logger.info("[DroxPerms] Group members:");
 			Set<String> keys = groupmembers.keySet();
 			for (String group : keys) {
-				ArrayList<String> members = groupmembers.get(group);
+				List<String> members = groupmembers.get(group);
 				plugin.logger.info("[DroxPerms] Group: " + group + ":");
 				StringBuilder memberstring = new StringBuilder();
 				for (String member : members) {
@@ -58,11 +58,11 @@ public class DroxStatsCommands implements CommandExecutor {
 		}
 
 		if (args[0].equalsIgnoreCase("subgroupmembers")) {
-			HashMap<String, ArrayList<String>> subgroupmembers = plugin.dataProvider.getSubgroupMembers();
+			Map<String, List<String>> subgroupmembers = plugin.dataProvider.getSubgroupMembers();
 			plugin.logger.info("[DroxPerms] Group members:");
 			Set<String> keys = subgroupmembers.keySet();
 			for (String subgroup : keys) {
-				ArrayList<String> members = subgroupmembers.get(subgroup);
+				List<String> members = subgroupmembers.get(subgroup);
 				plugin.logger.info("[DroxPerms] Group: " + subgroup + ":");
 				StringBuilder memberstring = new StringBuilder();
 				for (String member : members) {

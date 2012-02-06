@@ -5,24 +5,24 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.util.config.ConfigurationNode;
+import org.bukkit.configuration.ConfigurationSection;
 
 public class Track {
-	private static HashMap<String, Track> tracks = new HashMap<String, Track>();
+	private static Map<String, Track> tracks = new HashMap<String, Track>();
 
 	private String name;
-	private HashMap<String, String> mapping;
+	private Map<String, String> mapping;
 
-	public Track(String name, ConfigurationNode node) {
+	public Track(String name, ConfigurationSection node) {
 		this.mapping = new HashMap<String, String>();
 		this.name = name;
-		Map<String, Object> tmp = node.getAll();
-		Set<String> keys = tmp.keySet();
-		for (String key : keys) {
-			mapping.put(key.toLowerCase(), ((String) tmp.get(key)).toLowerCase());
+
+		Set<String> groups = node.getKeys(false);
+		for (String group : groups) {
+			mapping.put(group, node.getString(group));
 		}
 	}
-	
+
 	public String getPromoteGroup(String before) {
 		return mapping.get(before.toLowerCase());
 	}

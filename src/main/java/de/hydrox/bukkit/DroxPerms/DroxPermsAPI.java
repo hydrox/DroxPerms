@@ -28,8 +28,8 @@ import org.bukkit.plugin.Plugin;
  * @since 0.1.0
  */
 public class DroxPermsAPI {
-	DroxPerms plugin = null;
-	FakeCommandSender fakeCS = null;
+	private DroxPerms plugin = null;
+	private FakeCommandSender fakeCS = null;
 
 	public DroxPermsAPI(DroxPerms plugin) {
 		this.plugin = plugin;
@@ -75,7 +75,7 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public ArrayList<String> getPlayerSubgroups(String player) {
-		return plugin.dataProvider.getPlayerSubgroups(player);
+		return (ArrayList<String>) plugin.dataProvider.getPlayerSubgroups(player);
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class DroxPermsAPI {
 	 * @since 0.1.0
 	 */
 	public ArrayList<String> getGroupSubgroups(String group) {
-		return plugin.dataProvider.getGroupSubgroups(group);
+		return (ArrayList<String>) plugin.dataProvider.getGroupSubgroups(group);
 	}
 
 	/**

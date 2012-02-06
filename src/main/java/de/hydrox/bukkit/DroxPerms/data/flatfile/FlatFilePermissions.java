@@ -1,18 +1,21 @@
 package de.hydrox.bukkit.DroxPerms.data.flatfile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.config.Configuration;
-import org.bukkit.util.config.ConfigurationNode;
 
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
@@ -26,81 +29,43 @@ public class FlatFilePermissions implements IDataProvider {
 	public static final String NODE = "FlatFile";
 	protected static Plugin plugin = null;
 
-	private Configuration groupsConfig;
-	private Configuration usersConfig;
-	private Configuration tracksConfig;
+	private YamlConfiguration groupsConfig;
+	private YamlConfiguration usersConfig;
+	private YamlConfiguration tracksConfig;
 
 
 	public FlatFilePermissions() {
-		groupsConfig = new Configuration(new File("groupsConfig.yml"));
-		usersConfig = new Configuration(new File("usersConfig.yml"));
-		tracksConfig = new Configuration(new File("tracksConfig.yml"));
+		groupsConfig = YamlConfiguration.loadConfiguration(new File("groups.yml"));
+		usersConfig = YamlConfiguration.loadConfiguration(new File("users.yml"));
+		tracksConfig = YamlConfiguration.loadConfiguration(new File("tracks.yml"));
 	}
 
 	public FlatFilePermissions(Plugin plugin) {
 		FlatFilePermissions.plugin = plugin;
 		// Write some default configuration
 
-		groupsConfig = new Configuration(new File(plugin.getDataFolder(), "groups.yml"));
-		usersConfig = new Configuration(new File(plugin.getDataFolder(), "users.yml"));
-		tracksConfig = new Configuration(new File(plugin.getDataFolder(), "tracks.yml"));
-		if (!new File(plugin.getDataFolder(), "groups.yml").exists()) {
-			plugin.getServer().getLogger().info("[DroxPerms] Generating default groups.yml");
-			HashMap<String,Object> tmp = new HashMap<String,Object>();
-			tmp.put("default", new Group("default").toConfigurationNode());
+		groupsConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "groups.yml"));
+		YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(plugin.getResource("groups.yml"));
+		groupsConfig.setDefaults(defConfig);
+		usersConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "users.yml"));
+		defConfig = YamlConfiguration.loadConfiguration(plugin.getResource("users.yml"));
+		usersConfig.setDefaults(defConfig);
+		tracksConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "tracks.yml"));
 
-			groupsConfig.setProperty("groups", tmp);
-			groupsConfig.save();
-		}
-
-		groupsConfig.load();
-		//		System.out.println(groupsConfig.getKeys().toString());
-		Map<String, ConfigurationNode> groups = groupsConfig.getNodes("groups");
-		Iterator<String> iter = groups.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			plugin.getServer().getLogger().fine("load group: " + key);
-			ConfigurationNode conf = groups.get(key);
-			Group newGroup = new Group(key, conf);
+		Set<String> groups = groupsConfig.getConfigurationSection("groups.").getKeys(false);
+		for (String group : groups) {
+			plugin.getServer().getLogger().fine("load group: " + group);
+			ConfigurationSection conf = groupsConfig.getConfigurationSection("groups." + group);
+			Group newGroup = new Group(group, conf);
 			Group.addGroup(newGroup);
 		}
 
-		if (!new File(plugin.getDataFolder(), "users.yml").exists()) {
-			plugin.getServer().getLogger().info("[DroxPerms] Generating default users.yml");
-			HashMap<String,Object> tmp = new HashMap<String,Object>();
-			usersConfig.setProperty("users", tmp);
-			usersConfig.save();
-		}
-
-		usersConfig.load();
-		//		System.out.println(usersConfig.getKeys().toString());
-		String fileVersion = usersConfig.getString("fileversion");
-		if (fileVersion == null || !fileVersion.equals(plugin.getDescription().getVersion())) {
-			plugin.getServer().getLogger().info("[DroxPerms] users.yml-version to old or unknown. Doing full conversion");
-			usersConfig.setProperty("fileversion", plugin.getDescription().getVersion());
-			Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
-			iter = users.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
-				plugin.getServer().getLogger().fine("load user: " + key);
-				ConfigurationNode conf = users.get(key);
-				User newUser = new User(key, conf);
-				newUser.dirty();
-				User.addUser(newUser);
-			}
-		}
-
-		tracksConfig.load();
-		Map<String, ConfigurationNode> tracks = tracksConfig.getNodes("tracks");
-		if(tracks !=null){
-			iter = tracks.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
-				plugin.getServer().getLogger().fine("load track: " + key);
-				ConfigurationNode conf = tracks.get(key);
-				Track newTrack = new Track(key, conf);
-				Track.addTrack(newTrack);
-			}
+		Set<String> tracks = tracksConfig.getConfigurationSection("tracks.").getKeys(false);
+		for (String track : tracks) {
+			plugin.getServer().getLogger().fine("load track: " + track);
+			ConfigurationSection conf = tracksConfig.getConfigurationSection("tracks." + track);
+			Track newTrack = new Track(track, conf);
+			Track.addTrack(newTrack);
 		}
 	}
 
@@ -110,21 +75,30 @@ public class FlatFilePermissions implements IDataProvider {
 		while (iter.hasNext()) {
 			Group group = iter.next();
 			tmp.put(group.getName().toLowerCase(), group.toConfigurationNode());
+			groupsConfig.createSection("groups." + group.getName(), group.toConfigurationNode());
 		}
 
-		groupsConfig.setProperty("groups", tmp);
-		groupsConfig.save();
+		try {
+			groupsConfig.save(new File(plugin.getDataFolder(),"groups.yml"));
+		} catch (IOException e) {
+			plugin.getLogger().log(Level.SEVERE, "Could not save config to groups.yml", e);
+		}
 
 		tmp = new HashMap<String,Object>();
 		Iterator<User> iter2 = User.iter(); 
 		while (iter2.hasNext()) {
 			User user = iter2.next();
 			if (user.isDirty()) {
-				usersConfig.getNode("users").setProperty(user.getName(), user.toConfigurationNode());
+				usersConfig.createSection("users." + user.getName(), user.toConfigurationNode());
 				user.clean();
 			}
 		}
-		usersConfig.save();
+
+		try {
+			usersConfig.save(new File(plugin.getDataFolder(), "users.yml"));
+		} catch (IOException e) {
+			plugin.getLogger().log(Level.SEVERE, "Could not save config to users.yml", e);
+		}
 	}
 
 	public boolean createPlayer(String name) {
@@ -145,7 +119,7 @@ public class FlatFilePermissions implements IDataProvider {
 		User user = getExactUser(name);
 		if (user != null) {
 			User.removeUser(name);
-			usersConfig.getNode("users").removeProperty(name);
+			usersConfig.set("users." + name, null);
 			sender.sendMessage(ChatColor.GREEN + "Deleted Player " + name + ".");
 			return true;
 		}
@@ -188,10 +162,10 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public ArrayList<String> getPlayerSubgroups(String player) {
+	public List<String> getPlayerSubgroups(String player) {
 		User user = getUser(player, true);
 		if (user != null) {
-			ArrayList<String> result = new ArrayList<String>(user.getSubgroups());
+			List<String> result = new ArrayList<String>(user.getSubgroups());
 			result.add(user.getGroup());
 			result = calculateSubgroups(result);
 			result.remove(user.getGroup());
@@ -201,27 +175,29 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public ArrayList<String> getPlayerSubgroupsSimple(String player) {
+	public List<String> getPlayerSubgroupsSimple(String player) {
 		User user = getUser(player, true);
 		if (user != null) {
-			ArrayList<String> result = new ArrayList<String>(user.getSubgroups());
-			return result;
+			return new ArrayList<String>(user.getSubgroups());
 		} else {
 			return null;
 		}
 	}
 
-	private ArrayList<String> calculateSubgroups(ArrayList<String> input) {
-		ArrayList<String> result = new ArrayList<String>(input);
-		ArrayList<String> toTest = new ArrayList<String>(input);
+	private List<String> calculateSubgroups(List<String> input) {
+		List<String> result = new ArrayList<String>(input);
+		List<String> toTest = new ArrayList<String>(input);
 
 		while (toTest.size()!=0) {
 			String string = toTest.get(0);
-			ArrayList<String> subgroups = Group.getGroup(string).getSubgroups();
-			for (String string2 : subgroups) {
-				if (!result.contains(string2)) {
-					result.add(string2);
-					toTest.add(string2);
+			Group group = Group.getGroup(string);
+			if (group != null) {
+				List<String> subgroups = group.getSubgroups();
+				for (String string2 : subgroups) {
+					if (!result.contains(string2)) {
+						result.add(string2);
+						toTest.add(string2);
+					}
 				}
 			}
 			toTest.remove(string);
@@ -293,7 +269,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public HashMap<String, ArrayList<String>> getPlayerPermissions(String player, String world, boolean partialMatch) {
+	public Map<String, List<String>> getPlayerPermissions(String player, String world, boolean partialMatch) {
 		User user = getUser(player, partialMatch);
 		if (user == null) {
 			if (partialMatch) {
@@ -364,11 +340,10 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public ArrayList<String> getGroupSubgroups(String groupName) {
+	public List<String> getGroupSubgroups(String groupName) {
 		Group group = Group.getGroup(groupName);
 		if (group != null) {
-			ArrayList<String> result = calculateSubgroups(group.getSubgroups());
-			return result;
+			return calculateSubgroups(group.getSubgroups());
 		} else {
 			return null;
 		}
@@ -406,7 +381,7 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public HashMap<String, ArrayList<String>> getGroupPermissions(String groupName, String world) {
+	public Map<String, List<String>> getGroupPermissions(String groupName, String world) {
 		Group group = Group.getGroup(groupName);
 		if (group == null) {
 			return null;
@@ -451,7 +426,7 @@ public class FlatFilePermissions implements IDataProvider {
 			user = User.getUser(name);
 			return user;
 		} else {
-			ConfigurationNode node = usersConfig.getNode("users." + name);
+			ConfigurationSection node = usersConfig.getConfigurationSection("users." + name);
 			if (node != null) {
 				user = new User(name, node);
 				User.addUser(user);
@@ -481,21 +456,21 @@ public class FlatFilePermissions implements IDataProvider {
 					if (user == null) {
 						user = user2;
 					} else {
-						unsureOnline = true;;
+						unsureOnline = true;
 					}
 				}
 			}
 			if (user == null || unsureOnline) {
-				ConfigurationNode node = usersConfig.getNode("users." + name);
+				ConfigurationSection node = usersConfig.getConfigurationSection("users." + name);
 				if (node != null) {
 					user = new User(name, node);
 					User.addUser(user);
 				} else {
-					List<String> users = usersConfig.getNode("users").getKeys();
+					Set<String> users = usersConfig.getConfigurationSection("users.").getKeys(false);
 					for (String potentialUser : users) {
 						if(potentialUser.toLowerCase().contains(name.toLowerCase())) {
 							if (user == null) {
-								node = usersConfig.getNode("users." + potentialUser);
+								node = usersConfig.getConfigurationSection("users." + potentialUser);
 								user = new User(potentialUser, node);
 								User.addUser(user);
 							} else {
@@ -506,8 +481,9 @@ public class FlatFilePermissions implements IDataProvider {
 				}
 			}
 		}
-		if (user == null)
+		if (user == null) {
 			return null;
+		}
 		return user;
 	}
 
@@ -556,19 +532,17 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	@Override
-	public HashMap<String, ArrayList<String>> getGroupMembers() {
-		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+	public Map<String, List<String>> getGroupMembers() {
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		Iterator<Group> groups = Group.iter();
 		while (groups.hasNext()) {
 			Group group = (Group) groups.next();
 			result.put(group.getName(), new ArrayList<String>());
 		}
 
-		Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
-		Iterator<String> iter = users.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			ConfigurationNode conf = users.get(key);
+		Set<String> users = usersConfig.getConfigurationSection("users.").getKeys(false);
+		for (String key : users) {
+			ConfigurationSection conf = usersConfig.getConfigurationSection("users." + key);
 			User user = new User(key, conf);
 			result.get(user.getGroup()).add(user.getName());
 		}
@@ -576,21 +550,19 @@ public class FlatFilePermissions implements IDataProvider {
 	}
 
 	@Override
-	public HashMap<String, ArrayList<String>> getSubgroupMembers() {
-		HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
+	public Map<String, List<String>> getSubgroupMembers() {
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
 		Iterator<Group> groups = Group.iter();
 		while (groups.hasNext()) {
 			Group group = (Group) groups.next();
 			result.put(group.getName(), new ArrayList<String>());
 		}
 
-		Map<String, ConfigurationNode> users = usersConfig.getNodes("users");
-		Iterator<String> iter = users.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			ConfigurationNode conf = users.get(key);
+		Set<String> users = usersConfig.getConfigurationSection("users.").getKeys(false);
+		for (String key : users) {
+			ConfigurationSection conf = usersConfig.getConfigurationSection("users." + key);
 			User user = new User(key, conf);
-			ArrayList<String> subgroups = user.getSubgroups();
+			List<String> subgroups = user.getSubgroups();
 			for (String subgroup : subgroups) {
 				result.get(subgroup).add(user.getName());
 			}

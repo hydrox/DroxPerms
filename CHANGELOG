@@ -1,8 +1,16 @@
-v0.2.2 RB 1240
+v0.3.0 RB 1.1-R3
+* fix NPE while calculating subgroups
+* update Bukkit dependency to 1.1-R3
+* migrate to new Event-system
+* migrate to new Config-system
+* add logging time of last login and quit
+* add modifying TAB-list name via info-node
+
+v0.2.2 RB 1317, 1337, 1597
 * fix /cp remsub group not working
 
-v0.2.1 RB 1240
-* fix /cp new group not telling about success of operation
+v0.2.1 RB 1240, 1317, 1337
+* fix /cg new group not telling about success of operation
 
 v0.2.0 RB 1240
 * add listperms-commands

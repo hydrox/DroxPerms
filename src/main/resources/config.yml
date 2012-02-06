@@ -1,0 +1,6 @@
+DataProvider: FlatFile
+DefaultWorld: world
+SaveInterval: 5
+Mirrors:
+  world: 
+    - world_nether
