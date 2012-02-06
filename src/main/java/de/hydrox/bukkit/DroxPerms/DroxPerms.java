@@ -94,9 +94,25 @@ public class DroxPerms extends JavaPlugin {
 		return API;
 	}
 
+	private String getPrefix(String player) {
+		String prefix = API.getPlayerInfo(player, "display_prefix");
+		if (prefix == null) {
+			String group = API.getPlayerGroup(player);
+			prefix = API.getGroupInfo(group, "display_prefix");
+		}
+		if (prefix != null) {
+			return prefix.replace("&", "\247");
+		}
+		return "";
+	}
 	protected void registerPlayer(Player player) {
 		permissions.remove(player);
 		registerPlayer(player, player.getWorld());
+		String displayName = getPrefix(player.getName()) + player.getDisplayName();
+		if (displayName.length()>16) {
+			displayName = displayName.substring(0, 16);
+		}
+		player.setPlayerListName(displayName);
 	}
 
 	protected void registerPlayer(Player player, World world) {
