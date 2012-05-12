@@ -312,6 +312,31 @@ public interface IDataProvider {
 	 */
 	boolean demotePlayer(CommandSender sender, String player, String track);
 
+	
+	/**
+	 * Sets up a player to be promoted for a specific length of time. 
+	 * @param sender
+	 * @param player player to promote
+	 * @param track track to promote along
+	 * @param time number of seconds to promote for (current unix timestamp + time)
+	 * 
+	 * Should return data on current track and time left if an entry already exists
+	 * e.g. royalty 54000 
+	 * @return true if successful.
+	 */
+	boolean setTimedTrack(CommandSender sender,String player,String track,long time);
+	
+	/**
+	 * Sets up a player to have a subgroup for a specific length of time
+	 * @param sender
+	 * @param player player to add subgroup to
+	 * @param subgroup subgroup to add to
+	 * @param time number of seconds to promote for (current unix timestamp + time)
+	 * @return true if successful.
+	 */
+	boolean addTimedSubgroup(CommandSender sender,String player,String subgroup,long time);
+	
+	
 	Map<String, List<String>> getGroupMembers();
 
 	Map<String, List<String>> getSubgroupMembers();
