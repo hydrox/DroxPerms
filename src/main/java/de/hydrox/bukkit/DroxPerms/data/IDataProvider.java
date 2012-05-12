@@ -312,7 +312,7 @@ public interface IDataProvider {
 	 */
 	boolean demotePlayer(CommandSender sender, String player, String track);
 
-	
+	//Tehbeard Start
 	/**
 	 * Sets up a player to be promoted for a specific length of time. 
 	 * @param sender
@@ -336,7 +336,7 @@ public interface IDataProvider {
 	 */
 	boolean addTimedSubgroup(CommandSender sender,String player,String subgroup,long time);
 	
-	
+	//Tehbeard End
 	Map<String, List<String>> getGroupMembers();
 
 	Map<String, List<String>> getSubgroupMembers();
