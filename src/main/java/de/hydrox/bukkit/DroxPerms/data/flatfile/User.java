@@ -288,10 +288,12 @@ public class User {
         if(Track.existTrack(track) || track == null){
             this.timedTrack = track;
             this.timedTrackExpires = expires;
+            dirty();
             return true;
         }
         return false;
     }
+    
     
     public String getTimedTrack(){
         return this.timedTrack;
@@ -308,8 +310,10 @@ public class User {
         }else{
             this.timedSubgroups.put(subgroup, expires);
         }
+        dirty();
         return true;
     }
+    
     
     public boolean hasTimedSubgroup(String subgroup){
         return this.timedSubgroups.containsKey(subgroup);

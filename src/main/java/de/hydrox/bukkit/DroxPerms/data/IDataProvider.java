@@ -318,7 +318,7 @@ public interface IDataProvider {
 	 * @param sender
 	 * @param player player to promote
 	 * @param track track to promote along
-	 * @param time number of seconds to promote for (current unix timestamp + time)
+	 * @param time number of seconds to promote for
 	 * 
 	 * Should return data on current track and time left if an entry already exists
 	 * e.g. royalty 54000 
@@ -331,7 +331,7 @@ public interface IDataProvider {
 	 * @param sender
 	 * @param player player to add subgroup to
 	 * @param subgroup subgroup to add to
-	 * @param time number of seconds to promote for (current unix timestamp + time)
+	 * @param time number of seconds to promote for
 	 * @return true if successful.
 	 */
 	boolean addTimedSubgroup(CommandSender sender,String player,String subgroup,long time);
