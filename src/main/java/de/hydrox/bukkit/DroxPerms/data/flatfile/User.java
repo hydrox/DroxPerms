@@ -121,7 +121,7 @@ public class User {
 
         if(this.timedTrack !=null){output.put("timedTrack", timedTrack);}
 
-        if(this.timedTrackExpires != 0L){output.put("timedTrackExpires", 0L);}
+        if(this.timedTrackExpires != 0L){output.put("timedTrackExpires", this.timedTrackExpires);}
         if(this.timedSubgroups.size() > 0){
             List<String> sg = new ArrayList<String>();
             for(Entry<String, Long> e : this.timedSubgroups.entrySet()){

@@ -34,6 +34,7 @@ commands:
         /<command> setinfo player node data - sets an info-node for given player
         /<command> unsetinfo player node - unsets an info-node for given player
         /<command> delete player - deletes a player
+        /<command> timed player track time - Promote a player along a track for a specified length of time
   testdroxperms:
     description: Commands to test the correct functioning of DroxPerms methods
     permission: droxperms.test

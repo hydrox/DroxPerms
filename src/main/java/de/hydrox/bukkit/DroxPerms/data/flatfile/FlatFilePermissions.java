@@ -652,7 +652,6 @@ public class FlatFilePermissions implements IDataProvider {
                     Logger.getLogger("DroxPerms").info("Recredit " + player + " " + endedTrack + " " + timeLeft);
                 }
             }
-            //TODO: logging to file
         }
 
         //promote user
