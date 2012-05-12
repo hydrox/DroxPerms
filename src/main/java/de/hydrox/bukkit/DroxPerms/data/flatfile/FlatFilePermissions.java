@@ -2,7 +2,9 @@ package de.hydrox.bukkit.DroxPerms.data.flatfile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +38,9 @@ public class FlatFilePermissions implements IDataProvider {
     private YamlConfiguration usersConfig;
     private YamlConfiguration tracksConfig;
 
+    //Tehbeard start
+    private Logger logger = Logger.getLogger("DroxPerms");
+    //Tehbeard End
 
     public FlatFilePermissions() {
         groupsConfig = YamlConfiguration.loadConfiguration(new File("groups.yml"));
@@ -46,13 +51,17 @@ public class FlatFilePermissions implements IDataProvider {
     public FlatFilePermissions(Plugin plugin)  {
         FlatFilePermissions.plugin = plugin;
         // Write some default configuration
+        
         //Tehbeard Start
         //Add transaction logger
         File f = new File(plugin.getDataFolder(),"transaction.log");
         try {
-            Handler h = new FileHandler(f.toString());
-            Logger.getLogger("DroxPerms").addHandler(h);
-            Logger.getLogger("DroxPerms").setLevel(Level.INFO);
+            Handler handler = new TransactionLogger(f);
+            handler.setLevel(Level.INFO);
+            logger.addHandler(handler);
+            logger.setLevel(Level.INFO);
+            logger.setUseParentHandlers(false);
+            
         } catch (SecurityException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -61,6 +70,7 @@ public class FlatFilePermissions implements IDataProvider {
             e.printStackTrace();
         }
         //Tehbeard End
+        
         groupsConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "groups.yml"));
         YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(plugin.getResource("groups.yml"));
         groupsConfig.setDefaults(defConfig);
@@ -599,22 +609,23 @@ public class FlatFilePermissions implements IDataProvider {
     }
 
     //Tehbeard Start
-    @Override
+    
+    
     public boolean setTimedTrack(CommandSender sender, String player,
             String track, long time) {
         User user = getUser(player,true);
-        if(user == null){ Logger.getLogger("DroxPerms").severe("User not found! " + player);return false;}
-        if(!Track.existTrack(track)){ Logger.getLogger("DroxPerms").severe("No Track found " + track);return false;}
+        if(user == null){ logger.severe("User not found! " + player);return false;}
+        if(!Track.existTrack(track)){ logger.severe("No Track found " + track);return false;}
 
         if(user.getTimedTrack() != null){
-            if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){ Logger.getLogger("DroxPerms").severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
+            if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){ logger.severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
             //check demote->promote
-            if(Track.getTrack(track).getPromoteGroup(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup())) ==null){ Logger.getLogger("DroxPerms").severe("No way to promote player " + player + " along " + track + " from group " + Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()));return false;}
+            if(Track.getTrack(track).getPromoteGroup(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup())) ==null){ logger.severe("No way to promote player " + player + " along " + track + " from group " + Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()));return false;}
         }
         else
         {
             //just check promote
-            if(Track.getTrack(track).getPromoteGroup(user.getGroup()) ==null){ Logger.getLogger("DroxPerms").severe("No way to promote player " + player + " along " + track + " from group " + Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()));return false;}
+            if(Track.getTrack(track).getPromoteGroup(user.getGroup()) ==null){ logger.severe("No way to promote player " + player + " along " + track + " from group " + user.getGroup());return false;}
         }
 
         //if user currently has a timed Track
@@ -625,12 +636,12 @@ public class FlatFilePermissions implements IDataProvider {
                 if(user.setTimedTrack(track,
                         user.getTimedTrackExpires() + time
                         )){
-                    Logger.getLogger("DroxPerms").info("Extended time of player " + player + " on track " + track + " by " + time + "seconds.");
+                    logger.info("Extended time of player " + player + " on track " + track + " by " + time + "seconds.");
                     return true;
                 }
                 else
                 {
-                    Logger.getLogger("DroxPerms").severe("Could not extend time of player " + player + " on track " + track + " by " + time + "seconds.");
+                    logger.severe("Could not extend time of player " + player + " on track " + track + " by " + time + "seconds.");
                     return false;
                 }
             }
@@ -643,34 +654,34 @@ public class FlatFilePermissions implements IDataProvider {
 
                 //demote user
                 if(!user.setGroup(Track.getTrack(endedTrack).getDemoteGroup(user.getGroup()))){
-                    Logger.getLogger("DroxPerms").severe("Could not demote " + player + " from group " + user.getGroup() + " using track " + endedTrack);
+                    logger.severe("Could not demote " + player + " from group " + user.getGroup() + " using track " + endedTrack);
                     return false;
                 }
                 //send recredit message only if demoted
                 if(timeLeft > 0){
                     sender.sendMessage("CREDIT " + endedTrack + " " + timeLeft);
-                    Logger.getLogger("DroxPerms").info("Recredit " + player + " " + endedTrack + " " + timeLeft);
+                    logger.info("Recredit " + player + " " + endedTrack + " " + timeLeft);
                 }
             }
         }
 
         //promote user
         if(!user.setGroup(Track.getTrack(track).getPromoteGroup(user.getGroup()))){
-            Logger.getLogger("DroxPerms").severe("Could not promote " + player + " from group " + user.getGroup() + " using track " + track);
+            logger.severe("Could not promote " + player + " from group " + user.getGroup() + " using track " + track);
             return false;
         }
         else
         {
-            Logger.getLogger("DroxPerms").info(player + " promoted from group " + user.getGroup() + " using track " + track);
+            logger.info(player + " promoted to group " + user.getGroup() + " using track " + track + " for " + time + " seconds, expires " + new SimpleDateFormat().format(new Date(user.getTimedTrackExpires() * 1000L)));
         }
         //set data
         if(user.setTimedTrack(track, (System.currentTimeMillis()/1000L) + time)){
-            Logger.getLogger("DroxPerms").info(player + " updated timed track data");
+            logger.info(player + " updated timed track data");
             return true;
         }
         else
         {
-            Logger.getLogger("DroxPerms").severe("Could not store player track information! " + player + " from group " + user.getGroup() + " using track " + track);
+            logger.severe("Could not store player track information! " + player + " from group " + user.getGroup() + " using track " + track);
             return false;
         }
 

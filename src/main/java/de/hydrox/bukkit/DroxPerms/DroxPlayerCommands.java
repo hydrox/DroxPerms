@@ -249,7 +249,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 		
 		if (split[0].equalsIgnoreCase("timed") && split.length == 4) {
-            Player player = plugin.getServer().getPlayer(split[1]);
+            String player = split[1];
             String track = split[2];
             long time = Long.parseLong(split[3]);
             if (player == null) {
@@ -257,7 +257,7 @@ public class DroxPlayerCommands implements CommandExecutor {
                 return true;
             }
             
-            if(!dp.setTimedTrack(sender, player.getName(), track, time)){
+            if(!dp.setTimedTrack(sender, player, track, time)){
                 sender.sendMessage(ChatColor.RED + "Operation unsuccessful.");
             }
             
