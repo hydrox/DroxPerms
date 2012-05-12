@@ -27,8 +27,8 @@ public class User {
     private boolean dirty;
 
     //Tehbeard Start
-    private String timedGroup;
-    private long timedGroupExpires;
+    private String timedTrack;
+    private long timedTrackExpires;
     private Map<String,Long> timedSubgroups;
     //Tehbeard End
 
@@ -45,8 +45,8 @@ public class User {
         this.dirty = true;
 
         //Tehbeard Start
-        this.timedGroup = null;
-        this.timedGroupExpires = 0L;
+        this.timedTrack = null;
+        this.timedTrackExpires = 0L;
         this.timedSubgroups = new HashMap<String, Long>();
         //Tehbeard End
     }
@@ -72,8 +72,8 @@ public class User {
         }
 
         //Tehbeard Start
-        this.timedGroup = node.getString("timedGroup",null);
-        this.timedGroupExpires = node.getLong("timedGroupExpires", 0L);
+        this.timedTrack = node.getString("timedTrack",null);
+        this.timedTrackExpires = node.getLong("timedTrackExpires", 0L);
         this.timedSubgroups = new HashMap<String, Long>();
         if(node.contains("timedSubgroups")){
             for(String e : node.getStringList("timedSubgroups")){
@@ -119,9 +119,9 @@ public class User {
 
         //Tehbeard Start
 
-        if(this.timedGroup !=null){output.put("timedGroup", timedGroup);}
+        if(this.timedTrack !=null){output.put("timedTrack", timedTrack);}
 
-        if(this.timedGroupExpires != 0L){output.put("timedGroupExpires", 0L);}
+        if(this.timedTrackExpires != 0L){output.put("timedTrackExpires", 0L);}
         if(this.timedSubgroups.size() > 0){
             List<String> sg = new ArrayList<String>();
             for(Entry<String, Long> e : this.timedSubgroups.entrySet()){
@@ -283,6 +283,47 @@ public class User {
         return true;
     }
 
+    //Tehbeard Start
+    public boolean setTimedTrack(String track,long expires){
+        if(Track.existTrack(track) || track == null){
+            this.timedTrack = track;
+            this.timedTrackExpires = expires;
+            return true;
+        }
+        return false;
+    }
+    
+    public String getTimedTrack(){
+        return this.timedTrack;
+    }
+    
+    public long getTimedTrackExpires(){
+        return this.timedTrackExpires;
+    }
+    
+    public boolean setTimedSubgroup(String subgroup,long expires){
+        if(!Group.existGroup(subgroup)){return false;}
+        if(expires <= 0L){
+            this.timedSubgroups.remove(subgroup);
+        }else{
+            this.timedSubgroups.put(subgroup, expires);
+        }
+        return true;
+    }
+    
+    public boolean hasTimedSubgroup(String subgroup){
+        return this.timedSubgroups.containsKey(subgroup);
+    }
+    
+    public long getTimedSubgroupExpires(String subgroup){
+        if(hasTimedSubgroup(subgroup)){
+            return this.timedSubgroups.get(subgroup);
+        }
+        return 0L;
+    }
+    
+    //Tehbeard End
+    
     public String getInfo(String node) {
         if (info == null) {
             return null;

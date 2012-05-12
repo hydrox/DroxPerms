@@ -580,4 +580,22 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 		return null;
 	}
+
+    @Override
+    public boolean setTimedTrack(CommandSender sender, String player,
+            String track, long time) {
+        User user = getUser(player,true);
+        if(user !=null && Track.existTrack(track)){
+            Track.getTrack(track).get
+        }
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean addTimedSubgroup(CommandSender sender, String player,
+            String subgroup, long time) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
