@@ -51,7 +51,7 @@ public class FlatFilePermissions implements IDataProvider {
     public FlatFilePermissions(Plugin plugin)  {
         FlatFilePermissions.plugin = plugin;
         // Write some default configuration
-        
+
         //Tehbeard Start
         //Add transaction logger
         File f = new File(plugin.getDataFolder(),"transaction.log");
@@ -61,7 +61,7 @@ public class FlatFilePermissions implements IDataProvider {
             logger.addHandler(handler);
             logger.setLevel(Level.INFO);
             logger.setUseParentHandlers(false);
-            
+
         } catch (SecurityException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -70,7 +70,7 @@ public class FlatFilePermissions implements IDataProvider {
             e.printStackTrace();
         }
         //Tehbeard End
-        
+
         groupsConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "groups.yml"));
         YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(plugin.getResource("groups.yml"));
         groupsConfig.setDefaults(defConfig);
@@ -609,13 +609,14 @@ public class FlatFilePermissions implements IDataProvider {
     }
 
     //Tehbeard Start
-    
-    
+
+
     public boolean setTimedTrack(CommandSender sender, String player,
             String track, long time) {
         User user = getUser(player,true);
+        logger.info("===BEGIN TIMED TRACK BLOCK===");
         if(user == null){ logger.severe("User not found! " + player);return false;}
-        if(!Track.existTrack(track)){ logger.severe("No Track found " + track);return false;}
+        if(!Track.existTrack(track)){ logger.severe("No Track found! " + track);return false;}
 
         if(user.getTimedTrack() != null){
             if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){ logger.severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
@@ -690,8 +691,41 @@ public class FlatFilePermissions implements IDataProvider {
     @Override
     public boolean addTimedSubgroup(CommandSender sender, String player,
             String subgroup, long time) {
-        // TODO Auto-generated method stub
-        return false;
+        User user = getUser(player,true);
+        logger.info("===BEGIN TIMED SUBGROUP BLOCK===");
+        if(user == null){ logger.severe("User not found! " + player);return false;}
+        if(!Group.existGroup(subgroup)){logger.severe("Group not found! " + subgroup);return false;}
+
+        long t = time;
+        if(user.hasTimedSubgroup(subgroup)){
+            logger.info("Extending " + subgroup + " time by " + time + " seconds for " + player);
+            t+= user.getTimedSubgroupExpires(subgroup);
+        }
+        else
+        {
+            t+= (System.currentTimeMillis() / 1000L);
+        }
+
+        if(!user.getSubgroups().contains(subgroup)){
+            if(!user.addSubgroup(subgroup)){
+                logger.severe("Could not add subgroup " + subgroup + " to " + player);
+                return false;
+            }
+        }
+        
+        if(user.setTimedSubgroup(subgroup, t)){
+            
+            logger.info("Updated timed subgroup information for " + player + " " + subgroup + " " + time + " seconds.");
+            return true;
+        }
+        else
+        {
+            logger.severe("Could not update information for " + player + " " + subgroup + " " + time + " seconds.");
+            return false;
+        }
     }
+
+
+
     //Tehbeard End
 }

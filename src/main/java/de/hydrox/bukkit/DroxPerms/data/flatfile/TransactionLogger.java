@@ -10,6 +10,11 @@ import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
+/**
+ * Logs transactions of timed tracks and subgroups
+ * @author James
+ *
+ */
 public class TransactionLogger extends Handler {
 
     BufferedWriter bw;
