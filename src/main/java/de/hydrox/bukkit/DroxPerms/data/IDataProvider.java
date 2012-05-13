@@ -336,6 +336,39 @@ public interface IDataProvider {
 	 */
 	boolean addTimedSubgroup(CommandSender sender,String player,String subgroup,long time);
 	
+	
+	/**
+	 * Return track player is on
+	 * @param sender
+	 * @param player
+	 * @return
+	 */
+	String getTimedTrack(CommandSender sender,String player);
+	
+	/**
+	 * Return timestamp of them track expires
+	 * @param sender
+	 * @param player
+	 * @return
+	 */
+	long getTimedTrackExpires(CommandSender sender,String player);
+	
+	/**
+	 * return map of subgroup/expires
+	 * @param sender
+	 * @param player
+	 * @return
+	 */
+	Map<String,Long> getTimedSubgroups(CommandSender sender,String player);
+	
+	/**
+	 * Process player and demote as nessecary
+	 * @param sender
+	 * @param player player to process
+	 * @return 
+	 */
+	boolean processTimes(CommandSender sender,String player);
+	
 	//Tehbeard End
 	Map<String, List<String>> getGroupMembers();
 

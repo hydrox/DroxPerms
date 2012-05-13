@@ -285,7 +285,7 @@ public class User {
 
     //Tehbeard Start
     public boolean setTimedTrack(String track,long expires){
-        if(Track.existTrack(track) || track == null){
+        if(track == null || Track.existTrack(track)){
             this.timedTrack = track;
             this.timedTrackExpires = expires;
             dirty();
@@ -324,6 +324,10 @@ public class User {
             return this.timedSubgroups.get(subgroup);
         }
         return 0L;
+    }
+    
+    public Map<String,Long> getTimedSubgroups(){
+        return this.timedSubgroups;
     }
     
     //Tehbeard End

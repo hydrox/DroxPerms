@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -673,7 +674,7 @@ public class FlatFilePermissions implements IDataProvider {
         }
         else
         {
-            logger.info(player + " promoted to group " + user.getGroup() + " using track " + track + " for " + time + " seconds, expires " + new SimpleDateFormat().format(new Date(user.getTimedTrackExpires() * 1000L)));
+            logger.info(player + " promoted to group " + user.getGroup() + " using track " + track + " for " + time + " seconds, expires " + new SimpleDateFormat().format(new Date(System.currentTimeMillis() + (time * 1000L))));
         }
         //set data
         if(user.setTimedTrack(track, (System.currentTimeMillis()/1000L) + time)){
@@ -716,13 +717,92 @@ public class FlatFilePermissions implements IDataProvider {
         if(user.setTimedSubgroup(subgroup, t)){
             
             logger.info("Updated timed subgroup information for " + player + " " + subgroup + " " + time + " seconds.");
+            sender.sendMessage("SUCCESS");
             return true;
         }
         else
         {
             logger.severe("Could not update information for " + player + " " + subgroup + " " + time + " seconds.");
+            sender.sendMessage("ERROR");
             return false;
         }
+    }
+
+    @Override
+    public String getTimedTrack(CommandSender sender, String player) {
+        User user = getUser(player,true);
+        if(user==null){return null;}
+        return user.getTimedTrack();
+    }
+
+    @Override
+    public long getTimedTrackExpires(CommandSender sender, String player) {
+        User user = getUser(player,true);
+        if(user==null){return 0L;}
+        return user.getTimedTrackExpires();
+    }
+
+    @Override
+    public Map<String, Long> getTimedSubgroups(CommandSender sender,
+            String player) {
+        User user = getUser(player,true);
+        if(user==null){return null;}
+        
+        return user.getTimedSubgroups();
+    }
+
+    @Override
+    public boolean processTimes(CommandSender sender, String player) {
+        
+        //check track
+        User user = getUser(player,true);
+        if(user==null){return false;}
+        String track = user.getTimedTrack();
+        if(track != null){
+            long expires = user.getTimedTrackExpires();
+            long time = System.currentTimeMillis() / 1000L;
+            if(time > expires){
+                logger.info("===BEGIN DEMOTE TRACK BLOCK===");
+                if(!Track.existTrack(track)){logger.severe("Could not demote, track " + track + " not found for " + player);return false;}
+                
+                String demoteTo = Track.getTrack(track).getDemoteGroup(user.getGroup());
+                
+                if(demoteTo == null){logger.severe("Could not demote " + player + ", no demote path for " + user.getGroup());return  false;}
+                
+                if(!user.setGroup(demoteTo)){logger.severe("Could not demote " + player + " to group " + demoteTo);return false;}
+                
+                if(user.setTimedTrack(null, 0L)){
+                    logger.info("Track data reset for " + player);
+                }
+                else
+                {
+                    logger.severe("Player " + player + " demoted, but could not update track data!");
+                    return false;
+                }
+            }
+        }
+        boolean res = true;
+        //check subgroup
+        Iterator<Entry<String, Long>> it = user.getTimedSubgroups().entrySet().iterator();
+        while(it.hasNext()){
+            Entry<String, Long> e = it.next();
+            String sg = e.getKey();
+            long expires = e.getValue();
+            long time = System.currentTimeMillis() / 1000L;
+            if(time > expires){
+                logger.info(sg + " expired for " + player);
+                
+                if(!user.removeSubgroup(sg)){
+                    logger.severe("Could not remove subgroup " + sg + " for " + player);
+                    res = false;
+                }
+                
+                it.remove();
+            }
+        }
+        
+        
+        return res;
     }
 
 

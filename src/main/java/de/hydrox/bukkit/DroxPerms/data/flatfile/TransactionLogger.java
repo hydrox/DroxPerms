@@ -31,6 +31,7 @@ public class TransactionLogger extends Handler {
         rec += record.getMessage();
         try {
             bw.write(rec + "\n");
+            flush();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

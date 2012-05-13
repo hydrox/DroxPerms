@@ -399,6 +399,10 @@ public class DroxPermsAPI {
 	public void save() {
 		plugin.dataProvider.save();
 	}
+
+    public boolean processTimes(String name) {
+        return plugin.dataProvider.processTimes(fakeCS, name);
+    }
 }
 
 class FakeCommandSender implements CommandSender {
