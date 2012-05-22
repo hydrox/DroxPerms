@@ -1,6 +1,7 @@
 package de.hydrox.bukkit.DroxPerms;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Server;
@@ -400,9 +401,75 @@ public class DroxPermsAPI {
 		plugin.dataProvider.save();
 	}
 
+	
+	//Tehbeard Start
+    /**
+     * Sets up a player to be promoted for a specific length of time. 
+     * @param sender
+     * @param player player to promote
+     * @param track track to promote along
+     * @param time number of seconds to promote for
+     * 
+     * Should return data on current track and time left if an entry already exists
+     * e.g. royalty 54000 
+     * @return true if successful.
+     */
+    boolean setTimedTrack(CommandSender sender,String player,String track,long time){
+        return plugin.dataProvider.setTimedTrack(fakeCS, player, track, time);
+    }
+    
+    /**
+     * Sets up a player to have a subgroup for a specific length of time
+     * @param sender
+     * @param player player to add subgroup to
+     * @param subgroup subgroup to add to
+     * @param time number of seconds to promote for
+     * @return true if successful.
+     */
+    boolean addTimedSubgroup(CommandSender sender,String player,String subgroup,long time){
+        return plugin.dataProvider.addTimedSubgroup(fakeCS, player,subgroup,time);
+    }
+    
+    
+    /**
+     * Return track player is on
+     * @param sender
+     * @param player
+     * @return
+     */
+    String getTimedTrack(CommandSender sender,String player){
+        return plugin.dataProvider.getTimedTrack(fakeCS, player);
+    }
+    
+    /**
+     * Return timestamp of them track expires
+     * @param sender
+     * @param player
+     * @return
+     */
+    long getTimedTrackExpires(CommandSender sender,String player){
+        return plugin.dataProvider.getTimedTrackExpires(fakeCS, player);
+    }
+    
+    /**
+     * return map of subgroup/expires
+     * @param sender
+     * @param player
+     * @return
+     */
+    Map<String,Long> getTimedSubgroups(CommandSender sender,String player){
+        return plugin.dataProvider.getTimedSubgroups(fakeCS, player);
+    }
+    
+    /**
+     * Process player and demote as nessecary
+     * @param player player to process
+     * @return 
+     */
     public boolean processTimes(String name) {
         return plugin.dataProvider.processTimes(fakeCS, name);
     }
+  //Tehbeard End
 }
 
 class FakeCommandSender implements CommandSender {

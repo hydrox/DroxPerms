@@ -251,63 +251,7 @@ public class DroxPlayerCommands implements CommandExecutor {
             }
         }
 
-        if (split[0].equalsIgnoreCase("timed") && split.length == 4) {
-            String player = split[1];
-            String track = split[2];
-            long time = Long.parseLong(split[3]);
-            if (player == null) {
-                sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique username given or player not online?");
-                return true;
-            }
-
-            if(!dp.setTimedTrack(sender, player, track, time)){
-                sender.sendMessage(ChatColor.RED + "Operation unsuccessful.");
-            }
-
-        }
-
-        if (split[0].equalsIgnoreCase("timedsub") && split.length == 4) {
-            String player = split[1];
-            String subgroup = split[2];
-            long time = Long.parseLong(split[3]);
-            if (player == null) {
-                sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique username given or player not online?");
-                return true;
-            }
-
-            if(!dp.addTimedSubgroup(sender, player, subgroup, time)){
-                sender.sendMessage(ChatColor.RED + "Operation unsuccessful.");
-            }
-
-        }
-
-        if (split[0].equalsIgnoreCase("timedinfo") && split.length == 2) {
-            String player = split[1];
-            String track = dp.getTimedTrack(sender, player);
-            long expires = dp.getTimedTrackExpires(sender, player);
-
-            Map<String,Long> sg = dp.getTimedSubgroups(sender, player);
-            if(sg==null){sender.sendMessage(ChatColor.RED + "Operation unsuccessful");}
-
-            if(track !=null){
-                sender.sendMessage("TRACK " + track + " " + expires + " expires: " + new SimpleDateFormat().format(new Date(expires * 1000L)));
-            }
-
-            for(Entry<String,Long> e : sg.entrySet()){
-                sender.sendMessage("SUBGROUP " + e.getKey() + " " + e.getValue() + " expires " + new SimpleDateFormat().format(new Date(e.getValue() * 1000L)));
-            }
-            
-
-        }
-
-        if (split[0].equalsIgnoreCase("checktimed") && split.length == 2) {
-            String player = split[1];
-            if(!dp.processTimes(sender, player)){
-                sender.sendMessage(ChatColor.RED + "Operation unsuccessful");
-            }
-            
-            return true;
-        }
+        
         
        
         return true;
