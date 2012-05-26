@@ -16,11 +16,9 @@ import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 public class DroxTimedCommands implements CommandExecutor {
 
     private DroxPerms plugin;
-    private IDataProvider dp;
 
     public DroxTimedCommands(DroxPerms plugin) {
         this.plugin = plugin;
-        dp = plugin.dataProvider;
     }
     
     @Override
@@ -30,6 +28,9 @@ public class DroxTimedCommands implements CommandExecutor {
             sender.sendMessage("You don't have permission to modify timed data.");
             return true;
         }
+        
+        if(args.length == 0 ){return true;}
+        
         //Promote user along a track
         if (args[0].equalsIgnoreCase("promote") && args.length == 4) {
             String player = args[1];
@@ -42,7 +43,8 @@ public class DroxTimedCommands implements CommandExecutor {
                 return true;
             }
 
-            if(!dp.setTimedTrack(sender, player, track, time)){
+            if(plugin.dataProvider==null){sender.sendMessage("NULL DP");}
+            if(!plugin.dataProvider.setTimedTrack(sender, player, track, time)){
                 sender.sendMessage(ChatColor.RED + "Operation unsuccessful.");
             }
 
@@ -60,7 +62,7 @@ public class DroxTimedCommands implements CommandExecutor {
                 return true;
             }
 
-            if(!dp.addTimedSubgroup(sender, player, subgroup, time)){
+            if(!plugin.dataProvider.addTimedSubgroup(sender, player, subgroup, time)){
                 sender.sendMessage(ChatColor.RED + "Operation unsuccessful.");
             }
 
@@ -69,10 +71,10 @@ public class DroxTimedCommands implements CommandExecutor {
         //
         if (args[0].equalsIgnoreCase("info") && args.length == 2) {
             String player = args[1];
-            String track = dp.getTimedTrack(sender, player);
-            long expires = dp.getTimedTrackExpires(sender, player);
+            String track = plugin.dataProvider.getTimedTrack(sender, player);
+            long expires = plugin.dataProvider.getTimedTrackExpires(sender, player);
 
-            Map<String,Long> sg = dp.getTimedSubgroups(sender, player);
+            Map<String,Long> sg = plugin.dataProvider.getTimedSubgroups(sender, player);
             if(sg==null){sender.sendMessage(ChatColor.RED + "Operation unsuccessful");}
 
             if(track !=null){
@@ -89,7 +91,7 @@ public class DroxTimedCommands implements CommandExecutor {
         //process player times and demote as nessecary
         if (args[0].equalsIgnoreCase("checktimed") && args.length == 2) {
             String player = args[1];
-            if(!dp.processTimes(sender, player)){
+            if(!plugin.dataProvider.processTimes(sender, player)){
                 sender.sendMessage(ChatColor.RED + "Operation unsuccessful");
             }
             

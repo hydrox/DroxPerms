@@ -617,7 +617,7 @@ public class FlatFilePermissions implements IDataProvider {
         User user = getUser(player,true);
         logger.info("===BEGIN TIMED TRACK BLOCK===");
         if(user == null){ logger.severe("User not found! " + player);return false;}
-        if(!Track.existTrack(track)){ logger.severe("No Track found! " + track);return false;}
+        if(!Track.existTrack(track)){ logger.severe("No Track found! " + track + " when promoting " + player);return false;}
 
         if(user.getTimedTrack() != null){
             if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){ logger.severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
