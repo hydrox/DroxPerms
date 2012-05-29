@@ -1,5 +1,6 @@
 package de.hydrox.bukkit.DroxPerms;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,8 @@ public class DroxPerms extends JavaPlugin {
 	private DroxStatsCommands statsCommandExecutor = new DroxStatsCommands(this);
 	private Map<Player, Map<String, PermissionAttachment>> permissions = new HashMap<Player, Map<String, PermissionAttachment>>();
 	private DroxPermsAPI API = null;
+
+	private Metrics metrics = null;
 
 	private Runnable commiter;
 	private ScheduledThreadPoolExecutor scheduler;
@@ -88,6 +91,14 @@ public class DroxPerms extends JavaPlugin {
 		enableScheduler();
 
 		logger.info("[DroxPerms] Plugin activated in " + (System.currentTimeMillis() - time) + "ms.");
+
+        // Load up the Plugin metrics
+		try {
+			metrics = new Metrics(this);
+			metrics.start();
+		} catch (IOException e) {
+			// Failed to submit the stats :-(
+		}
 	}
 
 	public DroxPermsAPI getAPI() {
