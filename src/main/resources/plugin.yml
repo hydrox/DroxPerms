@@ -2,7 +2,7 @@ name: DroxPerms
 main: de.hydrox.bukkit.DroxPerms.DroxPerms
 author: Matthias Soehnholz
 website: https://github.com/hydrox/DroxPerms
-version: ${project.version}
+version: ${project.version} (${project.version_suffix})
 commands:
   changegroup:
     aliases: [cg]
