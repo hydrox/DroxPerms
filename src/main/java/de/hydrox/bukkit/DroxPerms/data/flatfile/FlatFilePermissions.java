@@ -663,7 +663,7 @@ public class FlatFilePermissions implements IDataProvider {
                 }
                 //send recredit message only if demoted
                 if(timeLeft > 0){
-                    sender.sendMessage("CREDIT " + endedTrack + " " + timeLeft);
+                    sender.sendMessage("CREDIT " + endedTrack + " " + (timeLeft/86400));
                     logger.info("Recredit " + player + " " + endedTrack + " " + timeLeft);
                 }
             }
@@ -819,7 +819,7 @@ public class FlatFilePermissions implements IDataProvider {
             logger.info("===BEGIN CANCEL TRACK BLOCK===");
             if(user.getTimedTrack()==null){logger.severe("Could not cancel for " + player + ", does not have a group active");return false;}
             
-            if(user.getTimedTrackExpires() < (System.currentTimeMillis() / 1000L)){
+            if(user.getTimedTrackExpires() > (System.currentTimeMillis() / 1000L)){
                 recredit = user.getTimedTrackExpires() - (System.currentTimeMillis() / 1000L);
             }
             group = user.getTimedTrack();
@@ -843,7 +843,7 @@ public class FlatFilePermissions implements IDataProvider {
             logger.info("===BEGIN CANCEL SUBGROUP BLOCK===");
             if(user.getTimedSubgroupExpires(group) == 0L){logger.severe("subgroup " + group + " not active for " + player);return false;}
             
-            if(user.getTimedSubgroupExpires(group) < (System.currentTimeMillis() / 1000L)){
+            if(user.getTimedSubgroupExpires(group) > (System.currentTimeMillis() / 1000L)){
                 recredit = user.getTimedSubgroupExpires(group) - (System.currentTimeMillis() / 1000L);
             }
             
@@ -859,7 +859,7 @@ public class FlatFilePermissions implements IDataProvider {
         }
         
         if(recredit > 0){
-            sender.sendMessage("CREDIT " + group + " " + recredit);
+            sender.sendMessage("CREDIT " + group + " " + (recredit/86400));
         }
         
         return true;
