@@ -369,6 +369,16 @@ public interface IDataProvider {
 	 */
 	boolean processTimes(CommandSender sender,String player);
 	
+	
+	/**
+	 * Cancels a timed track or subgroup
+	 * @param sender
+	 * @param player player to process
+	 * @param group subgroup to cancel, use null to indicate track
+	 * @return
+	 */
+	boolean cancelTimed(CommandSender sender,String player,String group);
+	
 	//Tehbeard End
 	Map<String, List<String>> getGroupMembers();
 

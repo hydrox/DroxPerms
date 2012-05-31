@@ -43,6 +43,8 @@ commands:
         /<command> addsub player subgroup time - Give a player a subgroup for a specified length of time
         /<command> info player - Display info on a players timed track/subgroup
         /<command> checktimed player - Check and demote players as nessecary
+        /<command> canceltrack player - Cancel's players current track
+        /<command> cancelsub player subgroup - Cancel's players subgroup
   testdroxperms:
     description: Commands to test the correct functioning of DroxPerms methods
     permission: droxperms.test

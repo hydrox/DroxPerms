@@ -11,7 +11,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
 public class DroxTimedCommands implements CommandExecutor {
 
@@ -29,7 +28,7 @@ public class DroxTimedCommands implements CommandExecutor {
             return true;
         }
         
-        if(args.length == 0 ){return true;}
+        if(args.length == 0 ){return false;}
         
         //Promote user along a track
         if (args[0].equalsIgnoreCase("promote") && args.length == 4) {
@@ -37,7 +36,7 @@ public class DroxTimedCommands implements CommandExecutor {
             String track = args[2];
             if(!isModifySelf(sender,player)){sender.sendMessage("Cannot modify self");return true;}
             
-            long time = Long.parseLong(args[3]);
+            long time = timeString(args[3]);
             if (player == null) {
                 sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique username given or player not online?");
                 return true;
@@ -56,7 +55,7 @@ public class DroxTimedCommands implements CommandExecutor {
             String subgroup = args[2];
             if(!isModifySelf(sender,player)){sender.sendMessage("Cannot modify self");return true;}
             
-            long time = Long.parseLong(args[3]);
+            long time = timeString(args[3]);
             if (player == null) {
                 sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique username given or player not online?");
                 return true;
@@ -97,6 +96,25 @@ public class DroxTimedCommands implements CommandExecutor {
             
             return true;
         }
+        
+        if(args[0].equalsIgnoreCase("canceltrack")){
+            String player = args[1];
+            if(!plugin.dataProvider.cancelTimed(sender, player,null)){
+                sender.sendMessage(ChatColor.RED + "Operation unsuccessful");
+            }
+            
+            return true;
+        }
+        
+        if(args[0].equalsIgnoreCase("cancelsub")){
+            String player = args[1];
+            String subgroup = args[2];
+            if(!plugin.dataProvider.cancelTimed(sender, player,subgroup)){
+                sender.sendMessage(ChatColor.RED + "Operation unsuccessful");
+            }
+            
+            return true;
+        }
 
         return true;
     }
@@ -111,5 +129,27 @@ public class DroxTimedCommands implements CommandExecutor {
         return sender instanceof Player ? ((Player)sender).getName().equals(name) ? ((Player)sender).hasPermission("droxperms.players.self") : true : true;
         
         
+    }
+    
+    private long timeString(String time){
+        long t = 0L;
+        String current = "";
+        for(char c : time.toLowerCase().toCharArray()){
+            if(c >= '0' && c <= '9'){
+                current += c;
+            }
+            
+            switch(c){
+            case 's': t += Long.parseLong(current);current="";break;
+            case 'm': t += 60*Long.parseLong(current);current="";break;
+            case 'h': t += 3600*Long.parseLong(current);current="";break;
+            case 'd': t += 86400*Long.parseLong(current);current="";break;
+            
+            }
+        }
+        if(current.length() > 0){
+            t += Long.parseLong(current);current="";
+        }
+        return t;
     }
 }

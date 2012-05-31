@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -616,18 +615,18 @@ public class FlatFilePermissions implements IDataProvider {
             String track, long time) {
         User user = getUser(player,true);
         logger.info("===BEGIN TIMED TRACK BLOCK===");
-        if(user == null){ logger.severe("User not found! " + player);return false;}
-        if(!Track.existTrack(track)){ logger.severe("No Track found! " + track + " when promoting " + player);return false;}
+        if(user == null){ sender.sendMessage("failed USER_NOT_FOUND"); logger.severe("User not found! " + player);return false;}
+        if(!Track.existTrack(track)){ sender.sendMessage("failed TRACK_NOT_FOUND"); logger.severe("No Track found! " + track + " when promoting " + player);return false;}
 
         if(user.getTimedTrack() != null){
-            if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){ logger.severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
+            if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){sender.sendMessage("failed CANT_DEMOTE"); logger.severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
             //check demote->promote
-            if(Track.getTrack(track).getPromoteGroup(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup())) ==null){ logger.severe("No way to promote player " + player + " along " + track + " from group " + Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()));return false;}
+            if(Track.getTrack(track).getPromoteGroup(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup())) ==null){sender.sendMessage("failed CANT_USE_TRACK"); logger.severe("No way to promote player " + player + " along " + track + " from group " + Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()));return false;}
         }
         else
         {
             //just check promote
-            if(Track.getTrack(track).getPromoteGroup(user.getGroup()) ==null){ logger.severe("No way to promote player " + player + " along " + track + " from group " + user.getGroup());return false;}
+            if(Track.getTrack(track).getPromoteGroup(user.getGroup()) ==null){ sender.sendMessage("failed CANT_USE_TRACK");logger.severe("No way to promote player " + player + " along " + track + " from group " + user.getGroup());return false;}
         }
 
         //if user currently has a timed Track
@@ -639,11 +638,13 @@ public class FlatFilePermissions implements IDataProvider {
                         user.getTimedTrackExpires() + time
                         )){
                     logger.info("Extended time of player " + player + " on track " + track + " by " + time + "seconds.");
+                    sender.sendMessage("success");
                     return true;
                 }
                 else
                 {
                     logger.severe("Could not extend time of player " + player + " on track " + track + " by " + time + "seconds.");
+                    sender.sendMessage("failed");
                     return false;
                 }
             }
@@ -656,6 +657,7 @@ public class FlatFilePermissions implements IDataProvider {
 
                 //demote user
                 if(!user.setGroup(Track.getTrack(endedTrack).getDemoteGroup(user.getGroup()))){
+                    sender.sendMessage("failed COULD_NOT_DEMOTE");
                     logger.severe("Could not demote " + player + " from group " + user.getGroup() + " using track " + endedTrack);
                     return false;
                 }
@@ -669,6 +671,7 @@ public class FlatFilePermissions implements IDataProvider {
 
         //promote user
         if(!user.setGroup(Track.getTrack(track).getPromoteGroup(user.getGroup()))){
+            sender.sendMessage("failed COULD_NOT_PROMOTE");
             logger.severe("Could not promote " + player + " from group " + user.getGroup() + " using track " + track);
             return false;
         }
@@ -678,11 +681,13 @@ public class FlatFilePermissions implements IDataProvider {
         }
         //set data
         if(user.setTimedTrack(track, (System.currentTimeMillis()/1000L) + time)){
+            sender.sendMessage("success");
             logger.info(player + " updated timed track data");
             return true;
         }
         else
         {
+            sender.sendMessage("failed COULD_NOT_STORE");
             logger.severe("Could not store player track information! " + player + " from group " + user.getGroup() + " using track " + track);
             return false;
         }
@@ -805,6 +810,60 @@ public class FlatFilePermissions implements IDataProvider {
         return res;
     }
 
+    public boolean cancelTimed(CommandSender sender,String player,String group){
+        User user = getUser(player,true);
+        long recredit = 0;
+        if(user==null){logger.severe("Could not cancel for user " + player + ", not found");return false;}
+        
+        if(group == null){
+            logger.info("===BEGIN CANCEL TRACK BLOCK===");
+            if(user.getTimedTrack()==null){logger.severe("Could not cancel for " + player + ", does not have a group active");return false;}
+            
+            if(user.getTimedTrackExpires() < (System.currentTimeMillis() / 1000L)){
+                recredit = user.getTimedTrackExpires() - (System.currentTimeMillis() / 1000L);
+            }
+            group = user.getTimedTrack();
+            
+            if(!Track.existTrack(group)){logger.severe("Cannot find track " + group);return false;}
+            if(Track.getTrack(group).getDemoteGroup(user.getGroup()) == null){logger.severe("Cannot find a demote path for track " + group + " group " + user.getGroup());return false;}
+            
+            if(!user.setGroup(Track.getTrack(group).getDemoteGroup(user.getGroup()))){
+                logger.severe("Error occured while demoting " + player + " on track " + group + " from " + user.getGroup());
+                return false;
+            }
+            else{
+            user.setTimedTrack(null, 0L);
+            logger.info("Cancelled track, recredit " + group + " "  + recredit + " to " + player);
+
+            }
+            
+        }
+        else
+        {
+            logger.info("===BEGIN CANCEL SUBGROUP BLOCK===");
+            if(user.getTimedSubgroupExpires(group) == 0L){logger.severe("subgroup " + group + " not active for " + player);return false;}
+            
+            if(user.getTimedSubgroupExpires(group) < (System.currentTimeMillis() / 1000L)){
+                recredit = user.getTimedSubgroupExpires(group) - (System.currentTimeMillis() / 1000L);
+            }
+            
+            if(!user.removeSubgroup(group)){
+                logger.severe("Could not remove subgroup " + group + " from " + player);
+                return false;
+            }
+            else
+            {
+                user.setTimedSubgroup(group, 0L);
+                logger.info("Cancelled subgroup, recredit " + group + " "  + recredit + " to " + player);
+            }
+        }
+        
+        if(recredit > 0){
+            sender.sendMessage("CREDIT " + group + " " + recredit);
+        }
+        
+        return true;
+    }
 
 
     //Tehbeard End
