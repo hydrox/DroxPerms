@@ -532,6 +532,9 @@ class FakeCommandSender implements CommandSender {
 	public void sendMessage(String arg0) {
 	}
 
+	public void sendMessage(String[] arg0) {
+	}
+
 	public String getName() {
 		return null;
 	}

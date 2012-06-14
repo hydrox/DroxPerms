@@ -548,6 +548,9 @@ class FakeCommandSender implements CommandSender {
 		Logger.getLogger("Minecraft").info("[DroxPerms] TestSuite: "+arg0);
 	}
 
+	public void sendMessage(String[] arg0) {
+	}
+
 	public String getName() {
 		return null;
 	}
