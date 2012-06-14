@@ -615,18 +615,19 @@ public class FlatFilePermissions implements IDataProvider {
             String track, long time) {
         User user = getUser(player,true);
         logger.info("===BEGIN TIMED TRACK BLOCK===");
-        if(user == null){ sender.sendMessage("failed USER_NOT_FOUND"); logger.severe("User not found! " + player);return false;}
-        if(!Track.existTrack(track)){ sender.sendMessage("failed TRACK_NOT_FOUND"); logger.severe("No Track found! " + track + " when promoting " + player);return false;}
+        if(user == null){ sender.sendMessage("USER_NOT_FOUND"); logger.severe("User not found! " + player);return false;}
+        if(!Track.existTrack(track)){ sender.sendMessage("TRACK_NOT_FOUND"); logger.severe("No Track found! " + track + " when promoting " + player);return false;}
 
         if(user.getTimedTrack() != null){
-            if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){sender.sendMessage("failed CANT_DEMOTE"); logger.severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
+            if(!Track.existTrack(user.getTimedTrack())){sender.sendMessage("ON_BAD_TRACK");logger.severe(player + " on bad track " + user.getTimedTrack());return false;}
+            if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){sender.sendMessage("CANT_DEMOTE"); logger.severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
             //check demote->promote
-            if(Track.getTrack(track).getPromoteGroup(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup())) ==null){sender.sendMessage("failed CANT_USE_TRACK"); logger.severe("No way to promote player " + player + " along " + track + " from group " + Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()));return false;}
+            if(Track.getTrack(track).getPromoteGroup(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup())) ==null){sender.sendMessage("CANT_USE_TRACK"); logger.severe("No way to promote player " + player + " along " + track + " from group " + Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()));return false;}
         }
         else
         {
             //just check promote
-            if(Track.getTrack(track).getPromoteGroup(user.getGroup()) ==null){ sender.sendMessage("failed CANT_USE_TRACK");logger.severe("No way to promote player " + player + " along " + track + " from group " + user.getGroup());return false;}
+            if(Track.getTrack(track).getPromoteGroup(user.getGroup()) ==null){ sender.sendMessage("CANT_PROMOTE");logger.severe("No way to promote player " + player + " along " + track + " from group " + user.getGroup());return false;}
         }
 
         //if user currently has a timed Track
@@ -638,13 +639,13 @@ public class FlatFilePermissions implements IDataProvider {
                         user.getTimedTrackExpires() + time
                         )){
                     logger.info("Extended time of player " + player + " on track " + track + " by " + time + "seconds.");
-                    sender.sendMessage("success");
+                    sender.sendMessage("SUCCESS");
                     return true;
                 }
                 else
                 {
                     logger.severe("Could not extend time of player " + player + " on track " + track + " by " + time + "seconds.");
-                    sender.sendMessage("failed");
+                    sender.sendMessage("CANT_EXTEND_TIME");
                     return false;
                 }
             }
@@ -657,7 +658,7 @@ public class FlatFilePermissions implements IDataProvider {
 
                 //demote user
                 if(!user.setGroup(Track.getTrack(endedTrack).getDemoteGroup(user.getGroup()))){
-                    sender.sendMessage("failed COULD_NOT_DEMOTE");
+                    sender.sendMessage("COULD_NOT_DEMOTE");
                     logger.severe("Could not demote " + player + " from group " + user.getGroup() + " using track " + endedTrack);
                     return false;
                 }
@@ -671,7 +672,7 @@ public class FlatFilePermissions implements IDataProvider {
 
         //promote user
         if(!user.setGroup(Track.getTrack(track).getPromoteGroup(user.getGroup()))){
-            sender.sendMessage("failed COULD_NOT_PROMOTE");
+            sender.sendMessage("COULD_NOT_PROMOTE");
             logger.severe("Could not promote " + player + " from group " + user.getGroup() + " using track " + track);
             return false;
         }
@@ -681,13 +682,13 @@ public class FlatFilePermissions implements IDataProvider {
         }
         //set data
         if(user.setTimedTrack(track, (System.currentTimeMillis()/1000L) + time)){
-            sender.sendMessage("success");
+            sender.sendMessage("SUCCESS");
             logger.info(player + " updated timed track data");
             return true;
         }
         else
         {
-            sender.sendMessage("failed COULD_NOT_STORE");
+            sender.sendMessage("COULD_NOT_STORE");
             logger.severe("Could not store player track information! " + player + " from group " + user.getGroup() + " using track " + track);
             return false;
         }
