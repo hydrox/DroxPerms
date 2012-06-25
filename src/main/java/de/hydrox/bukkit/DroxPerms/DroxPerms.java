@@ -52,7 +52,7 @@ public class DroxPerms extends JavaPlugin {
 		disableScheduler();
 
 		// Safe data
-		logger.info("[DroxPerms] safe configs");
+		logger.info("[DroxPerms] save configs");
 		dataProvider.save();
 		logger.info("[DroxPerms] Plugin unloaded in " + (System.currentTimeMillis() - time) + "ms.");
 	}
