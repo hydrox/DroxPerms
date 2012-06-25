@@ -591,4 +591,27 @@ public class Metrics {
 
     }
 
+    public static abstract class DroxPlotter extends Plotter{
+        private int max = 30/Metrics.PING_INTERVAL;
+        private int[] sum = new int[max];
+        private int count = 0;
+
+        public DroxPlotter(final String name) {
+            super(name);
+        }
+
+        public int getAvg(int value) {
+            sum[count++] = value;
+            count = count%max;
+            int result = 0;
+            for (int i : sum) {
+                result += i;
+            }
+
+            return result;
+		}
+    }
+
+
+
 }

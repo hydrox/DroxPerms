@@ -268,137 +268,126 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	private void initMetrics() {
-		// Load up the Plugin metrics
 		try {
 			metrics = new Metrics(this);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		initAPIMetrics(metrics);
+		initPlayerCommandMetrics(metrics);
 
-			Metrics.Graph graph = metrics.createGraph("API Usage (Players)");
+	}
 
-		    // Info Get
-			graph.addPlotter(new Metrics.Plotter("Info Get") {
-				@Override
-				public int getValue() {
-					return API.playerInfoGet;
-				}
+	private void initAPIMetrics(Metrics metrics) {
+		Metrics.Graph graph = metrics.createGraph("API Usage (Players)");
 
-				public void reset() {
-					API.playerInfoGet = 0;
-				}
-		    });
+		// Info Get
+		graph.addPlotter(new Metrics.DroxPlotter("Info Get") {
+			@Override
+			public int getValue() {
+				int value = API.playerInfoGet;
+				API.playerInfoGet = 0;
+				return getAvg(value);
+			}
+		});
 
-		    // Info Set
-			graph.addPlotter(new Metrics.Plotter("Info Set") {
-				@Override
-				public int getValue() {
-					return API.playerInfoSet;
-				}
+		   // Info Set
+		graph.addPlotter(new Metrics.DroxPlotter("Info Set") {
+			@Override
+			public int getValue() {
+				int value = API.playerInfoSet;
+				API.playerInfoSet = 0;
+				return getAvg(value);
+			}
+		});
 
-				public void reset() {
-					API.playerInfoSet = 0;
-				}
-		    });
+		// Add Permission
+		graph.addPlotter(new Metrics.DroxPlotter("Permission Add") {
+			@Override
+			public int getValue() {
+				int value = API.playerPermAdd;
+				API.playerPermAdd = 0;
+				return getAvg(value);
+			}
+		});
 
-		    // Add Permission
-			graph.addPlotter(new Metrics.Plotter("Permission Add") {
-				@Override
-				public int getValue() {
-					return API.playerPermAdd;
-				}
+		// Remove Permission
+		graph.addPlotter(new Metrics.DroxPlotter("Permission Remove") {
+			@Override
+			public int getValue() {
+				int value = API.playerPermRem;
+				API.playerPermRem = 0;
+				return getAvg(value);
+			}
+		});
 
-				public void reset() {
-					API.playerPermAdd = 0;
-				}
-		    });
+		// Group Get
+		graph.addPlotter(new Metrics.DroxPlotter("Group Get") {
+			@Override
+			public int getValue() {
+				int value = API.playerGroupGet;
+				API.playerGroupGet = 0;
+				return getAvg(value);
+			}
+		});
 
-		    // Remove Permission
-			graph.addPlotter(new Metrics.Plotter("Permission Remove") {
-				@Override
-				public int getValue() {
-					return API.playerPermRem;
-				}
+		// Group Set
+		graph.addPlotter(new Metrics.DroxPlotter("Group Set") {
+			@Override
+			public int getValue() {
+				int value = API.playerGroupSet;
+				API.playerGroupSet = 0;
+				return getAvg(value);
+			}
+		});
 
-				public void reset() {
-					API.playerPermRem = 0;
-				}
-		    });
+		Metrics.Graph graph2 = metrics.createGraph("API Usage (Groups)");
 
-		    // Group Get
-			graph.addPlotter(new Metrics.Plotter("Group Get") {
-				@Override
-				public int getValue() {
-					return API.playerGroupGet;
-				}
+		// Info Get
+		graph2.addPlotter(new Metrics.DroxPlotter("Info Get") {
+			@Override
+			public int getValue() {
+				int value = API.groupInfoGet;
+				API.groupInfoGet = 0;
+				return getAvg(value);
+			}
+		});
 
-				public void reset() {
-					API.playerGroupGet = 0;
-				}
-		    });
+		// Info Set
+		graph2.addPlotter(new Metrics.DroxPlotter("Info Set") {
+			@Override
+			public int getValue() {
+				int value = API.groupInfoSet;
+				API.groupInfoSet = 0;
+				return getAvg(value);
+			}
+		});
 
-		    // Group Set
-			graph.addPlotter(new Metrics.Plotter("Group Set") {
-				@Override
-				public int getValue() {
-					return API.playerGroupSet;
-				}
+		// Add Permission
+		graph2.addPlotter(new Metrics.DroxPlotter("Permission Add") {
+			@Override
+			public int getValue() {
+				int value = API.groupPermAdd;
+				API.groupPermAdd = 0;
+				return getAvg(value);
+			}
+		});
 
-				public void reset() {
-					API.playerGroupSet = 0;
-				}
-		    });
-
-			Metrics.Graph graph2 = metrics.createGraph("API Usage (Groups)");
-
-		    // Info Get
-			graph2.addPlotter(new Metrics.Plotter("Info Get") {
-				@Override
-				public int getValue() {
-					return API.groupInfoGet;
-				}
-
-				public void reset() {
-					API.groupInfoGet = 0;
-				}
-		    });
-
-		    // Info Set
-			graph2.addPlotter(new Metrics.Plotter("Info Set") {
-				@Override
-				public int getValue() {
-					return API.groupInfoSet;
-				}
-
-				public void reset() {
-					API.groupInfoSet = 0;
-				}
-		    });
-
-		    // Add Permission
-			graph2.addPlotter(new Metrics.Plotter("Permission Add") {
-				@Override
-				public int getValue() {
-					return API.groupPermAdd;
-				}
-
-				public void reset() {
-					API.groupPermAdd = 0;
-				}
-		    });
-
-		    // Remove Permission
-			graph2.addPlotter(new Metrics.Plotter("Permission Remove") {
-				@Override
-				public int getValue() {
-					return API.groupPermRem;
-				}
-
-				public void reset() {
-					API.groupPermRem = 0;
-				}
-		    });
+		// Remove Permission
+		graph2.addPlotter(new Metrics.DroxPlotter("Permission Remove") {
+			@Override
+			public int getValue() {
+				int value = API.groupPermRem;
+				API.groupPermRem = 0;
+				return getAvg(value);
+			}
+		});
 
 		    metrics.start();
-		} catch (IOException e) {
-			// Failed to submit the stats :-(
-		}
+	}
+
+	private void initPlayerCommandMetrics(Metrics metrics) {
+
 	}
 }
