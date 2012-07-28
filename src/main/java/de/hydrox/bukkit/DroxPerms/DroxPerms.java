@@ -1,5 +1,6 @@
 package de.hydrox.bukkit.DroxPerms;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class DroxPerms extends JavaPlugin {
 	private Map<Player, Map<String, PermissionAttachment>> permissions = new HashMap<Player, Map<String, PermissionAttachment>>();
 	private DroxPermsAPI API = null;
 
+	private Metrics metrics = null;
+
 	private Runnable commiter;
 	private ScheduledThreadPoolExecutor scheduler;
 
@@ -53,7 +56,7 @@ public class DroxPerms extends JavaPlugin {
 		disableScheduler();
 
 		// Safe data
-		logger.info("[DroxPerms] safe configs");
+		logger.info("[DroxPerms] save configs");
 		dataProvider.save();
 		logger.info("[DroxPerms] Plugin unloaded in " + (System.currentTimeMillis() - time) + "ms.");
 	}
@@ -110,6 +113,8 @@ public class DroxPerms extends JavaPlugin {
 		//beard end
 
 		logger.info("[DroxPerms] Plugin activated in " + (System.currentTimeMillis() - time) + "ms.");
+
+		initMetrics();
 	}
 
 	public DroxPermsAPI getAPI() {
@@ -282,5 +287,129 @@ public class DroxPerms extends JavaPlugin {
 			scheduler = null;
 			logger.info("[DroxPerms] Deactivated Save-Thread.");
 		}
+	}
+
+	private void initMetrics() {
+		try {
+			metrics = new Metrics(this);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		initAPIMetrics(metrics);
+		initPlayerCommandMetrics(metrics);
+
+	}
+
+	private void initAPIMetrics(Metrics metrics) {
+		Metrics.Graph graph = metrics.createGraph("API Usage (Players)");
+
+		// Info Get
+		graph.addPlotter(new Metrics.DroxPlotter("Info Get") {
+			@Override
+			public int getValue() {
+				int value = API.playerInfoGet;
+				API.playerInfoGet = 0;
+				return getAvg(value);
+			}
+		});
+
+		   // Info Set
+		graph.addPlotter(new Metrics.DroxPlotter("Info Set") {
+			@Override
+			public int getValue() {
+				int value = API.playerInfoSet;
+				API.playerInfoSet = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Add Permission
+		graph.addPlotter(new Metrics.DroxPlotter("Permission Add") {
+			@Override
+			public int getValue() {
+				int value = API.playerPermAdd;
+				API.playerPermAdd = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Remove Permission
+		graph.addPlotter(new Metrics.DroxPlotter("Permission Remove") {
+			@Override
+			public int getValue() {
+				int value = API.playerPermRem;
+				API.playerPermRem = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Group Get
+		graph.addPlotter(new Metrics.DroxPlotter("Group Get") {
+			@Override
+			public int getValue() {
+				int value = API.playerGroupGet;
+				API.playerGroupGet = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Group Set
+		graph.addPlotter(new Metrics.DroxPlotter("Group Set") {
+			@Override
+			public int getValue() {
+				int value = API.playerGroupSet;
+				API.playerGroupSet = 0;
+				return getAvg(value);
+			}
+		});
+
+		Metrics.Graph graph2 = metrics.createGraph("API Usage (Groups)");
+
+		// Info Get
+		graph2.addPlotter(new Metrics.DroxPlotter("Info Get") {
+			@Override
+			public int getValue() {
+				int value = API.groupInfoGet;
+				API.groupInfoGet = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Info Set
+		graph2.addPlotter(new Metrics.DroxPlotter("Info Set") {
+			@Override
+			public int getValue() {
+				int value = API.groupInfoSet;
+				API.groupInfoSet = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Add Permission
+		graph2.addPlotter(new Metrics.DroxPlotter("Permission Add") {
+			@Override
+			public int getValue() {
+				int value = API.groupPermAdd;
+				API.groupPermAdd = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Remove Permission
+		graph2.addPlotter(new Metrics.DroxPlotter("Permission Remove") {
+			@Override
+			public int getValue() {
+				int value = API.groupPermRem;
+				API.groupPermRem = 0;
+				return getAvg(value);
+			}
+		});
+
+		    metrics.start();
+	}
+
+	private void initPlayerCommandMetrics(Metrics metrics) {
+
 	}
 }
