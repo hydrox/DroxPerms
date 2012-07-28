@@ -325,7 +325,7 @@ public interface IDataProvider {
 	 * @return true if successful.
 	 */
 	boolean setTimedTrack(CommandSender sender,String player,String track,long time);
-	
+
 	/**
 	 * Sets up a player to have a subgroup for a specific length of time
 	 * @param sender
@@ -335,8 +335,8 @@ public interface IDataProvider {
 	 * @return true if successful.
 	 */
 	boolean addTimedSubgroup(CommandSender sender,String player,String subgroup,long time);
-	
-	
+
+
 	/**
 	 * Return track player is on
 	 * @param sender
@@ -344,7 +344,7 @@ public interface IDataProvider {
 	 * @return
 	 */
 	String getTimedTrack(CommandSender sender,String player);
-	
+
 	/**
 	 * Return timestamp of them track expires
 	 * @param sender
@@ -352,7 +352,7 @@ public interface IDataProvider {
 	 * @return
 	 */
 	long getTimedTrackExpires(CommandSender sender,String player);
-	
+
 	/**
 	 * return map of subgroup/expires
 	 * @param sender
@@ -360,7 +360,7 @@ public interface IDataProvider {
 	 * @return
 	 */
 	Map<String,Long> getTimedSubgroups(CommandSender sender,String player);
-	
+
 	/**
 	 * Process player and demote as nessecary
 	 * @param sender
@@ -368,8 +368,8 @@ public interface IDataProvider {
 	 * @return 
 	 */
 	boolean processTimes(CommandSender sender,String player);
-	
-	
+
+
 	/**
 	 * Cancels a timed track or subgroup
 	 * @param sender
@@ -378,7 +378,7 @@ public interface IDataProvider {
 	 * @return
 	 */
 	boolean cancelTimed(CommandSender sender,String player,String group);
-	
+
 	//Tehbeard End
 	Map<String, List<String>> getGroupMembers();
 
