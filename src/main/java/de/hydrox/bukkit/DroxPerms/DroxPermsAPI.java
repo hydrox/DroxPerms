@@ -60,6 +60,15 @@ public class DroxPermsAPI {
 		playerGroupGet++;
 		return plugin.dataProvider.getPlayerGroup(player);
 	}
+        
+        public String[] getGroupNames() {
+            String[] groupNames = new String[plugin.dataProvider.getGroupNames().size()];
+            int location = 0;
+            for (String s : plugin.dataProvider.getGroupNames()) {
+                groupNames[location++] = s;
+            }
+            return groupNames;
+        }
 
 	/**
 	 * Sets a Players Group.
