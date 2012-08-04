@@ -2,6 +2,7 @@ package de.hydrox.bukkit.DroxPerms.data;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.command.CommandSender;
 
@@ -316,6 +317,8 @@ public interface IDataProvider {
 
 	Map<String, List<String>> getSubgroupMembers();
 
+        Set<String> getGroupNames();
+        
 	String getUserNameFromPart(String partialName);
 	void save();
 }

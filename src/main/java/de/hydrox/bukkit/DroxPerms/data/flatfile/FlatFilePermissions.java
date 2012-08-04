@@ -580,4 +580,9 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 		return null;
 	}
+        @Override
+        public Set<String> getGroupNames() {
+            Set<String> groupNames = Group.getGroups();
+            return groupNames;
+        }
 }
