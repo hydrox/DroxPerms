@@ -62,12 +62,7 @@ public class DroxPermsAPI {
 	}
         
         public String[] getGroupNames() {
-            String[] groupNames = new String[plugin.dataProvider.getGroupNames().size()];
-            int location = 0;
-            for (String s : plugin.dataProvider.getGroupNames()) {
-                groupNames[location++] = s;
-            }
-            return groupNames;
+            return plugin.dataProvider.getGroupNames().toArray(new String[0]);
         }
 
 	/**
