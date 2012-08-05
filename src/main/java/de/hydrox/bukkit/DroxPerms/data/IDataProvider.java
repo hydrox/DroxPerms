@@ -317,7 +317,7 @@ public interface IDataProvider {
 
 	Map<String, List<String>> getSubgroupMembers();
 
-        Set<String> getGroupNames();
+	Set<String> getGroupNames();
         
 	String getUserNameFromPart(String partialName);
 	void save();

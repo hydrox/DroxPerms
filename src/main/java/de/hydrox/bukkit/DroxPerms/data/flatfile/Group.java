@@ -62,10 +62,6 @@ public class Group {
 		return name;
 	}
         
-        protected static Set<String> getGroups() {
-            return groups.keySet();
-        }
-
 	public Map<String, Object> toConfigurationNode() {
 		Map<String, Object> output = new HashMap<String, Object>();
 		if (subgroups != null && subgroups.size() != 0) {
@@ -332,6 +328,10 @@ public class Group {
 			return true;
 		}
 		return false;
+	}
+
+	protected static Set<String> getGroups() {
+		return groups.keySet();
 	}
 
 	public static void clearGroups() {
