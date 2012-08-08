@@ -297,7 +297,7 @@ public class DroxPerms extends JavaPlugin {
 			e.printStackTrace();
 		}
 		initAPIMetrics(metrics);
-		initPlayerCommandMetrics(metrics);
+		initCommandMetrics(metrics);
 
 	}
 
@@ -406,10 +406,184 @@ public class DroxPerms extends JavaPlugin {
 			}
 		});
 
-		    metrics.start();
+		metrics.start();
 	}
 
-	private void initPlayerCommandMetrics(Metrics metrics) {
+	private void initCommandMetrics(Metrics metrics) {
+		Metrics.Graph graph = metrics.createGraph("Command Usage (Players)");
 
+		// Info Set
+		graph.addPlotter(new Metrics.DroxPlotter("Info Set") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerInfoSet;
+				playerCommandExecutor.playerInfoSet = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Add Permission
+		graph.addPlotter(new Metrics.DroxPlotter("Permission Add") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerPermAdd;
+				playerCommandExecutor.playerPermAdd = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Remove Permission
+		graph.addPlotter(new Metrics.DroxPlotter("Permission Remove") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerPermRem;
+				playerCommandExecutor.playerPermRem = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Group Set
+		graph.addPlotter(new Metrics.DroxPlotter("Group Set") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerGroupSet;
+				playerCommandExecutor.playerGroupSet = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Promote
+		graph.addPlotter(new Metrics.DroxPlotter("Promote") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerPromote;
+				playerCommandExecutor.playerPromote = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Demote
+		graph.addPlotter(new Metrics.DroxPlotter("Demote") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerDemote;
+				playerCommandExecutor.playerDemote = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Add SubGroup
+		graph.addPlotter(new Metrics.DroxPlotter("SubGroup Add") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerAddSub;
+				playerCommandExecutor.playerAddSub = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Remove SubGroup
+		graph.addPlotter(new Metrics.DroxPlotter("SubGroup Remove") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerRemSub;
+				playerCommandExecutor.playerRemSub = 0;
+				return getAvg(value);
+			}
+		});
+
+		// List Permissions
+		graph.addPlotter(new Metrics.DroxPlotter("List Permissions") {
+			@Override
+			public int getValue() {
+				int value = playerCommandExecutor.playerListPerms;
+				playerCommandExecutor.playerListPerms = 0;
+				return getAvg(value);
+			}
+		});
+
+		Metrics.Graph graph2 = metrics.createGraph("Command Usage (Groups)");
+
+		// Info Set
+		graph2.addPlotter(new Metrics.DroxPlotter("Info Set") {
+			@Override
+			public int getValue() {
+				int value = groupCommandExecutor.groupInfoSet;
+				groupCommandExecutor.groupInfoSet = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Group Set
+		graph2.addPlotter(new Metrics.DroxPlotter("Group Set") {
+			@Override
+			public int getValue() {
+				int value = groupCommandExecutor.groupGroupSet;
+				groupCommandExecutor.groupGroupSet = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Add Permission
+		graph2.addPlotter(new Metrics.DroxPlotter("Permission Add") {
+			@Override
+			public int getValue() {
+				int value = groupCommandExecutor.groupPermAdd;
+				groupCommandExecutor.groupPermAdd = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Remove Permission
+		graph2.addPlotter(new Metrics.DroxPlotter("Permission Remove") {
+			@Override
+			public int getValue() {
+				int value = groupCommandExecutor.groupPermRem;
+				groupCommandExecutor.groupPermRem = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Add SubGroup
+		graph2.addPlotter(new Metrics.DroxPlotter("Subgroup Add") {
+			@Override
+			public int getValue() {
+				int value = groupCommandExecutor.groupAddSub;
+				groupCommandExecutor.groupAddSub = 0;
+				return getAvg(value);
+			}
+		});
+
+		// Remove SubGroup
+		graph2.addPlotter(new Metrics.DroxPlotter("Subgroup Remove") {
+			@Override
+			public int getValue() {
+				int value = groupCommandExecutor.groupRemSub;
+				groupCommandExecutor.groupRemSub = 0;
+				return getAvg(value);
+			}
+		});
+
+		// new Group
+		graph2.addPlotter(new Metrics.DroxPlotter("New Group") {
+			@Override
+			public int getValue() {
+				int value = groupCommandExecutor.groupNew;
+				groupCommandExecutor.groupNew = 0;
+				return getAvg(value);
+			}
+		});
+
+		// List Permissions
+		graph2.addPlotter(new Metrics.DroxPlotter("List Permissions") {
+			@Override
+			public int getValue() {
+				int value = groupCommandExecutor.groupListPerms;
+				groupCommandExecutor.groupListPerms = 0;
+				return getAvg(value);
+			}
+		});
+
+		metrics.start();
 	}
 }
