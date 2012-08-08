@@ -1,7 +1,10 @@
 package de.hydrox.bukkit.DroxPerms;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.ChatColor;
@@ -14,14 +17,14 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
 public class DroxPlayerCommands implements CommandExecutor {
-    
-    private DroxPerms plugin;
-    private IDataProvider dp;
 
-    public DroxPlayerCommands(DroxPerms plugin) {
-        this.plugin = plugin;
-        dp = plugin.dataProvider;
-    }
+	private DroxPerms plugin;
+	private IDataProvider dp;
+
+	public DroxPlayerCommands(DroxPerms plugin) {
+		this.plugin = plugin;
+		dp = plugin.dataProvider;
+	}
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
 		if (!(sender.hasPermission("droxperms.players"))) {
 			sender.sendMessage("You don't have permission to modify Players.");
@@ -247,6 +250,9 @@ public class DroxPlayerCommands implements CommandExecutor {
 				sender.sendMessage(permissionAttachmentInfo.getPermission());
 			}
 		}
+
+
+
 
 		return true;
 	}

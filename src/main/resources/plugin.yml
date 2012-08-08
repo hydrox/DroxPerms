@@ -34,6 +34,17 @@ commands:
         /<command> setinfo player node data - sets an info-node for given player
         /<command> unsetinfo player node - unsets an info-node for given player
         /<command> delete player - deletes a player
+  changetimed:
+    aliases: [ct]
+    description: Commands for manipulating timed groups and subgroups.
+    permission: droxperms.timed
+    usage: |
+        /<command> promote player track time - Promote a player along a track for a specified length of time
+        /<command> addsub player subgroup time - Give a player a subgroup for a specified length of time
+        /<command> info player - Display info on a players timed track/subgroup
+        /<command> checktimed player - Check and demote players as nessecary
+        /<command> canceltrack player - Cancel's players current track
+        /<command> cancelsub player subgroup - Cancel's players subgroup
   testdroxperms:
     description: Commands to test the correct functioning of DroxPerms methods
     permission: droxperms.test
@@ -52,6 +63,7 @@ permissions:
       droxperms.players.*: true
       droxperms.groups: true
       droxperms.stats: true
+      droxperms.timed: true
   droxperms.players.*:
     description: Allows to modify all Players.
     children:
@@ -65,6 +77,9 @@ permissions:
     default: op
   droxperms.groups:
     description: Allows to modify groups.
+    default: op
+  droxperms.timed:
+    description: Allows you to modify timed groups/subgroups.
     default: op
   droxperms.test:
     description: Allows usage of the test-commands.

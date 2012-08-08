@@ -2,13 +2,18 @@ package de.hydrox.bukkit.DroxPerms.data.flatfile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -33,6 +38,9 @@ public class FlatFilePermissions implements IDataProvider {
 	private YamlConfiguration usersConfig;
 	private YamlConfiguration tracksConfig;
 
+	//Tehbeard start
+	private Logger logger = Logger.getLogger("DroxPerms");
+	//Tehbeard End
 
 	public FlatFilePermissions() {
 		groupsConfig = YamlConfiguration.loadConfiguration(new File("groups.yml"));
@@ -40,9 +48,28 @@ public class FlatFilePermissions implements IDataProvider {
 		tracksConfig = YamlConfiguration.loadConfiguration(new File("tracks.yml"));
 	}
 
-	public FlatFilePermissions(Plugin plugin) {
+	public FlatFilePermissions(Plugin plugin)  {
 		FlatFilePermissions.plugin = plugin;
 		// Write some default configuration
+
+		//Tehbeard Start
+		//Add transaction logger
+		File f = new File(plugin.getDataFolder(),"transaction.log");
+		try {
+			Handler handler = new TransactionLogger(f);
+			handler.setLevel(Level.INFO);
+			logger.addHandler(handler);
+			logger.setLevel(Level.INFO);
+			logger.setUseParentHandlers(false);
+
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//Tehbeard End
 
 		groupsConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "groups.yml"));
 		YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(plugin.getResource("groups.yml"));
@@ -586,4 +613,265 @@ public class FlatFilePermissions implements IDataProvider {
 		Set<String> groupNames = Group.getGroups();
 		return groupNames;
 	}
+
+	//Tehbeard Start
+
+
+	public boolean setTimedTrack(CommandSender sender, String player,
+			String track, long time) {
+		User user = getUser(player,true);
+		logger.info("===BEGIN TIMED TRACK BLOCK===");
+		if(user == null){ sender.sendMessage("USER_NOT_FOUND"); logger.severe("User not found! " + player);return false;}
+		if(!Track.existTrack(track)){ sender.sendMessage("TRACK_NOT_FOUND"); logger.severe("No Track found! " + track + " when promoting " + player);return false;}
+
+		if(user.getTimedTrack() != null){
+			if(!Track.existTrack(user.getTimedTrack())){sender.sendMessage("ON_BAD_TRACK");logger.severe(player + " on bad track " + user.getTimedTrack());return false;}
+			if(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()) == null){sender.sendMessage("CANT_DEMOTE"); logger.severe("Users track does not exist " + player + " " + user.getTimedTrack());return false;}
+			//check demote->promote
+			if(Track.getTrack(track).getPromoteGroup(Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup())) ==null){sender.sendMessage("CANT_USE_TRACK"); logger.severe("No way to promote player " + player + " along " + track + " from group " + Track.getTrack(user.getTimedTrack()).getDemoteGroup(user.getGroup()));return false;}
+		}
+		else
+		{
+			//just check promote
+			if(Track.getTrack(track).getPromoteGroup(user.getGroup()) ==null){ sender.sendMessage("CANT_PROMOTE");logger.severe("No way to promote player " + player + " along " + track + " from group " + user.getGroup());return false;}
+		}
+
+		//if user currently has a timed Track
+		if(user.getTimedTrack() != null){
+			//if it's the same one, add the time
+			if(user.getTimedTrack().equals(track)){
+
+				if(user.setTimedTrack(track,
+						user.getTimedTrackExpires() + time
+						)){
+					logger.info("Extended time of player " + player + " on track " + track + " by " + time + "seconds.");
+					sender.sendMessage("SUCCESS");
+					return true;
+				}
+				else
+				{
+					logger.severe("Could not extend time of player " + player + " on track " + track + " by " + time + "seconds.");
+					sender.sendMessage("CANT_EXTEND_TIME");
+					return false;
+				}
+			}
+			else
+			{
+				//Tell sender how much to recredit the user
+				String endedTrack = user.getTimedTrack();
+				long timeLeft = user.getTimedTrackExpires() - (System.currentTimeMillis()/1000L);
+
+
+				//demote user
+				if(!user.setGroup(Track.getTrack(endedTrack).getDemoteGroup(user.getGroup()))){
+					sender.sendMessage("COULD_NOT_DEMOTE");
+					logger.severe("Could not demote " + player + " from group " + user.getGroup() + " using track " + endedTrack);
+					return false;
+				}
+				//send recredit message only if demoted
+				if(timeLeft > 0){
+					sender.sendMessage("CREDIT " + endedTrack + " " + (timeLeft/86400));
+					logger.info("Recredit " + player + " " + endedTrack + " " + timeLeft);
+				}
+			}
+		}
+
+		//promote user
+		if(!user.setGroup(Track.getTrack(track).getPromoteGroup(user.getGroup()))){
+			sender.sendMessage("COULD_NOT_PROMOTE");
+			logger.severe("Could not promote " + player + " from group " + user.getGroup() + " using track " + track);
+			return false;
+		}
+		else
+		{
+			logger.info(player + " promoted to group " + user.getGroup() + " using track " + track + " for " + time + " seconds, expires " + new SimpleDateFormat().format(new Date(System.currentTimeMillis() + (time * 1000L))));
+		}
+		//set data
+		if(user.setTimedTrack(track, (System.currentTimeMillis()/1000L) + time)){
+			sender.sendMessage("SUCCESS");
+			logger.info(player + " updated timed track data");
+			return true;
+		}
+		else
+		{
+			sender.sendMessage("COULD_NOT_STORE");
+			logger.severe("Could not store player track information! " + player + " from group " + user.getGroup() + " using track " + track);
+			return false;
+		}
+
+	}
+
+	@Override
+	public boolean addTimedSubgroup(CommandSender sender, String player,
+			String subgroup, long time) {
+		User user = getUser(player,true);
+		logger.info("===BEGIN TIMED SUBGROUP BLOCK===");
+		if(user == null){ logger.severe("User not found! " + player);return false;}
+		if(!Group.existGroup(subgroup)){logger.severe("Group not found! " + subgroup);return false;}
+
+		long t = time;
+		if(user.hasTimedSubgroup(subgroup)){
+			logger.info("Extending " + subgroup + " time by " + time + " seconds for " + player);
+			t+= user.getTimedSubgroupExpires(subgroup);
+		}
+		else
+		{
+			t+= (System.currentTimeMillis() / 1000L);
+		}
+
+		if(!user.getSubgroups().contains(subgroup)){
+			if(!user.addSubgroup(subgroup)){
+				logger.severe("Could not add subgroup " + subgroup + " to " + player);
+				return false;
+			}
+		}
+
+		if(user.setTimedSubgroup(subgroup, t)){
+
+			logger.info("Updated timed subgroup information for " + player + " " + subgroup + " " + time + " seconds.");
+			sender.sendMessage("SUCCESS");
+			return true;
+		}
+		else
+		{
+			logger.severe("Could not update information for " + player + " " + subgroup + " " + time + " seconds.");
+			sender.sendMessage("ERROR");
+			return false;
+		}
+	}
+
+	@Override
+	public String getTimedTrack(CommandSender sender, String player) {
+		User user = getUser(player,true);
+		if(user==null){return null;}
+		return user.getTimedTrack();
+	}
+
+	@Override
+	public long getTimedTrackExpires(CommandSender sender, String player) {
+		User user = getUser(player,true);
+		if(user==null){return 0L;}
+		return user.getTimedTrackExpires();
+	}
+
+	@Override
+	public Map<String, Long> getTimedSubgroups(CommandSender sender,
+			String player) {
+		User user = getUser(player,true);
+		if(user==null){return null;}
+
+		return user.getTimedSubgroups();
+	}
+
+	@Override
+	public boolean processTimes(CommandSender sender, String player) {
+
+		//check track
+		User user = getUser(player,true);
+		if(user==null){return false;}
+		String track = user.getTimedTrack();
+		if(track != null){
+			long expires = user.getTimedTrackExpires();
+			long time = System.currentTimeMillis() / 1000L;
+			if(time > expires){
+				logger.info("===BEGIN DEMOTE TRACK BLOCK===");
+				if(!Track.existTrack(track)){logger.severe("Could not demote, track " + track + " not found for " + player);return false;}
+
+				String demoteTo = Track.getTrack(track).getDemoteGroup(user.getGroup());
+
+				if(demoteTo == null){logger.severe("Could not demote " + player + ", no demote path for " + user.getGroup());return  false;}
+
+				if(!user.setGroup(demoteTo)){logger.severe("Could not demote " + player + " to group " + demoteTo);return false;}
+
+				if(user.setTimedTrack(null, 0L)){
+					logger.info("Track data reset for " + player);
+				}
+				else
+				{
+					logger.severe("Player " + player + " demoted, but could not update track data!");
+					return false;
+				}
+			}
+		}
+		boolean res = true;
+		//check subgroup
+		Iterator<Entry<String, Long>> it = user.getTimedSubgroups().entrySet().iterator();
+		while(it.hasNext()){
+			Entry<String, Long> e = it.next();
+			String sg = e.getKey();
+			long expires = e.getValue();
+			long time = System.currentTimeMillis() / 1000L;
+			if(time > expires){
+				logger.info(sg + " expired for " + player);
+
+						if(!user.removeSubgroup(sg)){
+							logger.severe("Could not remove subgroup " + sg + " for " + player);
+							res = false;
+						}
+
+						it.remove();
+			}
+		}
+
+
+		return res;
+	}
+
+	public boolean cancelTimed(CommandSender sender,String player,String group){
+		User user = getUser(player,true);
+		long recredit = 0;
+		if(user==null){logger.severe("Could not cancel for user " + player + ", not found");return false;}
+
+		if(group == null){
+			logger.info("===BEGIN CANCEL TRACK BLOCK===");
+			if(user.getTimedTrack()==null){logger.severe("Could not cancel for " + player + ", does not have a group active");return false;}
+
+			if(user.getTimedTrackExpires() > (System.currentTimeMillis() / 1000L)){
+				recredit = user.getTimedTrackExpires() - (System.currentTimeMillis() / 1000L);
+			}
+			group = user.getTimedTrack();
+
+			if(!Track.existTrack(group)){logger.severe("Cannot find track " + group);return false;}
+			if(Track.getTrack(group).getDemoteGroup(user.getGroup()) == null){logger.severe("Cannot find a demote path for track " + group + " group " + user.getGroup());return false;}
+
+			if(!user.setGroup(Track.getTrack(group).getDemoteGroup(user.getGroup()))){
+				logger.severe("Error occured while demoting " + player + " on track " + group + " from " + user.getGroup());
+				return false;
+			}
+			else{
+				user.setTimedTrack(null, 0L);
+				logger.info("Cancelled track, recredit " + group + " "  + recredit + " to " + player);
+
+			}
+
+		}
+		else
+		{
+			logger.info("===BEGIN CANCEL SUBGROUP BLOCK===");
+			if(user.getTimedSubgroupExpires(group) == 0L){logger.severe("subgroup " + group + " not active for " + player);return false;}
+
+			if(user.getTimedSubgroupExpires(group) > (System.currentTimeMillis() / 1000L)){
+				recredit = user.getTimedSubgroupExpires(group) - (System.currentTimeMillis() / 1000L);
+			}
+
+			if(!user.removeSubgroup(group)){
+				logger.severe("Could not remove subgroup " + group + " from " + player);
+				return false;
+			}
+			else
+			{
+				user.setTimedSubgroup(group, 0L);
+				logger.info("Cancelled subgroup, recredit " + group + " "  + recredit + " to " + player);
+			}
+		}
+
+		if(recredit > 0){
+			sender.sendMessage("CREDIT " + group + " " + (recredit/86400));
+		}
+
+		return true;
+	}
+
+
+	//Tehbeard End
 }
