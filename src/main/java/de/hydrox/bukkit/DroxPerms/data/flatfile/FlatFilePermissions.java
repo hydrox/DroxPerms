@@ -22,6 +22,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
 /**
@@ -272,6 +273,10 @@ public class FlatFilePermissions implements IDataProvider {
 		if (user != null) {
 			boolean result = user.addPermission(world, node);
 			if (result) {
+				if(world != null && !Config.getRealWorld(world).equalsIgnoreCase(world)) {
+					sender.sendMessage(ChatColor.RED + "World " + world + " inherits Permission from " + Config.getRealWorld(world));
+					sender.sendMessage(ChatColor.RED + "Permission were set on " + Config.getRealWorld(world));
+				}
 				sender.sendMessage(ChatColor.GREEN + "Added " + node + " to permissionslist of player " + user.getName());
 				return true;
 			} else {
@@ -342,6 +347,10 @@ public class FlatFilePermissions implements IDataProvider {
 		if (Group.existGroup(group)) {
 			boolean result = Group.getGroup(group).addPermission(world, node);
 			if (result) {
+				if(world != null && !Config.getRealWorld(world).equalsIgnoreCase(world)) {
+					sender.sendMessage(ChatColor.RED + "World " + world + " inherits Permission from " + Config.getRealWorld(world));
+					sender.sendMessage(ChatColor.RED + "Permission were set on " + Config.getRealWorld(world));
+				}
 				sender.sendMessage(ChatColor.GREEN + "Added " + node + " to permissionslist of group " + group);
 				return true;
 			} else {
