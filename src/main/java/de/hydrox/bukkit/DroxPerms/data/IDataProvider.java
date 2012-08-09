@@ -381,8 +381,16 @@ public interface IDataProvider {
 	boolean cancelTimed(CommandSender sender,String player,String group);
 
 	//Tehbeard End
+	/**
+	 * For every group a list of player that have that group as main-group is return.
+	 * @return Map of group => Members
+	 */
 	Map<String, List<String>> getGroupMembers();
 
+	/**
+	 * For every group a list of player that have that group as a subgroup is return.
+	 * @return Map of group => Members
+	 */
 	Map<String, List<String>> getSubgroupMembers();
 
 	Set<String> getGroupNames();
