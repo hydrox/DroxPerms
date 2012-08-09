@@ -14,14 +14,24 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
 public class DroxPlayerCommands implements CommandExecutor {
-    
-    private DroxPerms plugin;
-    private IDataProvider dp;
 
-    public DroxPlayerCommands(DroxPerms plugin) {
-        this.plugin = plugin;
-        dp = plugin.dataProvider;
-    }
+	private DroxPerms plugin;
+	private IDataProvider dp;
+
+	protected int playerInfoSet = 0;
+	protected int playerPermAdd = 0;
+	protected int playerPermRem = 0;
+	protected int playerGroupSet = 0;
+	protected int playerAddSub = 0;
+	protected int playerRemSub = 0;
+	protected int playerPromote = 0;
+	protected int playerDemote = 0;
+	protected int playerListPerms = 0;
+
+	public DroxPlayerCommands(DroxPerms plugin) {
+		this.plugin = plugin;
+		dp = plugin.dataProvider;
+	}
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] split) {
 		if (!(sender.hasPermission("droxperms.players"))) {
 			sender.sendMessage("You don't have permission to modify Players.");
@@ -42,6 +52,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 		// add permission
 		if (split[0].equalsIgnoreCase("addperm")) {
+			playerPermAdd++;
 			if (split.length == 3) {
 				// add global permission
 				result = dp.addPlayerPermission(sender, split[1], null, split[2]);
@@ -58,6 +69,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		// remove permission
 		if (split[0].equalsIgnoreCase("remperm")) {
+			playerPermRem++;
 			if (split.length == 3) {
 				// remove global permission
 				result = dp.removePlayerPermission(sender, split[1], null, split[2]);
@@ -74,6 +86,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		// add subgroup
 		if (split[0].equalsIgnoreCase("addsub")) {
+			playerAddSub++;
 			if (split.length == 3) {
 				result = dp.addPlayerSubgroup(sender, split[1], split[2]);
 			}
@@ -86,6 +99,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		// remove subgroup
 		if (split[0].equalsIgnoreCase("remsub")) {
+			playerRemSub++;
 			if (split.length == 3) {
 				result = dp.removePlayerSubgroup(sender, split[1],split[2]);
 			}
@@ -98,6 +112,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		// set group
 		if (split[0].equalsIgnoreCase("setgroup")) {
+			playerGroupSet++;
 			if (split.length == 3) {
 				result = dp.setPlayerGroup(sender, split[1],split[2]);
 			}
@@ -108,7 +123,6 @@ public class DroxPlayerCommands implements CommandExecutor {
 			return true;
 		}
 
-		// set group
 		if (split[0].equalsIgnoreCase("has") && (split.length == 3)) {
 			Player player = plugin.getServer().getPlayer(split[1]);
 			if (player == null) {
@@ -124,6 +138,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 
 		if (split[0].equalsIgnoreCase("listperms") && split.length >= 2) {
+			playerListPerms++;
 			Map<String, List<String>> permissions = null;
 			if (split.length == 3) {
 				permissions = dp.getPlayerPermissions(split[1], split[2], true);
@@ -179,6 +194,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		// promote
 		if (split[0].equalsIgnoreCase("promote")) {
+			playerPromote++;
 			if (split.length == 3) {
 				result = dp.promotePlayer(sender, split[1], split[2]);
 			}
@@ -191,6 +207,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		// demote
 		if (split[0].equalsIgnoreCase("demote")) {
+			playerDemote++;
 			if (split.length == 3) {
 				result = dp.demotePlayer(sender, split[1], split[2]);
 			}
@@ -203,6 +220,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		// set info-node
 		if (split[0].equalsIgnoreCase("setinfo")) {
+			playerInfoSet++;
 			if (split.length == 4) {
 				String data = split[3].replace("_", " ");
 				result = dp.setPlayerInfo(sender, split[1], split[2], data);
@@ -214,6 +232,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 
 		if (split[0].equalsIgnoreCase("unsetinfo")) {
+			playerInfoSet++;
 			if (split.length == 3) {
 				result = dp.setPlayerInfo(sender, split[1], split[2], null);
 			}
@@ -247,6 +266,9 @@ public class DroxPlayerCommands implements CommandExecutor {
 				sender.sendMessage(permissionAttachmentInfo.getPermission());
 			}
 		}
+
+
+
 
 		return true;
 	}

@@ -2,6 +2,7 @@ package de.hydrox.bukkit.DroxPerms.data;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.command.CommandSender;
 
@@ -312,10 +313,80 @@ public interface IDataProvider {
 	 */
 	boolean demotePlayer(CommandSender sender, String player, String track);
 
+	//Tehbeard Start
+	/**
+	 * Sets up a player to be promoted for a specific length of time. 
+	 * @param sender
+	 * @param player player to promote
+	 * @param track track to promote along
+	 * @param time number of seconds to promote for
+	 * 
+	 * Should return data on current track and time left if an entry already exists
+	 * e.g. royalty 54000 
+	 * @return true if successful.
+	 */
+	boolean setTimedTrack(CommandSender sender,String player,String track,long time);
+
+	/**
+	 * Sets up a player to have a subgroup for a specific length of time
+	 * @param sender
+	 * @param player player to add subgroup to
+	 * @param subgroup subgroup to add to
+	 * @param time number of seconds to promote for
+	 * @return true if successful.
+	 */
+	boolean addTimedSubgroup(CommandSender sender,String player,String subgroup,long time);
+
+
+	/**
+	 * Return track player is on
+	 * @param sender
+	 * @param player
+	 * @return
+	 */
+	String getTimedTrack(CommandSender sender,String player);
+
+	/**
+	 * Return timestamp of them track expires
+	 * @param sender
+	 * @param player
+	 * @return
+	 */
+	long getTimedTrackExpires(CommandSender sender,String player);
+
+	/**
+	 * return map of subgroup/expires
+	 * @param sender
+	 * @param player
+	 * @return
+	 */
+	Map<String,Long> getTimedSubgroups(CommandSender sender,String player);
+
+	/**
+	 * Process player and demote as nessecary
+	 * @param sender
+	 * @param player player to process
+	 * @return 
+	 */
+	boolean processTimes(CommandSender sender,String player);
+
+
+	/**
+	 * Cancels a timed track or subgroup
+	 * @param sender
+	 * @param player player to process
+	 * @param group subgroup to cancel, use null to indicate track
+	 * @return
+	 */
+	boolean cancelTimed(CommandSender sender,String player,String group);
+
+	//Tehbeard End
 	Map<String, List<String>> getGroupMembers();
 
 	Map<String, List<String>> getSubgroupMembers();
 
+	Set<String> getGroupNames();
+        
 	String getUserNameFromPart(String partialName);
 	void save();
 }

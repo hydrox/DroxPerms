@@ -1,3 +1,11 @@
+v0.4.0 RB 1.2.5-R4.0, 1.2.5-R5.0, 1.3.1-R1.0
+* add mcstats.org metrics
+* add fancy code-names for future major-releases
+* add getGroupNames() to DroxPermsAPI
+* add timed Groups and subgroups
+  (intended for use over RCON)
+* on permission-change display warning if world inherits permissions 
+
 v0.3.1 RB 1.1-R3
 * fix DroxPerms not starting if no tracks are defined
 

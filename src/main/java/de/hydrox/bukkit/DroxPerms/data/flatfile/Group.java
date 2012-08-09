@@ -61,7 +61,7 @@ public class Group {
 	public String getName() {
 		return name;
 	}
-
+        
 	public Map<String, Object> toConfigurationNode() {
 		Map<String, Object> output = new HashMap<String, Object>();
 		if (subgroups != null && subgroups.size() != 0) {
@@ -252,7 +252,7 @@ public class Group {
 			children.put("droxperms.meta.group." + name, true);
 
 			Permission permission = new Permission("droxperms.meta.group." + name + "." + Config.getDefaultWorld(), "Group-Permissions for group " + name + " on world " + Config.getDefaultWorld(), children);
-			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name + "." + Config.getDefaultWorld());
+			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission(permission);
 			FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 			bukkitPermissions.put(Config.getDefaultWorld(), permission);
 		}
@@ -278,7 +278,7 @@ public class Group {
 			children.put("droxperms.meta.group." + name, true);
 
 			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, children);
-			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name + "." + world);
+			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission(permission);
 			FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 			bukkitPermissions.put(world, permission);
 		}
@@ -299,7 +299,7 @@ public class Group {
 
 		//create Permission for global grouppermissions
 		Permission permission = new Permission("droxperms.meta.group." + name, "Group-Permissions for group " + name, children);
-		FlatFilePermissions.plugin.getServer().getPluginManager().removePermission("droxperms.meta.group." + name);
+		FlatFilePermissions.plugin.getServer().getPluginManager().removePermission(permission);
 		FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 	}
 
@@ -328,6 +328,10 @@ public class Group {
 			return true;
 		}
 		return false;
+	}
+
+	protected static Set<String> getGroups() {
+		return groups.keySet();
 	}
 
 	public static void clearGroups() {
