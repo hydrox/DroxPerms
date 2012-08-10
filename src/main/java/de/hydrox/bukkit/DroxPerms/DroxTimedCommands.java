@@ -24,7 +24,6 @@ public class DroxTimedCommands implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lbl,
 			String[] args) {
-		System.out.println("CHANGE TIME DATA COMMAND EXECUTED");
 		if (!(sender.hasPermission("droxperms.timed"))) {
 			sender.sendMessage("You don't have permission to modify timed data.");
 			return true;
