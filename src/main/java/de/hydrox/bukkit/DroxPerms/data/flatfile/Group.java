@@ -3,12 +3,14 @@ package de.hydrox.bukkit.DroxPerms.data.flatfile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 
 import de.hydrox.bukkit.DroxPerms.data.Config;
 
@@ -33,14 +35,14 @@ public class Group {
 		this.name = name;
 		this.subgroups = new ArrayList<String>();
 		this.globalPermissions = new ArrayList<String>();
-		this.permissions = new HashMap<String, List<String>>();
+		this.permissions = new LinkedHashMap<String, List<String>>();
 	}
 
 	public Group(String name, ConfigurationSection node) {
 		this.name = name;
 		this.subgroups = node.getStringList("subgroups");
 		this.globalPermissions = node.getStringList("globalpermissions");
-		this.permissions = new HashMap<String, List<String>>();
+		this.permissions = new LinkedHashMap<String, List<String>>();
 		if(node.contains("permissions")) {
 			Set<String> worlds = node.getConfigurationSection("permissions.").getKeys(false);
 			for (String world : worlds) {
@@ -80,7 +82,7 @@ public class Group {
 	}
 
 	public Map<String, List<String>> getPermissions(String world) {
-		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		Map<String, List<String>> result = new LinkedHashMap<String, List<String>>();
 		List<String> groupperms = new ArrayList<String>();
 		//add group permissions
 		groupperms.add("droxperms.meta.group." + name);
@@ -239,19 +241,19 @@ public class Group {
 	}
 
 	public void updatePermissions() {
-		bukkitPermissions = new HashMap<String, Permission>();
+		bukkitPermissions = new LinkedHashMap<String, Permission>();
 		//create Permission for default world
 		if (subgroups == null) {
 			subgroups = new ArrayList<String>();
 		}
 		if (!permissions.containsKey(Config.getDefaultWorld())) {
-			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
+			Map<String, Boolean> children = new LinkedHashMap<String, Boolean>();
 			for (String subgroup : subgroups) {
 				children.put("droxperms.meta.group." + subgroup + "." + Config.getDefaultWorld(), true);
 			}
 			children.put("droxperms.meta.group." + name, true);
 
-			Permission permission = new Permission("droxperms.meta.group." + name + "." + Config.getDefaultWorld(), "Group-Permissions for group " + name + " on world " + Config.getDefaultWorld(), children);
+			Permission permission = new Permission("droxperms.meta.group." + name + "." + Config.getDefaultWorld(), "Group-Permissions for group " + name + " on world " + Config.getDefaultWorld(), PermissionDefault.FALSE, children);
 			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission(permission);
 			FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 			bukkitPermissions.put(Config.getDefaultWorld(), permission);
@@ -259,7 +261,7 @@ public class Group {
 
 		//create Permissions for other worlds
 		for (String world : Config.getWorlds()) {
-			HashMap<String, Boolean> children = new HashMap<String, Boolean>();
+			Map<String, Boolean> children = new LinkedHashMap<String, Boolean>();
 			for (String subgroup : subgroups) {
 				children.put("droxperms.meta.group." + subgroup + "." + world, true);
 			}
@@ -277,13 +279,13 @@ public class Group {
 
 			children.put("droxperms.meta.group." + name, true);
 
-			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, children);
+			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, PermissionDefault.FALSE, children);
 			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission(permission);
 			FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 			bukkitPermissions.put(world, permission);
 		}
 
-		HashMap<String, Boolean> children = new HashMap<String, Boolean>();
+		Map<String, Boolean> children = new LinkedHashMap<String, Boolean>();
 		for (String subgroup : subgroups) {
 			children.put("droxperms.meta.group." + subgroup, true);
 		}
@@ -298,7 +300,7 @@ public class Group {
 		}
 
 		//create Permission for global grouppermissions
-		Permission permission = new Permission("droxperms.meta.group." + name, "Group-Permissions for group " + name, children);
+		Permission permission = new Permission("droxperms.meta.group." + name, "Group-Permissions for group " + name, PermissionDefault.FALSE, children);
 		FlatFilePermissions.plugin.getServer().getPluginManager().removePermission(permission);
 		FlatFilePermissions.plugin.getServer().getPluginManager().addPermission(permission);
 	}

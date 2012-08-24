@@ -2,6 +2,7 @@ package de.hydrox.bukkit.DroxPerms;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -143,7 +144,7 @@ public class DroxPerms extends JavaPlugin {
 	}
 
 	protected void registerPlayer(Player player, World world) {
-		HashMap<String, PermissionAttachment> attachments = new HashMap<String, PermissionAttachment>();
+		Map<String, PermissionAttachment> attachments = new LinkedHashMap<String, PermissionAttachment>();
 
 		PermissionAttachment attachment = player.addAttachment(this);
 		attachments.put("subgroups", attachment);
