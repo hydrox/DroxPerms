@@ -41,7 +41,7 @@ public class User {
 		this.group = "default";
 		this.subgroups = new ArrayList<String>();
 		this.globalPermissions = new ArrayList<String>();
-		this.permissions = new HashMap<String, List<String>>();
+		this.permissions = new LinkedHashMap<String, List<String>>();
 		this.dirty = true;
 
 		//Tehbeard Start
@@ -56,7 +56,7 @@ public class User {
 		this.group = node.getString("group");
 		this.subgroups = node.getStringList("subgroups");
 		this.globalPermissions = node.getStringList("globalpermissions");
-		this.permissions = new HashMap<String, List<String>>();
+		this.permissions = new LinkedHashMap<String, List<String>>();
 		if(node.contains("permissions")) {
 			Set<String> worlds = node.getConfigurationSection("permissions.").getKeys(false);
 			for (String world : worlds) {
