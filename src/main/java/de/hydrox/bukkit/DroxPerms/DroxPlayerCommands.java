@@ -263,7 +263,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 				if (split.length == 3 && !permissionAttachmentInfo.getPermission().startsWith(split[2])) {
 					continue;
 				}
-				sender.sendMessage(permissionAttachmentInfo.getPermission());
+				sender.sendMessage(permissionAttachmentInfo.getPermission() + " " + permissionAttachmentInfo.getValue());
 			}
 		}
 
