@@ -266,6 +266,8 @@ public class Group {
 				children.put("droxperms.meta.group." + subgroup + "." + world, true);
 			}
 
+			children.put("droxperms.meta.group." + name, true);
+
 			if(permissions.get(world) != null) {
 				for (String permission : permissions.get(world)) {
 					if (permission.startsWith("-")) {
@@ -276,8 +278,6 @@ public class Group {
 					}
 				}
 			}
-
-			children.put("droxperms.meta.group." + name, true);
 
 			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, PermissionDefault.FALSE, children);
 			FlatFilePermissions.plugin.getServer().getPluginManager().removePermission(permission);
