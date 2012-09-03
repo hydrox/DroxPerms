@@ -23,6 +23,7 @@ public class DroxPlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerLogin(PlayerLoginEvent event) {
+	    plugin.getAPI().processTimes(event.getPlayer().getName());
 		plugin.registerPlayer(event.getPlayer());
 	}
 
@@ -34,6 +35,7 @@ public class DroxPlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onPlayerQuit(PlayerQuitEvent event) {
+	    plugin.getAPI().processTimes(event.getPlayer().getName());
 		plugin.unregisterPlayer(event.getPlayer());
 	}
 
@@ -42,6 +44,7 @@ public class DroxPlayerListener implements Listener {
 		if (event.isCancelled()) {
 			return;
 		}
+		plugin.getAPI().processTimes(event.getPlayer().getName());
 		plugin.unregisterPlayer(event.getPlayer());
 	}
 
@@ -60,13 +63,12 @@ public class DroxPlayerListener implements Listener {
 	public void updatePlayerSeenOnLogin(PlayerLoginEvent event) {
 		plugin.getAPI().setPlayerInfo(event.getPlayer().getName(), "lastSeen", Long.toString((System.currentTimeMillis() / 1000L)));
 		
-		plugin.getAPI().processTimes(event.getPlayer().getName());
+		
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void updatePlayerSeenOnQuit(PlayerQuitEvent event) {
 		plugin.getAPI().setPlayerInfo(event.getPlayer().getName(), "lastSeen", Long.toString((System.currentTimeMillis() / 1000L)));
 		
-		plugin.getAPI().processTimes(event.getPlayer().getName());
 	}
 }

@@ -104,6 +104,9 @@ public class DroxPerms extends JavaPlugin {
 			@Override
 			public void run() {
 				for (Player p : Bukkit.getOnlinePlayers()) {
+					if(!permissions.containsKey(p)){
+						registerPlayer(p);
+					}
 					if(!getAPI().processTimes(p.getName())){
 						getLogger().severe("An Error occured while processing " + p.getName() + ", check the log for more details");
 					}
@@ -319,7 +322,7 @@ public class DroxPerms extends JavaPlugin {
 			}
 		});
 
-		   // Info Set
+		// Info Set
 		graph.addPlotter(new Metrics.DroxPlotter("Info Set") {
 			@Override
 			public int getValue() {
