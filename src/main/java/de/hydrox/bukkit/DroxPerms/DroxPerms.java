@@ -322,7 +322,7 @@ public class DroxPerms extends JavaPlugin {
 			}
 		});
 
-		   // Info Set
+		// Info Set
 		graph.addPlotter(new Metrics.DroxPlotter("Info Set") {
 			@Override
 			public int getValue() {
