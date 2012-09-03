@@ -187,6 +187,10 @@ public class DroxPerms extends JavaPlugin {
 			return;
 		}
 		Map<String, PermissionAttachment> attachments = permissions.get(player);
+		if (attachments == null) {
+			getLogger().severe("Attachments for Player " + player.getName() + " are null. THIS SHOULD NOT BE. Returning without updating Permissions.");
+			return;
+		}
 		for (PermissionAttachment attachment : attachments.values()) {
 			for (String key : attachment.getPermissions().keySet()) {
 				attachment.unsetPermission(key);
