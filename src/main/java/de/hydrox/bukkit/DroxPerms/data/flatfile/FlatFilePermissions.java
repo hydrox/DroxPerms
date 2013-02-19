@@ -20,8 +20,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
+import de.hydrox.bukkit.DroxPerms.DroxPerms;
 import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
@@ -33,7 +33,7 @@ import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 public class FlatFilePermissions implements IDataProvider {
 
 	public static final String NODE = "FlatFile";
-	protected static Plugin plugin = null;
+	protected static DroxPerms plugin = null;
 
 	private YamlConfiguration groupsConfig;
 	private YamlConfiguration usersConfig;
@@ -49,7 +49,7 @@ public class FlatFilePermissions implements IDataProvider {
 		tracksConfig = YamlConfiguration.loadConfiguration(new File("tracks.yml"));
 	}
 
-	public FlatFilePermissions(Plugin plugin)  {
+	public FlatFilePermissions(DroxPerms plugin)  {
 		FlatFilePermissions.plugin = plugin;
 		// Write some default configuration
 
@@ -583,7 +583,17 @@ public class FlatFilePermissions implements IDataProvider {
 		for (String key : users) {
 			ConfigurationSection conf = usersConfig.getConfigurationSection("users." + key);
 			User user = new User(key, conf);
-			result.get(user.getGroup()).add(user.getName());
+			String userGroup = user.getGroup();
+			if (userGroup == null) {
+				plugin.logger.warning("Group for User " + user.getName() + " is not set");
+				continue;
+			}
+			List<String> resultGroup = result.get(user.getGroup());
+			if (resultGroup == null) {
+				plugin.logger.warning("Group " + userGroup + " for User " + user.getName() + " does not exist");
+				continue;
+			}
+			resultGroup.add(user.getName());
 		}
 		return result;
 	}
@@ -603,7 +613,12 @@ public class FlatFilePermissions implements IDataProvider {
 			User user = new User(key, conf);
 			List<String> subgroups = user.getSubgroups();
 			for (String subgroup : subgroups) {
-				result.get(subgroup).add(user.getName());
+				List<String> resultGroup = result.get(subgroup);
+				if (resultGroup == null) {
+					plugin.logger.warning("SubGroup " + subgroup + " for User " + user.getName() + " does not exist");
+					continue;
+				}
+				resultGroup.add(user.getName());
 			}
 		}
 		return result;

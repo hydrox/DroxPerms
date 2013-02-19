@@ -53,7 +53,7 @@ public class User {
 
 	public User(String name, ConfigurationSection node) {
 		this.name = name;
-		this.group = node.getString("group");
+		this.group = node.getString("group", "default");
 		this.subgroups = node.getStringList("subgroups");
 		this.globalPermissions = node.getStringList("globalpermissions");
 		this.permissions = new LinkedHashMap<String, List<String>>();

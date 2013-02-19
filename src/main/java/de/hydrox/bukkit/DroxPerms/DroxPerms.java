@@ -136,6 +136,7 @@ public class DroxPerms extends JavaPlugin {
 		}
 		return "";
 	}
+
 	protected void registerPlayer(Player player) {
 		permissions.remove(player);
 		registerPlayer(player, player.getWorld());
