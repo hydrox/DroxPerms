@@ -394,7 +394,10 @@ public interface IDataProvider {
 	Map<String, List<String>> getSubgroupMembers();
 
 	Set<String> getGroupNames();
-        
+
+	Set<String> getAllUserNames();
+
 	String getUserNameFromPart(String partialName);
+
 	void save();
 }

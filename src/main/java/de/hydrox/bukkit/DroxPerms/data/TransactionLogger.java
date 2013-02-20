@@ -1,4 +1,4 @@
-package de.hydrox.bukkit.DroxPerms.data.flatfile;
+package de.hydrox.bukkit.DroxPerms.data;
 
 import java.io.BufferedWriter;
 import java.io.File;

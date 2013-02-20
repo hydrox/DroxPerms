@@ -1,4 +1,4 @@
-package de.hydrox.bukkit.DroxPerms.data.flatfile;
+package de.hydrox.bukkit.DroxPerms.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,75 +6,28 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import de.hydrox.bukkit.DroxPerms.data.AUser;
-import de.hydrox.bukkit.DroxPerms.data.Config;
+public class AUser {
+	protected static Map<String, AUser> users = new HashMap<String, AUser>();
+	protected static Map<String, AUser> backupUsers = new HashMap<String, AUser>();
+	protected static boolean testmode = false;
 
-public class User extends AUser{
+	protected String name;
+	protected String group;
+	protected List<String> subgroups;
+	protected List<String> globalPermissions;
+	protected Map<String, List<String>> permissions;
+	protected Map<String, String> info;
+	protected boolean dirty;
 
-	public User() {
-		this("mydrox");
-	}
-
-	public User(String name) {
-		this.name = name;
-		this.group = "default";
-		this.subgroups = new ArrayList<String>();
-		this.globalPermissions = new ArrayList<String>();
-		this.permissions = new LinkedHashMap<String, List<String>>();
-		this.dirty = true;
-
-		//Tehbeard Start
-		this.timedTrack = null;
-		this.timedTrackExpires = 0L;
-		this.timedSubgroups = new HashMap<String, Long>();
-		//Tehbeard End
-	}
-
-	public User(String name, ConfigurationSection node) {
-		this.name = name;
-		this.group = node.getString("group", "default");
-		this.subgroups = node.getStringList("subgroups");
-		this.globalPermissions = node.getStringList("globalpermissions");
-		this.permissions = new LinkedHashMap<String, List<String>>();
-		if(node.contains("permissions")) {
-			Set<String> worlds = node.getConfigurationSection("permissions.").getKeys(false);
-			for (String world : worlds) {
-				permissions.put(world, node.getStringList("permissions." + world));
-			}
-		}
-		if(node.contains("info")) {
-			this.info = new HashMap<String, String>();
-			Set<String> infoNodes = node.getConfigurationSection("info.").getKeys(false);
-			for (String infoNode : infoNodes) {
-				info.put(infoNode, node.getString("info." + infoNode));
-			}
-		}
-
-		//Tehbeard Start
-		this.timedTrack = node.getString("timedTrack",null);
-		this.timedTrackExpires = node.getLong("timedTrackExpires", 0L);
-		this.timedSubgroups = new HashMap<String, Long>();
-		if(node.contains("timedSubgroups")){
-			for(String e : node.getStringList("timedSubgroups")){
-				String[] tg = e.split("\\:");
-				if(tg.length != 2){
-					throw new IllegalStateException(name + " Has an invalid timed Group entry [" + e + "] does not contain two values");
-				}
-				String subgroup = tg[0];
-				long subgroupExpires = Long.parseLong(tg[1]);
-				this.timedSubgroups.put(subgroup, subgroupExpires);
-			}
-		}
-		//Tehbeard End
-
-
-		this.dirty = false;
-	}
+	//Tehbeard Start
+	protected String timedTrack;
+	protected long timedTrackExpires;
+	protected Map<String,Long> timedSubgroups;
+	//Tehbeard End
 
 	public String getName() {
 		return name;
@@ -82,40 +35,6 @@ public class User extends AUser{
 
 	public String getGroup() {
 		return group;
-	}
-
-	public Map<String, Object> toConfigurationNode() {
-		Map<String, Object> output = new LinkedHashMap<String, Object>();
-		output.put("group", group);
-		if (subgroups != null && subgroups.size() != 0) {
-			output.put("subgroups", subgroups);
-		}
-		if (permissions != null && permissions.size() != 0) {
-			output.put("permissions", permissions);
-		}
-		if (info != null && info.size() != 0) {
-			output.put("info", info);
-		}
-		if (globalPermissions != null && globalPermissions.size() != 0) {
-			output.put("globalpermissions", globalPermissions);
-		}
-
-
-		//Tehbeard Start
-
-		if(this.timedTrack !=null){output.put("timedTrack", timedTrack);}
-
-		if(this.timedTrackExpires != 0L){output.put("timedTrackExpires", this.timedTrackExpires);}
-		if(this.timedSubgroups.size() > 0){
-			List<String> sg = new ArrayList<String>();
-			for(Entry<String, Long> e : this.timedSubgroups.entrySet()){
-				sg.add(e.getKey() + ":" + e.getValue());
-			}
-			output.put("timedSubgroups", sg);
-		}
-		//Tehbeard End
-
-		return output;
 	}
 
 	public boolean isDirty() {
@@ -167,7 +86,7 @@ public class User extends AUser{
 	}
 
 	public boolean setGroup(String newGroup) {
-		if (Group.existGroup(newGroup)) {
+		if (AGroup.existGroup(newGroup)) {
 			group = newGroup.toLowerCase();
 			dirty = true;
 			return true;
@@ -231,7 +150,7 @@ public class User extends AUser{
 	}
 
 	public boolean addSubgroup(String subgroup) {
-		if(Group.existGroup(subgroup.toLowerCase())) {
+		if(AGroup.existGroup(subgroup.toLowerCase())) {
 			if (subgroups == null) {
 				subgroups = new ArrayList<String>();
 			}
@@ -269,7 +188,7 @@ public class User extends AUser{
 
 	//Tehbeard Start
 	public boolean setTimedTrack(String track,long expires){
-		if(track == null || Track.existTrack(track)){
+		if(track == null || ATrack.existTrack(track)){
 			this.timedTrack = track;
 			this.timedTrackExpires = expires;
 			dirty();
@@ -288,7 +207,7 @@ public class User extends AUser{
 	}
 
 	public boolean setTimedSubgroup(String subgroup,long expires){
-		if(!Group.existGroup(subgroup)){return false;}
+		if(!AGroup.existGroup(subgroup)){return false;}
 		if(expires <= 0L){
 			this.timedSubgroups.remove(subgroup);
 		}else{
@@ -330,7 +249,7 @@ public class User extends AUser{
 		return subgroups;
 	}
 
-	public static boolean addUser(User user) {
+	public static boolean addUser(AUser user) {
 		if (existUser(user.name.toLowerCase())) {
 			return false;
 		}
@@ -346,8 +265,23 @@ public class User extends AUser{
 		return false;
 	}
 
+	public static AUser getUser(String name) {
+		return users.get(name.toLowerCase());
+	}
+
+	public static boolean existUser(String name) {
+		if (users.containsKey(name.toLowerCase())) {
+			return true;
+		}
+		return false;
+	}
+
 	public static void clearUsers() {
 		users.clear();
+	}
+
+	public static Iterator<AUser> iter() {
+		return users.values().iterator();
 	}
 
 	public static void setTestMode() {
