@@ -334,10 +334,19 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public String getPlayerInfo(CommandSender sender, String player, String node) {
+	public String getPlayerInfo(String player, String node) {
 		User user = getUser(player, true);
 		if (user != null) {
 			return user.getInfo(node);
+		} else {
+			return null;
+		}
+	}
+
+	public Map<String, String> getPlayerInfoComplete(String player) {
+		User user = getUser(player, true);
+		if (user != null) {
+			return user.getInfoComplete();
 		} else {
 			return null;
 		}

@@ -190,6 +190,15 @@ public class DroxPlayerCommands implements CommandExecutor {
 				}
 				sender.sendMessage(string.toString());
 			}
+			Map<String, String> infos = dp.getPlayerInfoComplete(player);
+			if (infos != null) {
+				StringBuilder string = new StringBuilder();
+				string.append(player + " has info-nodes:\n");
+				for (String infonode : infos.keySet()) {
+					string.append("-" + infonode + ": " + infos.get(infonode) + "\n");
+				}
+				sender.sendMessage(string.toString());
+			}
 		}
 
 		// promote
