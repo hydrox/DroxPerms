@@ -453,11 +453,18 @@ public class FlatFilePermissions implements IDataProvider {
 		}
 	}
 
-	public String getGroupInfo(CommandSender sender, String group, String node) {
+	public String getGroupInfo(String group, String node) {
 		if (Group.existGroup(group)) {
 			return Group.getGroup(group).getInfo(node);
 		} else {
-			sender.sendMessage(ChatColor.RED + "Group " + group + " doesn't exist.");
+			return null;
+		}
+	}
+
+	public Map<String, String> getGroupInfoComplete(String group) {
+		if (Group.existGroup(group)) {
+			return Group.getGroup(group).getInfoComplete();
+		} else {
 			return null;
 		}
 	}

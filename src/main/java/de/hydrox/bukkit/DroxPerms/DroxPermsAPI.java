@@ -376,7 +376,7 @@ public class DroxPermsAPI {
 	 */
 	public String getGroupInfo(String group, String node) {
 		groupInfoGet++;
-		return plugin.dataProvider.getGroupInfo(fakeCS, group, node);
+		return plugin.dataProvider.getGroupInfo(group, node);
 	}
 
 	/**

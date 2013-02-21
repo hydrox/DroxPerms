@@ -42,8 +42,11 @@ public class Group {
 		this.name = name;
 		this.subgroups = node.getStringList("subgroups");
 		this.globalPermissions = node.getStringList("globalpermissions");
+		if (this.globalPermissions == null) {
+			this.globalPermissions = new ArrayList<String>();
+		}
 		this.permissions = new LinkedHashMap<String, List<String>>();
-		if(node.contains("permissions")) {
+		if (node.contains("permissions")) {
 			Set<String> worlds = node.getConfigurationSection("permissions.").getKeys(false);
 			for (String world : worlds) {
 				permissions.put(world, node.getStringList("permissions." + world));
@@ -222,6 +225,13 @@ public class Group {
 			return null;
 		}
 		return info.get(node);
+	}
+
+	public Map<String, String> getInfoComplete() {
+		if (info == null) {
+			return null;
+		}
+		return new HashMap<String, String>(info);
 	}
 
 	public boolean addWorld(String world) {
