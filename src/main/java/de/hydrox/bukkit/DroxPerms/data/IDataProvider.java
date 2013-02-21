@@ -175,14 +175,22 @@ public interface IDataProvider {
 	/**
 	 * Gets Data from the Players Info-node.
 	 * 
-	 * @param sender
 	 * @param player
 	 *            Player to be queried
 	 * @param node
 	 *            Info-node to be read
 	 * @return Info-node, is null if Player or Info-node doesn't exist
 	 */
-	String getPlayerInfo(CommandSender sender, String player, String node);
+	String getPlayerInfo(String player, String node);
+
+	/**
+	 * Gets all Info-nodes from the Player.
+	 * 
+	 * @param player
+	 *            Player to be queried
+	 * @return all Info-nodes of the Player, null if Player doesn't exist
+	 */
+	Map<String, String> getPlayerInfoComplete(String player);
 
 	/**
 	 * Returns all Subgroups of a given Group.
@@ -280,14 +288,22 @@ public interface IDataProvider {
 	/**
 	 * Gets Data from the Groups Info-node.
 	 * 
-	 * @param sender
 	 * @param group
 	 *            Group to be queried
 	 * @param node
 	 *            Info-node to be read
 	 * @return Info-node, is null if Player or Info-node doesn't exist
 	 */
-	String getGroupInfo(CommandSender sender, String group, String node);
+	String getGroupInfo(String group, String node);
+
+	/**
+	 * Gets all Info-nodes for the Group.
+	 * 
+	 * @param group
+	 *            Group to be queried
+	 * @return all Info-nodes of the Group, null if Group doesn't exist
+	 */
+	Map<String, String> getGroupInfoComplete(String group);
 
 	/**
 	 * Promotes a Player along a given Track.

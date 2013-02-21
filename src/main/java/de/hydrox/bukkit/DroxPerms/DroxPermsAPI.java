@@ -225,7 +225,7 @@ public class DroxPermsAPI {
 	 */
 	public String getPlayerInfo(String player, String node) {
 		playerInfoGet++;
-		return plugin.dataProvider.getPlayerInfo(fakeCS, player, node);
+		return plugin.dataProvider.getPlayerInfo(player, node);
 	}
 
 	/**
@@ -376,7 +376,7 @@ public class DroxPermsAPI {
 	 */
 	public String getGroupInfo(String group, String node) {
 		groupInfoGet++;
-		return plugin.dataProvider.getGroupInfo(fakeCS, group, node);
+		return plugin.dataProvider.getGroupInfo(group, node);
 	}
 
 	/**

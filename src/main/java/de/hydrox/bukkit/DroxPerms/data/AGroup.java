@@ -172,6 +172,13 @@ public abstract class AGroup {
 		return info.get(node);
 	}
 
+	public Map<String, String> getInfoComplete() {
+		if (info == null) {
+			return null;
+		}
+		return new HashMap<String, String>(info);
+	}
+
 	public boolean addWorld(String world) {
 		if (permissions.containsKey(world.toLowerCase())) {
 			return false;

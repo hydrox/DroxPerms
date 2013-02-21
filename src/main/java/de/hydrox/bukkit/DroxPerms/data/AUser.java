@@ -242,6 +242,13 @@ public class AUser {
 		return info.get(node);
 	}
 
+	public Map<String, String> getInfoComplete() {
+		if (info == null) {
+			return null;
+		}
+		return new HashMap<String, String>(info);
+	}
+
 	public List<String> getSubgroups() {
 		if (subgroups == null) {
 			subgroups = new ArrayList<String>();

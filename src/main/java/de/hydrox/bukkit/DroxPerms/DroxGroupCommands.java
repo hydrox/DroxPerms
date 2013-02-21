@@ -113,6 +113,10 @@ public class DroxGroupCommands implements CommandExecutor {
 			} else {
 				return false;
 			}
+			if (permissions == null) {
+				sender.sendMessage(ChatColor.RED + "Could not find group matching input");
+				return true;
+			}
 			List<String> subgroups = dp.getGroupSubgroups(split[1]);
 			if (subgroups != null && subgroups.size() > 0) {
 				StringBuilder string = new StringBuilder();
@@ -137,6 +141,15 @@ public class DroxGroupCommands implements CommandExecutor {
 				string.append(split[1] + " has permission worldpermissions:");
 				for (String globalstring : worldperms) {
 					string.append(" " + globalstring);
+				}
+				sender.sendMessage(string.toString());
+			}
+			Map<String, String> infos = dp.getGroupInfoComplete(split[1]);
+			if (infos != null) {
+				StringBuilder string = new StringBuilder();
+				string.append(split[1] + " has info-nodes:\n");
+				for (String infonode : infos.keySet()) {
+					string.append("-" + infonode + ": " + infos.get(infonode) + "\n");
 				}
 				sender.sendMessage(string.toString());
 			}

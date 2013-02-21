@@ -202,10 +202,19 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public String getPlayerInfo(CommandSender sender, String player, String node) {
+	public String getPlayerInfo(String player, String node) {
 		AUser user = getUser(player, true);
 		if (user != null) {
 			return user.getInfo(node);
+		} else {
+			return null;
+		}
+	}
+
+	public Map<String, String> getPlayerInfoComplete(String player) {
+		AUser user = getUser(player, true);
+		if (user != null) {
+			return user.getInfoComplete();
 		} else {
 			return null;
 		}
@@ -312,11 +321,18 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public String getGroupInfo(CommandSender sender, String group, String node) {
+	public String getGroupInfo(String group, String node) {
 		if (AGroup.existGroup(group)) {
 			return AGroup.getGroup(group).getInfo(node);
 		} else {
-			sender.sendMessage(ChatColor.RED + "Group " + group + " doesn't exist.");
+			return null;
+		}
+	}
+
+	public Map<String, String> getGroupInfoComplete(String group) {
+		if (AGroup.existGroup(group)) {
+			return AGroup.getGroup(group).getInfoComplete();
+		} else {
 			return null;
 		}
 	}

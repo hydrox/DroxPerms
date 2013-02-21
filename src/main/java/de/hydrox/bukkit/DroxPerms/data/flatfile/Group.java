@@ -29,8 +29,11 @@ public class Group extends AGroup{
 		this.name = name;
 		this.subgroups = node.getStringList("subgroups");
 		this.globalPermissions = node.getStringList("globalpermissions");
+		if (this.globalPermissions == null) {
+			this.globalPermissions = new ArrayList<String>();
+		}
 		this.permissions = new LinkedHashMap<String, List<String>>();
-		if(node.contains("permissions")) {
+		if (node.contains("permissions")) {
 			Set<String> worlds = node.getConfigurationSection("permissions.").getKeys(false);
 			for (String world : worlds) {
 				permissions.put(world, node.getStringList("permissions." + world));
