@@ -1,6 +1,7 @@
 package de.hydrox.bukkit.DroxPerms;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
+import de.hydrox.bukkit.DroxPerms.data.sql.SQLPermissions;
 
 /**
  * Base Class of DroxPerms
@@ -71,6 +73,13 @@ public class DroxPerms extends JavaPlugin {
 		logger.info("[DroxPerms] Loading DataProvider");
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
 			dataProvider = new FlatFilePermissions(this);
+		} else if (Config.getDataProvider().equals(SQLPermissions.NODE)) {
+			try {
+				dataProvider = new SQLPermissions(Config.getMySQLConfig(), this);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				SQLPermissions.mysqlError(e);
+			}
 		}
 
 		API = new DroxPermsAPI(this);

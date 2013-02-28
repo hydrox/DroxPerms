@@ -23,7 +23,6 @@ import de.hydrox.bukkit.DroxPerms.DroxPerms;
  */
 public abstract class APermissions implements IDataProvider {
 
-	public static final String NODE = "FlatFile";
 	protected static DroxPerms plugin = null;
 
 	//Tehbeard start

@@ -29,7 +29,6 @@ import de.hydrox.bukkit.DroxPerms.data.TransactionLogger;
 public class FlatFilePermissions extends APermissions{
 
 	public static final String NODE = "FlatFile";
-	protected static DroxPerms plugin = null;
 
 	private YamlConfiguration groupsConfig;
 	private YamlConfiguration usersConfig;

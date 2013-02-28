@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -16,6 +17,7 @@ public class Config {
 	private static int saveInterval;
 	private static Map<String, List<String>> worldMirrors= null;
 	
+	private static ConfigurationSection mysql = null;
 	
 	public Config(Plugin plugin) {
 		Logger logger = plugin.getServer().getLogger();
@@ -38,6 +40,7 @@ public class Config {
 			logger.fine("mirrors for world "+world+": " + worldMirrors.get(world).size());
 		}
 		
+		mysql = configuration.getConfigurationSection("MySQL");
 		// TODO Needs config-file reader
 	}
 	
@@ -71,5 +74,9 @@ public class Config {
 
 	public static int getSaveInterval() {
 		return saveInterval;
+	}
+
+	public static ConfigurationSection getMySQLConfig() {
+		return mysql;
 	}
 }
