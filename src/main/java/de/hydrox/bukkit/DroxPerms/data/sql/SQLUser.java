@@ -80,7 +80,7 @@ public class SQLUser extends AUser {
 	}
 
 	@Override
-	public Map<String, List<String>> getPermissions(String world) {
+	public Map<String, Map<String, Boolean>> getPermissions(String world) {
 		throw new NotImplementedException();
 		// TODO Auto-generated method stub
 	}

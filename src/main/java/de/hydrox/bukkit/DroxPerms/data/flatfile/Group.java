@@ -17,10 +17,9 @@ import de.hydrox.bukkit.DroxPerms.data.AGroup;
 import de.hydrox.bukkit.DroxPerms.data.Config;
 
 public class Group extends AGroup{
-	private String name;
-	private Map<String, List<String>> permissions;
+	private Map<String, Map<String, Boolean>> permissions;
 	private Map<String, String> info;
-	private List<String> globalPermissions;
+	private Map<String, Boolean> globalPermissions;
 	private List<String> subgroups;
 
 	private Map<String, Permission> bukkitPermissions;
@@ -32,22 +31,22 @@ public class Group extends AGroup{
 	public Group(String name) {
 		this.name = name;
 		this.subgroups = new ArrayList<String>();
-		this.globalPermissions = new ArrayList<String>();
-		this.permissions = new LinkedHashMap<String, List<String>>();
+		this.globalPermissions = new LinkedHashMap<String, Boolean>();
+		this.permissions = new LinkedHashMap<String, Map<String, Boolean>>();
 	}
 
 	public Group(String name, ConfigurationSection node) {
 		this.name = name;
 		this.subgroups = node.getStringList("subgroups");
-		this.globalPermissions = node.getStringList("globalpermissions");
+		this.globalPermissions = fileFormatToInternal(node.getStringList("globalpermissions"));
 		if (this.globalPermissions == null) {
-			this.globalPermissions = new ArrayList<String>();
+			this.globalPermissions = new LinkedHashMap<String, Boolean>();
 		}
-		this.permissions = new LinkedHashMap<String, List<String>>();
+		this.permissions = new LinkedHashMap<String, Map<String, Boolean>>();
 		if (node.contains("permissions")) {
 			Set<String> worlds = node.getConfigurationSection("permissions.").getKeys(false);
 			for (String world : worlds) {
-				permissions.put(world, node.getStringList("permissions." + world));
+				permissions.put(world, fileFormatToInternal(node.getStringList("permissions." + world)));
 			}
 		}
 		if(node.contains("info")) {
@@ -61,44 +60,74 @@ public class Group extends AGroup{
 		updatePermissions();
 	}
 
-	public String getName() {
-		return name;
+	private Map<String, Boolean> fileFormatToInternal(List<String> list){
+		if (list == null) {
+			return null;
+		}
+		Map<String, Boolean> result = new LinkedHashMap<String, Boolean>();
+		for (String string : list) {
+			boolean value = true;
+			if (string.startsWith("-")) {
+				string = string.substring(1);
+				value = false;
+			}
+			result.put(string, value);
+		}
+		return result;
 	}
-        
+
+	private List<String> internalFormatToFile(Map<String, Boolean> map){
+		if (map == null) {
+			return null;
+		}
+		List<String> result = new ArrayList<String>();
+		for (String string : map.keySet()) {
+			if(!map.get(string)){
+				string = "-"+string;
+			}
+			result.add(string);
+		}
+		return result;
+	}
+
 	public Map<String, Object> toConfigurationNode() {
 		Map<String, Object> output = new HashMap<String, Object>();
 		if (subgroups != null && subgroups.size() != 0) {
 			output.put("subgroups", subgroups);
 		}
 		if (permissions != null && permissions.size() != 0) {
-			output.put("permissions", permissions);
+			Map<String, List<String>> tmp = new LinkedHashMap<String, List<String>>(); 
+			for (String world : permissions.keySet()) {
+				tmp.put(world, internalFormatToFile(permissions.get(world)));
+			}
+			output.put("permissions", tmp);
 		}
 		if (info != null && info.size() != 0) {
 			output.put("info", info);
 		}
 		if (globalPermissions != null && globalPermissions.size() != 0) {
-			output.put("globalpermissions", globalPermissions);
+			output.put("globalpermissions", internalFormatToFile(globalPermissions));
 		}
 		return output;
 	}
 
-	public Map<String, List<String>> getPermissions(String world) {
-		Map<String, List<String>> result = new LinkedHashMap<String, List<String>>();
-		List<String> groupperms = new ArrayList<String>();
+	public Map<String, Map<String, Boolean>> getPermissions(String world) {
+		Map<String, Map<String, Boolean>> result = new LinkedHashMap<String, Map<String, Boolean>>();
+		Map<String, Boolean> groupperms = new LinkedHashMap<String, Boolean>();
 		//add group permissions
-		groupperms.add("droxperms.meta.group." + name);
+		groupperms.put("droxperms.meta.group." + name, true);
 		if (world != null) {
-			groupperms.add("droxperms.meta.group." + name + "." + Config.getRealWorld(world));
+			groupperms.put("droxperms.meta.group." + name + "." + Config.getRealWorld(world), true);
 		}
 		result.put("group", groupperms);
 		//add subgroup permissions
 		if (subgroups != null) {
-			ArrayList<String> subgroupperms = new ArrayList<String>();
+			Map<String, Boolean> subgroupperms = new LinkedHashMap<String, Boolean>();
 			for (Iterator<String> iterator = subgroups.iterator(); iterator.hasNext();) {
 				String subgroup = iterator.next();
-				subgroupperms.add("droxperms.meta.group." + subgroup);
+				subgroupperms.put("droxperms.meta.group." + subgroup, true);
 				if (world != null) {
-					subgroupperms.add("droxperms.meta.group." + subgroup + "." + Config.getRealWorld(world));
+					subgroupperms.put("droxperms.meta.group." + subgroup + "." + Config.getRealWorld(world), true);
 				}
 			}
 			result.put("subgroups", subgroupperms);
@@ -109,9 +138,9 @@ public class Group extends AGroup{
 		}
 		//add world permissions
 		if (world != null && permissions != null) {
-			ArrayList<String> worldperms = new ArrayList<String>();
+			Map<String, Boolean> worldperms = new LinkedHashMap<String, Boolean>();
 			if (permissions.get(Config.getRealWorld(world)) != null) {
-				worldperms.addAll(permissions.get(Config.getRealWorld(world)));
+				worldperms.putAll(permissions.get(Config.getRealWorld(world)));
 			}
 			result.put("world", worldperms);
 		}
@@ -119,34 +148,39 @@ public class Group extends AGroup{
 	}
 
 	public boolean addPermission(String world, String permission) {
+		boolean value = true;
+		if (permission.startsWith("-")) {
+			permission = permission.substring(1);
+			value = false;
+		}
 		if (world == null) {
 			if (globalPermissions == null) {
-				globalPermissions = new ArrayList<String>();
+				globalPermissions = new LinkedHashMap<String, Boolean>();
 			}
-			if (globalPermissions.contains(permission)) {
+			if (globalPermissions.containsKey(permission)) {
 				return false;
 			}
-			globalPermissions.add(permission);
+			globalPermissions.put(permission, value);
 			updatePermissions();
 			return true;
 		}
 
-		List<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
+		Map<String, Boolean> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
 		if (permArray == null) {
-			permArray = new ArrayList<String>();
+			permArray = new LinkedHashMap<String, Boolean>();
 			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
 		}
-		if (permArray.contains(permission)) {
+		if (permArray.containsKey(permission)) {
 			return false;
 		}
-		permArray.add(permission);
+		permArray.put(permission, value);
 		updatePermissions();
 		return true;
 	}
 
 	public boolean removePermission(String world, String permission) {
 		if (world == null) {
-			if (globalPermissions.contains(permission)) {
+			if (globalPermissions.containsKey(permission)) {
 				globalPermissions.remove(permission);
 				updatePermissions();
 				return true;
@@ -154,12 +188,12 @@ public class Group extends AGroup{
 			return false;
 		}
 
-		List<String> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
+		Map<String, Boolean> permArray = permissions.get(Config.getRealWorld(world).toLowerCase());
 		if (permArray == null) {
-			permArray = new ArrayList<String>();
+			permArray = new LinkedHashMap<String, Boolean>();
 			permissions.put(Config.getRealWorld(world).toLowerCase(), permArray);
 		}
-		if (permArray.contains(permission)) {
+		if (permArray.containsKey(permission)) {
 			permArray.remove(permission);
 			updatePermissions();
 			return true;
@@ -191,9 +225,9 @@ public class Group extends AGroup{
 	}
 
 	public boolean hasPermission(String world, String permission) {
-		List<String> permArray = permissions.get(world.toLowerCase());
-		if (permArray != null && permArray.contains(permission)) {
-			return true;
+		Map<String, Boolean> permArray = permissions.get(world.toLowerCase());
+		if (permArray != null && permArray.containsKey(permission)) {
+			return permArray.get(permission);
 		}
 
 		for (String subgroup : subgroups) {
@@ -235,7 +269,7 @@ public class Group extends AGroup{
 		if (permissions.containsKey(world.toLowerCase())) {
 			return false;
 		}
-		permissions.put(world.toLowerCase(), new ArrayList<String>());
+		permissions.put(world.toLowerCase(), new LinkedHashMap<String, Boolean>());
 		updatePermissions();
 		return true;
 	}
@@ -276,14 +310,7 @@ public class Group extends AGroup{
 			children.put("droxperms.meta.group." + name, true);
 
 			if(permissions.get(world) != null) {
-				for (String permission : permissions.get(world)) {
-					if (permission.startsWith("-")) {
-						permission = permission.substring(1);
-						children.put(permission, false);
-					} else {
-						children.put(permission, true);
-					}
-				}
+				children.putAll(permissions.get(world));
 			}
 
 			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, PermissionDefault.FALSE, children);
@@ -297,14 +324,7 @@ public class Group extends AGroup{
 			children.put("droxperms.meta.group." + subgroup, true);
 		}
 
-		for (String permission : globalPermissions) {
-			if (permission.startsWith("-")) {
-				permission = permission.substring(1);
-				children.put(permission, false);
-			} else {
-				children.put(permission, true);
-			}
-		}
+		children.putAll(globalPermissions);
 
 		//create Permission for global grouppermissions
 		Permission permission = new Permission("droxperms.meta.group." + name, "Group-Permissions for group " + name, PermissionDefault.FALSE, children);

@@ -25,7 +25,7 @@ public abstract class AUser {
 	public abstract String getInfo(String node);
 	public abstract Map<String, String> getInfoComplete();
 	public abstract String getName();
-	public abstract Map<String, List<String>> getPermissions(String world);
+	public abstract Map<String, Map<String, Boolean>> getPermissions(String world);
 	public abstract List<String> getSubgroups();
 	public abstract long getTimedSubgroupExpires(String subgroup);
 	public abstract Map<String,Long> getTimedSubgroups();

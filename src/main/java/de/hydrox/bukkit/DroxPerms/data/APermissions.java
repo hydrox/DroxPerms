@@ -171,7 +171,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public Map<String, List<String>> getPlayerPermissions(String player, String world, boolean partialMatch) {
+	public Map<String, Map<String, Boolean>> getPlayerPermissions(String player, String world, boolean partialMatch) {
 		AUser user = getUser(player, partialMatch);
 		if (user == null) {
 			if (partialMatch) {
@@ -296,7 +296,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public Map<String, List<String>> getGroupPermissions(String groupName, String world) {
+	public Map<String, Map<String, Boolean>> getGroupPermissions(String groupName, String world) {
 		AGroup group = AGroup.getGroup(groupName);
 		if (group == null) {
 			return null;

@@ -25,7 +25,7 @@ public abstract class AGroup {
 		return name;
 	}
 
-	public abstract Map<String, List<String>> getPermissions(String world);
+	public abstract Map<String, Map<String, Boolean>> getPermissions(String world);
 
 	public abstract boolean addPermission(String world, String permission);
 

@@ -21,7 +21,7 @@ public class SQLGroup extends AGroup {
 	}
 
 	@Override
-	public Map<String, List<String>> getPermissions(String world) {
+	public Map<String, Map<String, Boolean>> getPermissions(String world) {
 		throw new NotImplementedException();
 		// TODO Auto-generated method stub
 	}

@@ -105,7 +105,7 @@ public class DroxGroupCommands implements CommandExecutor {
 
 		if (split[0].equalsIgnoreCase("listperms") && split.length >= 2) {
 			groupListPerms++;
-			Map<String, List<String>> permissions = null;
+			Map<String, Map<String, Boolean>> permissions = null;
 			if (split.length == 3) {
 				permissions = dp.getGroupPermissions(split[1], split[2]);
 			} else if (split.length == 2) {
@@ -126,23 +126,21 @@ public class DroxGroupCommands implements CommandExecutor {
 				}
 				sender.sendMessage(string.toString());
 			}
-			List<String> globalperms = permissions.get("global");
+			Map<String, Boolean> globalperms = permissions.get("global");
 			if (globalperms != null && globalperms.size() > 0) {
-				StringBuilder string = new StringBuilder();
-				string.append(split[1] + " has permission globalpermissions:");
-				for (String globalstring : globalperms) {
-					string.append(" " + globalstring);
+				sender.sendMessage(split[1] + " has permission globalpermissions:");
+				for (String globalstring : globalperms.keySet()) {
+					ChatColor color = (globalperms.get(globalstring)) ? ChatColor.GREEN : ChatColor.RED;
+					sender.sendMessage(" " + globalstring + ": " + color + globalperms.get(globalstring));
 				}
-				sender.sendMessage(string.toString());
 			}
-			List<String> worldperms = permissions.get("world");
+			Map<String, Boolean> worldperms = permissions.get("world");
 			if (worldperms != null && worldperms.size() > 0) {
-				StringBuilder string = new StringBuilder();
-				string.append(split[1] + " has permission worldpermissions:");
-				for (String globalstring : worldperms) {
-					string.append(" " + globalstring);
+				sender.sendMessage(split[1] + " has permission worldpermissions:");
+				for (String worldstring : worldperms.keySet()) {
+					ChatColor color = (worldperms.get(worldstring)) ? ChatColor.GREEN : ChatColor.RED;
+					sender.sendMessage(" " + worldstring + ": " + color + worldperms.get(worldstring));
 				}
-				sender.sendMessage(string.toString());
 			}
 			Map<String, String> infos = dp.getGroupInfoComplete(split[1]);
 			if (infos != null) {

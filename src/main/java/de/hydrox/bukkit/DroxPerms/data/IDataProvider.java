@@ -155,7 +155,7 @@ public interface IDataProvider {
 	 *            World to be queried.
 	 * @return array of String containing the players permissions
 	 */
-	Map<String, List<String>> getPlayerPermissions(String player, String world, boolean partial);
+	Map<String, Map<String, Boolean>> getPlayerPermissions(String player, String world, boolean partial);
 
 	/**
 	 * Sets Data in the Players Info-node.
@@ -268,7 +268,7 @@ public interface IDataProvider {
 	 *            World to be queried.
 	 * @return array of String containing the Groups Permissions
 	 */
-	Map<String, List<String>> getGroupPermissions(String group, String world);
+	Map<String, Map<String, Boolean>> getGroupPermissions(String group, String world);
 
 	/**
 	 * Sets Data in the Groups Info-node.
