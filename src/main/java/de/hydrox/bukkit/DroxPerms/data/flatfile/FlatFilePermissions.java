@@ -209,7 +209,7 @@ public class FlatFilePermissions extends APermissions{
 					user = new User(name, node);
 					User.addUser(user);
 				} else {
-					Set<String> users = usersConfig.getConfigurationSection("users.").getKeys(false);
+					Set<String> users = usersConfig.getConfigurationSection("users").getKeys(false);
 					for (String potentialUser : users) {
 						if(potentialUser.toLowerCase().contains(name.toLowerCase())) {
 							if (user == null) {

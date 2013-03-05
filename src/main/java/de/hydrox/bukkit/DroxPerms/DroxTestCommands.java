@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.test.TestClassTemplate;
 import de.hydrox.bukkit.DroxPerms.test.TestFlatFilePermissions;
 
@@ -15,7 +16,11 @@ public class DroxTestCommands implements CommandExecutor {
 			sender.sendMessage("You don't have permission to run the TestSuite.");
 			return true;
 		}
-		TestClassTemplate.runTests(new TestFlatFilePermissions());
+		if(Config.getDataProvider().equals("FlatFile")){
+			TestClassTemplate.runTests(new TestFlatFilePermissions());
+		} else {
+			sender.sendMessage("No Tests for DataProvider " + Config.getDataProvider());
+		}
 		return true;
 	}
 }
