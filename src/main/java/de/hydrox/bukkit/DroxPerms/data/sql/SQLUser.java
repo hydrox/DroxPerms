@@ -175,36 +175,6 @@ public class SQLUser extends AUser {
 	}
 
 	@Override
-	public long getTimedSubgroupExpires(String subgroup) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public Map<String, Long> getTimedSubgroups() {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public String getTimedTrack() {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public long getTimedTrackExpires() {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public boolean hasTimedSubgroup(String subgroup) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
-	}
-
-	@Override
 	public boolean removePermission(String world, String permission) {
 		throw new NotImplementedException();
 		// TODO Auto-generated method stub
@@ -224,18 +194,6 @@ public class SQLUser extends AUser {
 
 	@Override
 	public boolean setInfo(String node, String data) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public boolean setTimedSubgroup(String subgroup, long expires) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public boolean setTimedTrack(String track, long expires) {
 		throw new NotImplementedException();
 		// TODO Auto-generated method stub
 	}

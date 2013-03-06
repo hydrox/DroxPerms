@@ -6,13 +6,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
 
 import de.hydrox.bukkit.DroxPerms.data.AGroup;
-import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.data.Config;
 
@@ -26,12 +24,6 @@ public class User extends AUser{
 	private Map<String, String> info;
 	private boolean dirty;
 
-	//Tehbeard Start
-	private String timedTrack;
-	private long timedTrackExpires;
-	private Map<String,Long> timedSubgroups;
-	//Tehbeard End
-
 	public User() {
 		this("mydrox");
 	}
@@ -43,12 +35,6 @@ public class User extends AUser{
 		this.globalPermissions = new LinkedHashMap<String, Boolean>();
 		this.permissions = new LinkedHashMap<String, Map<String, Boolean>>();
 		this.dirty = true;
-
-		//Tehbeard Start
-		this.timedTrack = null;
-		this.timedTrackExpires = 0L;
-		this.timedSubgroups = new HashMap<String, Long>();
-		//Tehbeard End
 	}
 
 	public User(String name, ConfigurationSection node) {
@@ -73,24 +59,6 @@ public class User extends AUser{
 				info.put(infoNode, node.getString("info." + infoNode));
 			}
 		}
-
-		//Tehbeard Start
-		this.timedTrack = node.getString("timedTrack",null);
-		this.timedTrackExpires = node.getLong("timedTrackExpires", 0L);
-		this.timedSubgroups = new HashMap<String, Long>();
-		if(node.contains("timedSubgroups")){
-			for(String e : node.getStringList("timedSubgroups")){
-				String[] tg = e.split("\\:");
-				if(tg.length != 2){
-					throw new IllegalStateException(name + " Has an invalid timed Group entry [" + e + "] does not contain two values");
-				}
-				String subgroup = tg[0];
-				long subgroupExpires = Long.parseLong(tg[1]);
-				this.timedSubgroups.put(subgroup, subgroupExpires);
-			}
-		}
-		//Tehbeard End
-
 
 		this.dirty = false;
 	}
@@ -152,21 +120,6 @@ public class User extends AUser{
 		if (globalPermissions != null && globalPermissions.size() != 0) {
 			output.put("globalpermissions", internalFormatToFile(globalPermissions));
 		}
-
-
-		//Tehbeard Start
-
-		if(this.timedTrack !=null){output.put("timedTrack", timedTrack);}
-
-		if(this.timedTrackExpires != 0L){output.put("timedTrackExpires", this.timedTrackExpires);}
-		if(this.timedSubgroups.size() > 0){
-			List<String> sg = new ArrayList<String>();
-			for(Entry<String, Long> e : this.timedSubgroups.entrySet()){
-				sg.add(e.getKey() + ":" + e.getValue());
-			}
-			output.put("timedSubgroups", sg);
-		}
-		//Tehbeard End
 
 		return output;
 	}
@@ -324,55 +277,6 @@ public class User extends AUser{
 		dirty();
 		return true;
 	}
-
-	//Tehbeard Start
-	public boolean setTimedTrack(String track,long expires){
-		if(track == null || ATrack.existTrack(track)){
-			this.timedTrack = track;
-			this.timedTrackExpires = expires;
-			dirty();
-			return true;
-		}
-		return false;
-	}
-
-
-	public String getTimedTrack(){
-		return this.timedTrack;
-	}
-
-	public long getTimedTrackExpires(){
-		return this.timedTrackExpires;
-	}
-
-	public boolean setTimedSubgroup(String subgroup,long expires){
-		if(!AGroup.existGroup(subgroup)){return false;}
-		if(expires <= 0L){
-			this.timedSubgroups.remove(subgroup);
-		}else{
-			this.timedSubgroups.put(subgroup, expires);
-		}
-		dirty();
-		return true;
-	}
-
-
-	public boolean hasTimedSubgroup(String subgroup){
-		return this.timedSubgroups.containsKey(subgroup);
-	}
-
-	public long getTimedSubgroupExpires(String subgroup){
-		if(hasTimedSubgroup(subgroup)){
-			return this.timedSubgroups.get(subgroup);
-		}
-		return 0L;
-	}
-
-	public Map<String,Long> getTimedSubgroups(){
-		return this.timedSubgroups;
-	}
-
-	//Tehbeard End
 
 	public String getInfo(String node) {
 		if (info == null) {

@@ -9,7 +9,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
@@ -34,9 +33,6 @@ public class DroxPerms extends JavaPlugin {
 	private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
 	private DroxTestCommands testCommandExecutor = new DroxTestCommands();
 	private DroxStatsCommands statsCommandExecutor = new DroxStatsCommands(this);
-	//beard start
-	private DroxTimedCommands timedCommandExecutor = new DroxTimedCommands(this);
-	//beard end
 	private Map<Player, Map<String, PermissionAttachment>> permissions = new HashMap<Player, Map<String, PermissionAttachment>>();
 	private DroxPermsAPI API = null;
 
@@ -89,9 +85,7 @@ public class DroxPerms extends JavaPlugin {
 		getCommand("changeplayer").setExecutor(playerCommandExecutor);
 		getCommand("testdroxperms").setExecutor(testCommandExecutor);
 		getCommand("droxstats").setExecutor(statsCommandExecutor);
-		//beard start
-		getCommand("changetimed").setExecutor(timedCommandExecutor);
-		//beard end
+
 		// Events
 		logger.info("[DroxPerms] Registering Events");
 		PluginManager pm = getServer().getPluginManager();
@@ -104,25 +98,6 @@ public class DroxPerms extends JavaPlugin {
 		}
 
 		enableScheduler();
-
-		//beard start
-		//run processing once a minute
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
-
-			@Override
-			public void run() {
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					if(!permissions.containsKey(p)){
-						registerPlayer(p);
-					}
-					if(!getAPI().processTimes(p.getName())){
-						getLogger().severe("An Error occured while processing " + p.getName() + ", check the log for more details");
-					}
-					refreshPlayer(p);
-				}
-
-			}}, 1200L , 1200L);
-		//beard end
 
 		logger.info("[DroxPerms] Plugin activated in " + (System.currentTimeMillis() - time) + "ms.");
 

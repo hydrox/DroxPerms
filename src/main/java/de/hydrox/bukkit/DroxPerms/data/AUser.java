@@ -27,17 +27,10 @@ public abstract class AUser {
 	public abstract String getName();
 	public abstract Map<String, Map<String, Boolean>> getPermissions(String world);
 	public abstract List<String> getSubgroups();
-	public abstract long getTimedSubgroupExpires(String subgroup);
-	public abstract Map<String,Long> getTimedSubgroups();
-	public abstract String getTimedTrack();
-	public abstract long getTimedTrackExpires();
-	public abstract boolean hasTimedSubgroup(String subgroup);
 	public abstract boolean removePermission(String world, String permission);
 	public abstract boolean removeSubgroup(String subgroup);
 	public abstract boolean setGroup(String newGroup);
 	public abstract boolean setInfo(String node, String data);
-	public abstract boolean setTimedSubgroup(String subgroup,long expires);
-	public abstract boolean setTimedTrack(String track,long expires);
 
 	public static boolean addUser(AUser user) {
 		if (existUser(user.getName().toLowerCase())) {
