@@ -67,8 +67,25 @@ public class SQLUser extends AUser {
 
 	@Override
 	public String getInfo(String node) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		String result = null;
+		provider.checkConnection();
+		PreparedStatement prep = provider.prepGetUserInfoNode;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, node);
+			ResultSet rs = prep.executeQuery();
+			rs.last(); int numrows = rs.getRow(); rs.beforeFirst();
+			if(numrows == 1) {
+				rs.next();
+//				provider.logger.info("NODE: " + node + " DATA: " + rs.getString(1));
+				result = rs.getString(1);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		}
+		return result;
 	}
 
 	@Override

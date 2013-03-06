@@ -42,12 +42,14 @@ public class SQLPermissions extends APermissions {
 	protected PreparedStatement prepGetUserSubgroups;
 	protected PreparedStatement prepGetUserPermissions;
 	protected PreparedStatement prepGetUserInfoComplete;
+	protected PreparedStatement prepGetUserInfoNode;
 
 	protected PreparedStatement prepGetAllGroups;
 
 	protected PreparedStatement prepGetGroupSubgroups;
 	protected PreparedStatement prepGetGroupPermissions;
 	protected PreparedStatement prepGetGroupInfoComplete;
+	protected PreparedStatement prepGetGroupInfoNode;
 
 //	public SQLPermissions(String host,int port,String database,String table,String username,String password, DroxPerms plugin) throws SQLException{
 	public SQLPermissions(ConfigurationSection config, DroxPerms plugin) throws SQLException{
@@ -192,12 +194,14 @@ public class SQLPermissions extends APermissions {
 			prepGetUserSubgroups = conn.prepareStatement("SELECT groupName FROM " + SQLPermissions.tableprefix + "groups AS groups JOIN " + SQLPermissions.tableprefix + "playerSubgroups AS subgroups ON subgroups.subgroupID=groups.groupID JOIN " + SQLPermissions.tableprefix + "players AS players ON players.playerID=subgroups.playerID WHERE players.playerID=?");
 			prepGetUserPermissions = conn.prepareStatement("SELECT permissionNode, value FROM " + SQLPermissions.tableprefix + "playerPermissions AS permissions JOIN " + SQLPermissions.tableprefix + "players AS players ON players.playerID=permissions.playerID JOIN " + SQLPermissions.tableprefix + "worlds AS worlds ON worlds.worldID=permissions.worldID WHERE players.playerID=? AND worlds.worldName=?");
 			prepGetUserInfoComplete = conn.prepareStatement("SELECT nodeName, nodeData FROM " + SQLPermissions.tableprefix + "playerInfoNodes AS infonodes JOIN " + SQLPermissions.tableprefix + "players AS players ON players.playerID=infonodes.playerID WHERE players.playerID=?");
+			prepGetUserInfoNode = conn.prepareStatement("SELECT nodeData FROM " + SQLPermissions.tableprefix + "playerInfoNodes AS infonodes JOIN " + SQLPermissions.tableprefix + "players AS players ON players.playerID=infonodes.playerID WHERE players.playerID=? AND infonodes.nodeName=?");
 			
 			prepGetAllGroups = conn.prepareStatement("SELECT groupID, groupName FROM " + tableprefix + "groups");
 
 			prepGetGroupSubgroups = conn.prepareStatement("SELECT groupName FROM " + SQLPermissions.tableprefix + "groups AS groups JOIN " + SQLPermissions.tableprefix + "groupSubgroups AS subgroups ON subgroups.subgroupID=groups.groupID WHERE groups.groupID=subgroups.groupID AND groups.groupID=?");
 			prepGetGroupPermissions = conn.prepareStatement("SELECT permissionNode, value FROM " + SQLPermissions.tableprefix + "groupPermissions AS permissions JOIN " + SQLPermissions.tableprefix + "groups AS groups ON groups.groupID=permissions.groupID JOIN " + SQLPermissions.tableprefix + "worlds AS worlds ON worlds.worldID=permissions.worldID WHERE groups.groupID=? AND worlds.worldName=?");
 			prepGetGroupInfoComplete = conn.prepareStatement("SELECT nodeName, nodeData FROM " + SQLPermissions.tableprefix + "groupInfoNodes AS infonodes JOIN " + SQLPermissions.tableprefix + "groups AS groups ON groups.groupID=infonodes.groupID WHERE groups.groupID=?");
+			prepGetGroupInfoNode = conn.prepareStatement("SELECT nodeData FROM " + SQLPermissions.tableprefix + "groupInfoNodes AS infonodes JOIN " + SQLPermissions.tableprefix + "groups AS groups ON groups.groupID=infonodes.groupID WHERE groups.groupID=? AND infonodes.nodeName=?");
 
 			logger.fine("Set player stat statement created");
 			logger.info("Initaised MySQL Data Provider.");
