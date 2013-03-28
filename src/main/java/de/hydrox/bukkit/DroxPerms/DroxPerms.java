@@ -72,7 +72,6 @@ public class DroxPerms extends JavaPlugin {
 			try {
 				dataProvider = new SQLPermissions(Config.getMySQLConfig(), this);
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				SQLPermissions.mysqlError(e);
 			}
 		}
@@ -258,7 +257,6 @@ public class DroxPerms extends JavaPlugin {
 		try {
 			metrics = new Metrics(this);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		initAPIMetrics(metrics);

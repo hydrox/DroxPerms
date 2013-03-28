@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -19,7 +17,6 @@ import de.hydrox.bukkit.DroxPerms.DroxPerms;
 import de.hydrox.bukkit.DroxPerms.data.AGroup;
 import de.hydrox.bukkit.DroxPerms.data.APermissions;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
-import de.hydrox.bukkit.DroxPerms.data.TransactionLogger;
 
 /**
  * 
@@ -34,10 +31,6 @@ public class FlatFilePermissions extends APermissions{
 	private YamlConfiguration usersConfig;
 	private YamlConfiguration tracksConfig;
 
-	//Tehbeard start
-	private Logger logger = Logger.getLogger("DroxPerms");
-	//Tehbeard End
-
 	public FlatFilePermissions() {
 		groupsConfig = YamlConfiguration.loadConfiguration(new File("groups.yml"));
 		usersConfig = YamlConfiguration.loadConfiguration(new File("users.yml"));
@@ -47,25 +40,6 @@ public class FlatFilePermissions extends APermissions{
 	public FlatFilePermissions(DroxPerms plugin)  {
 		FlatFilePermissions.plugin = plugin;
 		// Write some default configuration
-
-		//Tehbeard Start
-		//Add transaction logger
-		File f = new File(plugin.getDataFolder(),"transaction.log");
-		try {
-			Handler handler = new TransactionLogger(f);
-			handler.setLevel(Level.INFO);
-			logger.addHandler(handler);
-			logger.setLevel(Level.INFO);
-			logger.setUseParentHandlers(false);
-
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//Tehbeard End
 
 		groupsConfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "groups.yml"));
 		YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(plugin.getResource("groups.yml"));
