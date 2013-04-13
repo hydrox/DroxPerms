@@ -44,6 +44,14 @@ public class SQLPermissions extends APermissions {
 	protected PreparedStatement prepGetUserInfoComplete;
 	protected PreparedStatement prepGetUserInfoNode;
 
+	protected PreparedStatement prepSetUserGroup;
+	protected PreparedStatement prepAddUserPermission;
+	protected PreparedStatement prepAddUserInfoNode;
+	protected PreparedStatement prepAddUserSubgroup;
+
+	protected PreparedStatement prepRemoveUserPermission;
+	protected PreparedStatement prepRemoveUserSubgroup;
+
 	protected PreparedStatement prepGetAllGroups;
 
 	protected PreparedStatement prepGetGroupSubgroups;
@@ -51,7 +59,13 @@ public class SQLPermissions extends APermissions {
 	protected PreparedStatement prepGetGroupInfoComplete;
 	protected PreparedStatement prepGetGroupInfoNode;
 
-//	public SQLPermissions(String host,int port,String database,String table,String username,String password, DroxPerms plugin) throws SQLException{
+	protected PreparedStatement prepAddGroupPermission;
+	protected PreparedStatement prepAddGroupInfoNode;
+	protected PreparedStatement prepAddGroupSubgroup;
+
+	protected PreparedStatement prepRemoveGroupPermission;
+	protected PreparedStatement prepRemoveGroupSubgroup;
+
 	public SQLPermissions(ConfigurationSection config, DroxPerms plugin) throws SQLException{
 		APermissions.plugin = plugin;
 		this.logger = plugin.getLogger();
@@ -78,7 +92,7 @@ public class SQLPermissions extends APermissions {
 		try {
 			ResultSet rs = prepGetAllGroups.executeQuery();
 			while(rs.next()){
-				String adding = rs.getString(1); 
+				String adding = rs.getString(2); 
 				Group.addGroup(new SQLGroup(rs.getInt(1), rs.getString(2), this));
 				logger.info("GROUPNAME: " + adding);
 			}
@@ -196,12 +210,33 @@ public class SQLPermissions extends APermissions {
 			prepGetUserInfoComplete = conn.prepareStatement("SELECT nodeName, nodeData FROM " + SQLPermissions.tableprefix + "playerInfoNodes AS infonodes JOIN " + SQLPermissions.tableprefix + "players AS players ON players.playerID=infonodes.playerID WHERE players.playerID=?");
 			prepGetUserInfoNode = conn.prepareStatement("SELECT nodeData FROM " + SQLPermissions.tableprefix + "playerInfoNodes AS infonodes JOIN " + SQLPermissions.tableprefix + "players AS players ON players.playerID=infonodes.playerID WHERE players.playerID=? AND infonodes.nodeName=?");
 			
+			prepAddUserPermission = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "playerPermissions " +
+					"(playerID, worldID, permissionNode, value) " +
+					"values (?,(SELECT worldID FROM " + SQLPermissions.tableprefix + "worlds WHERE worldName = ?),?,?) ON DUPLICATE KEY UPDATE `value`=?;");
+			prepAddUserInfoNode = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "playerInfoNodes" +
+					"(playerID, nodeName, nodeData) values (?,?,?) ON DUPLICATE KEY UPDATE `nodeData`=?;");
+			prepSetUserGroup = conn.prepareStatement("UPDATE " + SQLPermissions.tableprefix + "players SET groupID=(SELECT groupID FROM " + SQLPermissions.tableprefix + "groups WHERE groupName=?) WHERE playerID=?;");
+			prepAddUserSubgroup = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "playerSubgroups (playerID,subgroupID) values (?,(SELECT groupID FROM " + SQLPermissions.tableprefix + "groups WHERE groupName=?));");
+
+			prepRemoveUserPermission = conn.prepareStatement("DELETE FROM " + SQLPermissions.tableprefix + "playerPermissions WHERE playerID=? AND worldID=(SELECT worldID FROM " + SQLPermissions.tableprefix + "worlds WHERE worldName = ?) AND permissionNode=?;");
+			prepRemoveUserSubgroup = conn.prepareStatement("DELETE FROM " + SQLPermissions.tableprefix + "playerSubgroups WHERE playerID=? AND subgroupID=(SELECT groupID FROM " + SQLPermissions.tableprefix + "groups WHERE groupName=?);");
+
 			prepGetAllGroups = conn.prepareStatement("SELECT groupID, groupName FROM " + tableprefix + "groups");
 
-			prepGetGroupSubgroups = conn.prepareStatement("SELECT groupName FROM " + SQLPermissions.tableprefix + "groups AS groups JOIN " + SQLPermissions.tableprefix + "groupSubgroups AS subgroups ON subgroups.subgroupID=groups.groupID WHERE groups.groupID=subgroups.groupID AND groups.groupID=?");
+			prepGetGroupSubgroups = conn.prepareStatement("SELECT groups.groupName FROM " + SQLPermissions.tableprefix + "groups AS groups JOIN " + SQLPermissions.tableprefix + "groupSubgroups AS subgroups ON subgroups.subgroupID=groups.groupID JOIN " + SQLPermissions.tableprefix + "groups AS groups2 ON groups2.groupID=subgroups.groupID WHERE groups2.groupID=?");
 			prepGetGroupPermissions = conn.prepareStatement("SELECT permissionNode, value FROM " + SQLPermissions.tableprefix + "groupPermissions AS permissions JOIN " + SQLPermissions.tableprefix + "groups AS groups ON groups.groupID=permissions.groupID JOIN " + SQLPermissions.tableprefix + "worlds AS worlds ON worlds.worldID=permissions.worldID WHERE groups.groupID=? AND worlds.worldName=?");
 			prepGetGroupInfoComplete = conn.prepareStatement("SELECT nodeName, nodeData FROM " + SQLPermissions.tableprefix + "groupInfoNodes AS infonodes JOIN " + SQLPermissions.tableprefix + "groups AS groups ON groups.groupID=infonodes.groupID WHERE groups.groupID=?");
 			prepGetGroupInfoNode = conn.prepareStatement("SELECT nodeData FROM " + SQLPermissions.tableprefix + "groupInfoNodes AS infonodes JOIN " + SQLPermissions.tableprefix + "groups AS groups ON groups.groupID=infonodes.groupID WHERE groups.groupID=? AND infonodes.nodeName=?");
+
+			prepAddGroupPermission = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "groupPermissions " +
+					"(groupID, worldID, permissionNode, value) " +
+					"values (?,(SELECT worldID FROM " + SQLPermissions.tableprefix + "worlds WHERE worldName = ?),?,?) ON DUPLICATE KEY UPDATE `value`=?;");
+			prepAddGroupInfoNode = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "groupInfoNodes" +
+					"(groupID, nodeName, nodeData) values (?,?,?) ON DUPLICATE KEY UPDATE `nodeData`=?;");
+			prepAddGroupSubgroup = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "groupSubgroups (groupID,subgroupID) values (?,(SELECT groupID FROM " + SQLPermissions.tableprefix + "groups WHERE groupName=?));");
+
+			prepRemoveGroupPermission = conn.prepareStatement("DELETE FROM " + SQLPermissions.tableprefix + "groupPermissions WHERE groupID=? AND worldID=(SELECT worldID FROM " + SQLPermissions.tableprefix + "worlds WHERE worldName = ?) AND permissionNode=?;");
+			prepRemoveGroupSubgroup = conn.prepareStatement("DELETE FROM " + SQLPermissions.tableprefix + "groupSubgroups WHERE groupID=? AND subgroupID=(SELECT groupID FROM " + SQLPermissions.tableprefix + "groups WHERE groupName=?);");
 
 			logger.fine("Set player stat statement created");
 			logger.info("Initaised MySQL Data Provider.");
@@ -211,12 +246,13 @@ public class SQLPermissions extends APermissions {
 	}
 
 	public void save() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public boolean createPlayer(String name) {
+		if(getExactUser(name) != null) {
+			return false;
+		}
 		throw new NotImplementedException();
 		// TODO Auto-generated method stub
 	}

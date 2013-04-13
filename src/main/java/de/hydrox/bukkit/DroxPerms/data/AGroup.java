@@ -14,10 +14,6 @@ public abstract class AGroup {
 	private static boolean testmode = false;
 
 	protected String name;
-	protected Map<String, List<String>> permissions;
-	protected Map<String, String> info;
-	protected List<String> globalPermissions;
-	protected List<String> subgroups;
 
 	protected Map<String, Permission> bukkitPermissions;
 

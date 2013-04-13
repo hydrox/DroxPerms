@@ -31,14 +31,50 @@ public class SQLUser extends AUser {
 
 	@Override
 	public boolean addPermission(String world, String permission) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		if (world == null) {
+			world = global;
+		} else {
+			world = Config.getRealWorld(world).toLowerCase();
+		}
+
+		boolean value = true;
+		if (permission.startsWith("-")) {
+			permission = permission.substring(1);
+			value = false;
+		}
+		PreparedStatement prep = provider.prepAddUserPermission;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, world);
+			prep.setString(3, permission);
+			prep.setBoolean(4, value);
+			prep.setBoolean(5, value);
+			prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		}
+		return true;
 	}
 
 	@Override
 	public boolean addSubgroup(String subgroup) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		PreparedStatement prep = provider.prepAddUserSubgroup;
+		int num=0;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, subgroup);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			if (e.getErrorCode()!=1062) {
+				SQLPermissions.mysqlError(e);
+			}
+		} 
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -176,26 +212,83 @@ public class SQLUser extends AUser {
 
 	@Override
 	public boolean removePermission(String world, String permission) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		if (world == null) {
+			world = global;
+		} else {
+			world = Config.getRealWorld(world).toLowerCase();
+		}
+		
+		PreparedStatement prep = provider.prepRemoveUserPermission;
+		int num=0;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, world);
+			prep.setString(3, permission);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		} 
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean removeSubgroup(String subgroup) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		PreparedStatement prep = provider.prepRemoveUserSubgroup;
+		int num=0;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, subgroup);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		} 
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean setGroup(String newGroup) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		PreparedStatement prep = provider.prepSetUserGroup;
+		int num = 0;
+		try {
+			prep.clearParameters();
+			prep.setString(1, newGroup);
+			prep.setInt(2, ID);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		}
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean setInfo(String node, String data) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		PreparedStatement prep = provider.prepAddUserInfoNode;
+		int num = 0;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, node);
+			prep.setString(3, data);
+			prep.setString(4, data);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		}
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	private Map<String, Boolean> getWorldPermissions(String world) {

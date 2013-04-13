@@ -64,7 +64,7 @@ public class DroxPerms extends JavaPlugin {
 		logger.info("[DroxPerms] Activating Plugin.");
 		getConfig().options().copyDefaults(true);
 		saveConfig();
-		Config config = new Config(this);
+		new Config(this);
 		logger.info("[DroxPerms] Loading DataProvider");
 		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
 			dataProvider = new FlatFilePermissions(this);

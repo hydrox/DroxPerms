@@ -13,6 +13,7 @@ import org.apache.commons.lang.NotImplementedException;
 
 import de.hydrox.bukkit.DroxPerms.data.AGroup;
 import de.hydrox.bukkit.DroxPerms.data.Config;
+import de.hydrox.bukkit.DroxPerms.data.flatfile.Group;
 
 public class SQLGroup extends AGroup {
 
@@ -65,38 +66,134 @@ public class SQLGroup extends AGroup {
 
 	@Override
 	public boolean addPermission(String world, String permission) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		if (world == null) {
+			world = global;
+		} else {
+			world = Config.getRealWorld(world).toLowerCase();
+		}
+
+		boolean value = true;
+		if (permission.startsWith("-")) {
+			permission = permission.substring(1);
+			value = false;
+		}
+		PreparedStatement prep = provider.prepAddGroupPermission;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, world);
+			prep.setString(3, permission);
+			prep.setBoolean(4, value);
+			prep.setBoolean(5, value);
+			prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		}
+		return true;
 	}
 
 	@Override
 	public boolean removePermission(String world, String permission) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		if (world == null) {
+			world = global;
+		} else {
+			world = Config.getRealWorld(world).toLowerCase();
+		}
+		
+		PreparedStatement prep = provider.prepRemoveGroupPermission;
+		int num=0;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, world);
+			prep.setString(3, permission);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		} 
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean addSubgroup(String subgroup) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		PreparedStatement prep = provider.prepAddGroupSubgroup;
+		int num=0;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, subgroup);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			if (e.getErrorCode()!=1062) {
+				SQLPermissions.mysqlError(e);
+			}
+		} 
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean removeSubgroup(String subgroup) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		PreparedStatement prep = provider.prepRemoveGroupSubgroup;
+		int num=0;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, subgroup);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		} 
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean hasPermission(String world, String permission) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		if (world == null) {
+			world = global;
+		} else {
+			world = Config.getRealWorld(world).toLowerCase();
+		}
+		Map<String, Boolean> perms = getWorldPermissions(world);
+		if (perms.containsKey(permission)) {
+			return perms.get(permission);
+		}
+
+		for (String subgroup : getSubgroups()) {
+			if (Group.getGroup(subgroup) != null &&
+					Group.getGroup(subgroup).hasPermission(world.toLowerCase(), permission)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public boolean setInfo(String node, String data) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		PreparedStatement prep = provider.prepAddGroupInfoNode;
+		int num = 0;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			prep.setString(2, node);
+			prep.setString(3, data);
+			prep.setString(4, data);
+			num = prep.executeUpdate();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		} 
+		if (num==1) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

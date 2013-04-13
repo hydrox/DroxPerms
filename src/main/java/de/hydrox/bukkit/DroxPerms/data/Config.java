@@ -41,7 +41,6 @@ public class Config {
 		}
 		
 		mysql = configuration.getConfigurationSection("MySQL");
-		// TODO Needs config-file reader
 	}
 	
 	public static String getDataProvider() {
