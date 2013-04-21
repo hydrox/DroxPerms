@@ -7,7 +7,9 @@ import java.util.Set;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-public class Track {
+import de.hydrox.bukkit.DroxPerms.data.ATrack;
+
+public class Track extends ATrack{
 	private static Map<String, Track> tracks = new HashMap<String, Track>();
 
 	private String name;

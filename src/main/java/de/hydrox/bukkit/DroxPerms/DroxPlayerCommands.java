@@ -139,7 +139,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		if (split[0].equalsIgnoreCase("listperms") && split.length >= 2) {
 			playerListPerms++;
-			Map<String, List<String>> permissions = null;
+			Map<String, Map<String, Boolean>> permissions = null;
 			if (split.length == 3) {
 				permissions = dp.getPlayerPermissions(split[1], split[2], true);
 			} else if (split.length == 2) {
@@ -172,23 +172,21 @@ public class DroxPlayerCommands implements CommandExecutor {
 				}
 				sender.sendMessage(string.toString());
 			}
-			List<String> globalperms = permissions.get("global");
+			Map<String, Boolean> globalperms = permissions.get("global");
 			if (globalperms != null && globalperms.size() > 0) {
-				StringBuilder string = new StringBuilder();
-				string.append(player + " has permission globalpermissions:");
-				for (String globalstring : globalperms) {
-					string.append(" " + globalstring);
+				sender.sendMessage(player + " has permission globalpermissions:");
+				for (String globalstring : globalperms.keySet()) {
+					ChatColor color = (globalperms.get(globalstring)) ? ChatColor.GREEN : ChatColor.RED;
+					sender.sendMessage(" " + globalstring + ": " + color + globalperms.get(globalstring));
 				}
-				sender.sendMessage(string.toString());
 			}
-			List<String> worldperms = permissions.get("world");
+			Map<String, Boolean> worldperms = permissions.get("world");
 			if (worldperms != null && worldperms.size() > 0) {
-				StringBuilder string = new StringBuilder();
-				string.append(player + " has permission worldpermissions:");
-				for (String worldstring : worldperms) {
-					string.append(" " + worldstring);
+				sender.sendMessage(player + " has permission worldpermissions:");
+				for (String worldstring : worldperms.keySet()) {
+					ChatColor color = (worldperms.get(worldstring)) ? ChatColor.GREEN : ChatColor.RED;
+					sender.sendMessage(" " + worldstring + ": " + color + worldperms.get(worldstring));
 				}
-				sender.sendMessage(string.toString());
 			}
 			Map<String, String> infos = dp.getPlayerInfoComplete(player);
 			if (infos != null) {
