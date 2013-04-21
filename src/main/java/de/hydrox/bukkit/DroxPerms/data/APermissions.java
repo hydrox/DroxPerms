@@ -171,7 +171,6 @@ public abstract class APermissions implements IDataProvider {
 			}
 			plugin.getServer().getLogger().info("[DroxPerms] User " + player + " doesn't exist yet. Creating ...");
 			createPlayer(player);
-			AUser.addUser(user);
 			return getUser(player, false).getPermissions(world);
 		}
 		return user.getPermissions(world);
@@ -341,7 +340,7 @@ public abstract class APermissions implements IDataProvider {
 	@Override
 	public boolean promotePlayer(CommandSender sender, String player,
 			String track) {
-		ATrack selectedTrack = ATrack.getTrack(track);
+		ATrack selectedTrack = getTrack(track);
 		if (selectedTrack == null) {
 			sender.sendMessage(ChatColor.RED + "Could not find Track " + track + ".");
 			return false;
@@ -363,7 +362,7 @@ public abstract class APermissions implements IDataProvider {
 	@Override
 	public boolean demotePlayer(CommandSender sender, String player,
 			String track) {
-		ATrack selectedTrack = ATrack.getTrack(track);
+		ATrack selectedTrack = getTrack(track);
 		if (selectedTrack == null) {
 			sender.sendMessage(ChatColor.RED + "Could not find Track " + track + ".");
 			return false;
@@ -450,4 +449,6 @@ public abstract class APermissions implements IDataProvider {
 
 	@Override
 	public abstract Set<String> getAllUserNames();
+
+	public abstract ATrack getTrack(String track);
 }

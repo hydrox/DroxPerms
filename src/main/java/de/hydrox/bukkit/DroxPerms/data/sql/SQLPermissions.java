@@ -5,19 +5,24 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import de.hydrox.bukkit.DroxPerms.DroxPerms;
 import de.hydrox.bukkit.DroxPerms.data.APermissions;
+import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.data.flatfile.Group;
+import de.hydrox.bukkit.DroxPerms.data.flatfile.User;
 
 public class SQLPermissions extends APermissions {
 
@@ -66,6 +71,13 @@ public class SQLPermissions extends APermissions {
 	protected PreparedStatement prepRemoveGroupPermission;
 	protected PreparedStatement prepRemoveGroupSubgroup;
 
+	protected PreparedStatement prepCreateGroup;
+	protected PreparedStatement prepCreatePlayer;
+	protected PreparedStatement prepDeletePlayer;
+
+	protected PreparedStatement prepGetDemotionGroup;
+	protected PreparedStatement prepGetPromotionGroup;
+
 	public SQLPermissions(ConfigurationSection config, DroxPerms plugin) throws SQLException{
 		APermissions.plugin = plugin;
 		this.logger = plugin.getLogger();
@@ -93,7 +105,7 @@ public class SQLPermissions extends APermissions {
 			ResultSet rs = prepGetAllGroups.executeQuery();
 			while(rs.next()){
 				String adding = rs.getString(2); 
-				Group.addGroup(new SQLGroup(rs.getInt(1), rs.getString(2), this));
+				SQLGroup.addGroup(new SQLGroup(rs.getInt(1), rs.getString(2), this));
 				logger.info("GROUPNAME: " + adding);
 			}
 			rs.close();
@@ -238,6 +250,15 @@ public class SQLPermissions extends APermissions {
 			prepRemoveGroupPermission = conn.prepareStatement("DELETE FROM " + SQLPermissions.tableprefix + "groupPermissions WHERE groupID=? AND worldID=(SELECT worldID FROM " + SQLPermissions.tableprefix + "worlds WHERE worldName = ?) AND permissionNode=?;");
 			prepRemoveGroupSubgroup = conn.prepareStatement("DELETE FROM " + SQLPermissions.tableprefix + "groupSubgroups WHERE groupID=? AND subgroupID=(SELECT groupID FROM " + SQLPermissions.tableprefix + "groups WHERE groupName=?);");
 
+			prepCreateGroup = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "groups" + "(groupName) values (?);",Statement.RETURN_GENERATED_KEYS);
+
+			prepCreatePlayer = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "players" + "(playerName, groupID) values (?, ?);",Statement.RETURN_GENERATED_KEYS);
+
+			prepDeletePlayer = conn.prepareStatement("DELETE FROM " + SQLPermissions.tableprefix + "players" + " WHERE playerName = ?;");
+
+			prepGetDemotionGroup = conn.prepareStatement("SELECT groupName FROM " + tableprefix + "groups WHERE groupID = (SELECT lowerGroupID FROM " + tableprefix + "tracks WHERE trackName=? AND higherGroupID=?);");
+			prepGetPromotionGroup = conn.prepareStatement("SELECT groupName FROM " + tableprefix + "groups WHERE groupID = (SELECT higherGroupID FROM " + tableprefix + "tracks WHERE trackName=? AND lowerGroupID=?);");
+
 			logger.fine("Set player stat statement created");
 			logger.info("Initaised MySQL Data Provider.");
 		} catch (SQLException e) {
@@ -252,21 +273,81 @@ public class SQLPermissions extends APermissions {
 	public boolean createPlayer(String name) {
 		if(getExactUser(name) != null) {
 			return false;
+		} else {
+			PreparedStatement prep = prepCreatePlayer;
+			int num=0;
+			try {
+				SQLGroup group = (SQLGroup) SQLGroup.getGroup("default");
+				prep.clearParameters();
+				prep.setString(1, name);
+				prep.setInt(2, group.getID());
+				num = prep.executeUpdate();
+				if (num==1) {
+					return true;
+				}
+			} catch (SQLException e) {
+				if (e.getErrorCode()!=1062) {
+					SQLPermissions.mysqlError(e);
+				}
+			}
+			return false;
 		}
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public boolean deletePlayer(CommandSender sender, String name) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		Player player = plugin.getServer().getPlayerExact(name);
+		if (player != null) {
+			sender.sendMessage(ChatColor.RED + "Can't delete online Player.");
+			return false;
+		}
+		SQLUser user = (SQLUser) getExactUser(name);
+		if (user != null) {
+			User.removeUser(name);
+			PreparedStatement prep = prepDeletePlayer;
+			int num=0;
+			try {
+				prep.clearParameters();
+				prep.setString(1, name);
+				num = prep.executeUpdate();
+				if (num==1) {
+					sender.sendMessage(ChatColor.GREEN + "Deleted Player " + name + ".");
+					return true;
+				}
+			} catch (SQLException e) {
+					SQLPermissions.mysqlError(e);
+			}
+			return true;
+		}
+		sender.sendMessage(ChatColor.RED + "No Player with this exact name found.");
+
+		return false;
 	}
 
 	@Override
 	public boolean createGroup(CommandSender sender, String name) {
-		throw new NotImplementedException();
-		// TODO Auto-generated method stub
+		if (SQLGroup.existGroup(name)) {
+			return false;
+		} else {
+			PreparedStatement prep = prepCreateGroup;
+			int num=0;
+			try {
+				prep.clearParameters();
+				prep.setString(1, name);
+				num = prep.executeUpdate();
+				if (num==1) {
+					ResultSet rs = prep.getGeneratedKeys();
+					rs.next();
+					SQLGroup.addGroup(new SQLGroup(rs.getInt(1), name, this));
+					return true;
+				}
+			} catch (SQLException e) {
+				if (e.getErrorCode()!=1062) {
+					SQLPermissions.mysqlError(e);
+				}
+			}
+			return false;
+		}
 	}
 
 	@Override
@@ -370,4 +451,9 @@ public class SQLPermissions extends APermissions {
         logger.severe("=========================================");
 
     }
+
+	@Override
+	public ATrack getTrack(String track) {
+		return new SQLTrack(track, this);
+	}
 }

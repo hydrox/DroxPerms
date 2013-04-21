@@ -44,7 +44,7 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXplayerInfoNodes` (
   CONSTRAINT `fk_infonodes_1`
     FOREIGN KEY (`playerID` )
     REFERENCES `$PREFIXplayers` (`playerID` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -73,7 +73,7 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXplayerPermissions` (
   CONSTRAINT `fk_playerPermissions_1`
     FOREIGN KEY (`playerID` )
     REFERENCES `$PREFIXplayers` (`playerID` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_playerPermissions_2`
     FOREIGN KEY (`worldID` )
@@ -158,7 +158,7 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXplayerSubgroups` (
   CONSTRAINT `fk_playerSubgroups_1`
     FOREIGN KEY (`playerID` )
     REFERENCES `$PREFIXplayers` (`playerID` )
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_playerSubgroups_2`
     FOREIGN KEY (`subgroupID` )

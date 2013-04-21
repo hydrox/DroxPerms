@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import de.hydrox.bukkit.DroxPerms.DroxPerms;
 import de.hydrox.bukkit.DroxPerms.data.AGroup;
 import de.hydrox.bukkit.DroxPerms.data.APermissions;
+import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
 
 /**
@@ -207,5 +208,10 @@ public class FlatFilePermissions extends APermissions{
 	@Override
 	public Set<String> getAllUserNames() {
 		return usersConfig.getConfigurationSection("users.").getKeys(false);
+	}
+
+	@Override
+	public ATrack getTrack(String track) {
+		return Track.getTrack(track);
 	}
 }

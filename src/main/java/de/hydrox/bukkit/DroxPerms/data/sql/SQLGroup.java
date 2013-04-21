@@ -168,8 +168,8 @@ public class SQLGroup extends AGroup {
 		}
 
 		for (String subgroup : getSubgroups()) {
-			if (Group.getGroup(subgroup) != null &&
-					Group.getGroup(subgroup).hasPermission(world.toLowerCase(), permission)) {
+			if (SQLGroup.getGroup(subgroup) != null &&
+					SQLGroup.getGroup(subgroup).hasPermission(world.toLowerCase(), permission)) {
 				return true;
 			}
 		}
@@ -286,5 +286,9 @@ public class SQLGroup extends AGroup {
 			SQLPermissions.mysqlError(e);
 		}
 		return result;
+	}
+
+	public int getID() {
+		return ID;
 	}
 }
