@@ -66,14 +66,17 @@ public class DroxPerms extends JavaPlugin {
 		saveConfig();
 		new Config(this);
 		logger.info("[DroxPerms] Loading DataProvider");
-		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
+		if (Config.getDataProvider().equalsIgnoreCase(FlatFilePermissions.NODE)) {
 			dataProvider = new FlatFilePermissions(this);
-		} else if (Config.getDataProvider().equals(SQLPermissions.NODE)) {
+		} else if (Config.getDataProvider().equalsIgnoreCase(SQLPermissions.NODE)) {
 			try {
 				dataProvider = new SQLPermissions(Config.getMySQLConfig(), this);
 			} catch (SQLException e) {
 				SQLPermissions.mysqlError(e);
 			}
+		} else {
+			logger.warning("No DataProvider named \""+Config.getDataProvider()+ "\" available. Falling back to " + FlatFilePermissions.NODE);
+			dataProvider = new FlatFilePermissions(this);
 		}
 
 		API = new DroxPermsAPI(this);
