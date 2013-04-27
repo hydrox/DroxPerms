@@ -11,7 +11,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,7 +20,6 @@ import de.hydrox.bukkit.DroxPerms.DroxPerms;
 import de.hydrox.bukkit.DroxPerms.data.APermissions;
 import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
-import de.hydrox.bukkit.DroxPerms.data.flatfile.Group;
 import de.hydrox.bukkit.DroxPerms.data.flatfile.User;
 
 public class SQLPermissions extends APermissions {

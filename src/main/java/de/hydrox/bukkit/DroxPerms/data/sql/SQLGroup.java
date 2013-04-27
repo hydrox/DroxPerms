@@ -9,11 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import de.hydrox.bukkit.DroxPerms.data.AGroup;
 import de.hydrox.bukkit.DroxPerms.data.Config;
-import de.hydrox.bukkit.DroxPerms.data.flatfile.Group;
 
 public class SQLGroup extends AGroup {
 

@@ -4,3 +4,10 @@ SaveInterval: 5
 Mirrors:
   world: 
     - world_nether
+MySQL:
+  host: localhost
+  database: minecraft
+  prefix: droxperms_
+  username: drox
+  password: perms
+
