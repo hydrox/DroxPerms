@@ -68,6 +68,7 @@ public class SQLGroup extends AGroup {
 		} else {
 			world = Config.getRealWorld(world).toLowerCase();
 		}
+		permission = permission.toLowerCase();
 
 		boolean value = true;
 		if (permission.startsWith("-")) {
@@ -159,6 +160,7 @@ public class SQLGroup extends AGroup {
 		} else {
 			world = Config.getRealWorld(world).toLowerCase();
 		}
+		permission = permission.toLowerCase();
 		Map<String, Boolean> perms = getWorldPermissions(world);
 		if (perms.containsKey(permission)) {
 			return perms.get(permission);

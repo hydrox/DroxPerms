@@ -34,6 +34,7 @@ public class SQLUser extends AUser {
 		} else {
 			world = Config.getRealWorld(world).toLowerCase();
 		}
+		permission = permission.toLowerCase();
 
 		boolean value = true;
 		if (permission.startsWith("-")) {
