@@ -437,7 +437,7 @@ public class SQLPermissions extends APermissions {
         case 1045:logger.severe("Cannot connect to database, check user credentials, database exists and that user is able to log in from this remote machine");break;
         case 1049:logger.severe("Cannot locate database, check you spelt it correctly and username has access rights.");break;
 
-        default:logger.severe("Error code not found, either check the error code online, or post on the dev.bukkit.org/server-mods/beardstat page");break; 
+        default:logger.severe("Error code not found, either check the error code online, or post on the dev.bukkit.org/server-mods/droxperms page");break; 
         }
 
         logger.severe("=========================================");
