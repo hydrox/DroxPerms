@@ -187,6 +187,9 @@ public class SQLPermissions extends APermissions {
 				while (s.hasNext()) {
 					String query = s.next();
 					query = query.replace("$PREFIX", tableprefix);
+					if (query.startsWith("--")) {
+						continue;
+					}
 
 					PreparedStatement ps = conn.prepareStatement(query);
 

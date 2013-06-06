@@ -1,8 +1,6 @@
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXgroups`
 -- -----------------------------------------------------
@@ -11,8 +9,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXgroups` (
   `groupName` VARCHAR(45) NULL ,
   PRIMARY KEY (`groupID`) )
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXplayers`
 -- -----------------------------------------------------
@@ -30,8 +26,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXplayers` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXplayerInfoNodes`
 -- -----------------------------------------------------
@@ -47,8 +41,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXplayerInfoNodes` (
     ON DELETE CASCADE
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXworlds`
 -- -----------------------------------------------------
@@ -57,8 +49,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXworlds` (
   `worldName` VARCHAR(45) NULL ,
   PRIMARY KEY (`worldID`) )
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXplayerPermissions`
 -- -----------------------------------------------------
@@ -81,8 +71,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXplayerPermissions` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXgroupPermissions`
 -- -----------------------------------------------------
@@ -105,8 +93,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXgroupPermissions` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXgroupSubgroups`
 -- -----------------------------------------------------
@@ -127,8 +113,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXgroupSubgroups` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXgroupInfoNodes`
 -- -----------------------------------------------------
@@ -144,8 +128,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXgroupInfoNodes` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXplayerSubgroups`
 -- -----------------------------------------------------
@@ -166,8 +148,6 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXplayerSubgroups` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
 -- -----------------------------------------------------
 -- Table `$PREFIXtracks`
 -- -----------------------------------------------------
@@ -190,25 +170,18 @@ CREATE  TABLE IF NOT EXISTS `$PREFIXtracks` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
-
-
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
 -- -----------------------------------------------------
 -- Data for table `$PREFIXgroups`
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `$PREFIXgroups` (`groupID`, `groupName`) VALUES (0, 'default');
-
 COMMIT;
-
 -- -----------------------------------------------------
 -- Data for table `$PREFIXworlds`
 -- -----------------------------------------------------
 START TRANSACTION;
 INSERT INTO `$PREFIXworlds` (`worldID`, `worldName`) VALUES (0, 'globalpermissions');
-
 COMMIT;
