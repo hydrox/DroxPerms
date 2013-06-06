@@ -9,6 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+
 import de.hydrox.bukkit.DroxPerms.data.AGroup;
 import de.hydrox.bukkit.DroxPerms.data.Config;
 
@@ -24,6 +28,7 @@ public class SQLGroup extends AGroup {
 		this.name = name;
 		this.provider = provider;
 //		provider.logger.info("Groupname: " + name + " ID: " + ID);
+		updatePermissions();
 	}
 
 	@Override
@@ -87,6 +92,7 @@ public class SQLGroup extends AGroup {
 		} catch (SQLException e) {
 			SQLPermissions.mysqlError(e);
 		}
+		updatePermissions();
 		return true;
 	}
 
@@ -110,6 +116,7 @@ public class SQLGroup extends AGroup {
 			SQLPermissions.mysqlError(e);
 		} 
 		if (num==1) {
+			updatePermissions();
 			return true;
 		}
 		return false;
@@ -130,6 +137,7 @@ public class SQLGroup extends AGroup {
 			}
 		} 
 		if (num==1) {
+			updatePermissions();
 			return true;
 		}
 		return false;
@@ -148,6 +156,7 @@ public class SQLGroup extends AGroup {
 			SQLPermissions.mysqlError(e);
 		} 
 		if (num==1) {
+			updatePermissions();
 			return true;
 		}
 		return false;
@@ -289,5 +298,52 @@ public class SQLGroup extends AGroup {
 
 	public int getID() {
 		return ID;
+	}
+
+	private void updatePermissions() {
+		bukkitPermissions = new LinkedHashMap<String, Permission>();
+		List<String> subgroups = getSubgroups();
+		//create Permission for default world
+		{
+			Map<String, Boolean> children = new LinkedHashMap<String, Boolean>();
+			for (String subgroup : subgroups) {
+				children.put("droxperms.meta.group." + subgroup + "." + Config.getDefaultWorld(), true);
+			}
+			children.put("droxperms.meta.group." + name, true);
+
+			Permission permission = new Permission("droxperms.meta.group." + name + "." + Config.getDefaultWorld(), "Group-Permissions for group " + name + " on world " + Config.getDefaultWorld(), PermissionDefault.FALSE, children);
+			Bukkit.getPluginManager().removePermission(permission);
+			Bukkit.getPluginManager().addPermission(permission);
+			bukkitPermissions.put(Config.getDefaultWorld(), permission);
+		}
+
+		//create Permissions for other worlds
+		for (String world : Config.getWorlds()) {
+			Map<String, Boolean> children = new LinkedHashMap<String, Boolean>();
+			for (String subgroup : subgroups) {
+				children.put("droxperms.meta.group." + subgroup + "." + world, true);
+			}
+
+			children.put("droxperms.meta.group." + name, true);
+
+			children.putAll(getWorldPermissions(world));
+
+			Permission permission = new Permission("droxperms.meta.group." + name + "." + world, "Group-Permissions for group " + name + " on world " + world, PermissionDefault.FALSE, children);
+			Bukkit.getPluginManager().removePermission(permission);
+			Bukkit.getPluginManager().addPermission(permission);
+			bukkitPermissions.put(world, permission);
+		}
+
+		Map<String, Boolean> children = new LinkedHashMap<String, Boolean>();
+		for (String subgroup : subgroups) {
+			children.put("droxperms.meta.group." + subgroup, true);
+		}
+
+		children.putAll(getWorldPermissions(global));
+
+		//create Permission for global grouppermissions
+		Permission permission = new Permission("droxperms.meta.group." + name, "Group-Permissions for group " + name, PermissionDefault.FALSE, children);
+		Bukkit.getPluginManager().removePermission(permission);
+		Bukkit.getPluginManager().addPermission(permission);
 	}
 }

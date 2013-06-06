@@ -281,7 +281,7 @@ public class Group extends AGroup{
 		return subgroups;
 	}
 
-	public void updatePermissions() {
+	private void updatePermissions() {
 		bukkitPermissions = new LinkedHashMap<String, Permission>();
 		//create Permission for default world
 		if (subgroups == null) {
