@@ -1,0 +1,187 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
+-- -----------------------------------------------------
+-- Table `$PREFIXgroups`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXgroups` (
+  `groupID` INT NOT NULL AUTO_INCREMENT ,
+  `groupName` VARCHAR(45) NULL ,
+  PRIMARY KEY (`groupID`) )
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXplayers`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXplayers` (
+  `playerID` INT NOT NULL AUTO_INCREMENT ,
+  `playerName` VARCHAR(45) NULL ,
+  `groupID` INT NOT NULL ,
+  PRIMARY KEY (`playerID`) ,
+  INDEX `fk_players_1` (`groupID` ASC) ,
+  UNIQUE INDEX `playerName_UNIQUE` (`playerName` ASC) ,
+  UNIQUE INDEX `playerID_UNIQUE` (`playerID` ASC) ,
+  CONSTRAINT `fk_players_1`
+    FOREIGN KEY (`groupID` )
+    REFERENCES `$PREFIXgroups` (`groupID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXplayerInfoNodes`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXplayerInfoNodes` (
+  `playerID` INT NOT NULL ,
+  `nodeName` VARCHAR(45) NOT NULL ,
+  `nodeData` VARCHAR(100) NULL ,
+  INDEX `fk_infonodes_1` (`playerID` ASC) ,
+  PRIMARY KEY (`playerID`, `nodeName`) ,
+  CONSTRAINT `fk_infonodes_1`
+    FOREIGN KEY (`playerID` )
+    REFERENCES `$PREFIXplayers` (`playerID` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXworlds`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXworlds` (
+  `worldID` INT NOT NULL AUTO_INCREMENT ,
+  `worldName` VARCHAR(45) NULL ,
+  PRIMARY KEY (`worldID`) )
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXplayerPermissions`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXplayerPermissions` (
+  `playerID` INT NOT NULL ,
+  `worldID` INT NOT NULL DEFAULT 0 ,
+  `permissionNode` VARCHAR(100) NOT NULL ,
+  `value` TINYINT(1) NULL ,
+  INDEX `fk_playerPermissions_1` (`playerID` ASC) ,
+  INDEX `fk_playerPermissions_2` (`worldID` ASC) ,
+  PRIMARY KEY (`playerID`, `worldID`, `permissionNode`) ,
+  CONSTRAINT `fk_playerPermissions_1`
+    FOREIGN KEY (`playerID` )
+    REFERENCES `$PREFIXplayers` (`playerID` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_playerPermissions_2`
+    FOREIGN KEY (`worldID` )
+    REFERENCES `$PREFIXworlds` (`worldID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXgroupPermissions`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXgroupPermissions` (
+  `groupID` INT NOT NULL ,
+  `worldID` INT NOT NULL ,
+  `permissionNode` VARCHAR(100) NOT NULL ,
+  `value` TINYINT(1) NULL ,
+  INDEX `fk_playerPermissions_1` (`groupID` ASC) ,
+  INDEX `fk_playerPermissions_2` (`worldID` ASC) ,
+  PRIMARY KEY (`groupID`, `worldID`, `permissionNode`) ,
+  CONSTRAINT `fk_playerPermissions_10`
+    FOREIGN KEY (`groupID` )
+    REFERENCES `$PREFIXgroups` (`groupID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_playerPermissions_20`
+    FOREIGN KEY (`worldID` )
+    REFERENCES `$PREFIXworlds` (`worldID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXgroupSubgroups`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXgroupSubgroups` (
+  `groupID` INT NOT NULL ,
+  `subgroupID` INT NOT NULL ,
+  INDEX `fk_groupSubgroups_1` (`groupID` ASC) ,
+  INDEX `fk_groupSubgroups_2` (`subgroupID` ASC) ,
+  PRIMARY KEY (`groupID`, `subgroupID`) ,
+  CONSTRAINT `fk_groupSubgroups_1`
+    FOREIGN KEY (`groupID` )
+    REFERENCES `$PREFIXgroups` (`groupID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_groupSubgroups_2`
+    FOREIGN KEY (`subgroupID` )
+    REFERENCES `$PREFIXgroups` (`groupID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXgroupInfoNodes`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXgroupInfoNodes` (
+  `groupID` INT NOT NULL ,
+  `nodeName` VARCHAR(100) NOT NULL ,
+  `nodeData` VARCHAR(100) NULL ,
+  INDEX `fk_infonodes_1` (`groupID` ASC) ,
+  PRIMARY KEY (`nodeName`, `groupID`) ,
+  CONSTRAINT `fk_infonodes_10`
+    FOREIGN KEY (`groupID` )
+    REFERENCES `$PREFIXgroups` (`groupID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXplayerSubgroups`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXplayerSubgroups` (
+  `playerID` INT NOT NULL ,
+  `subgroupID` INT NOT NULL ,
+  INDEX `fk_subgroups_1` (`playerID` ASC) ,
+  PRIMARY KEY (`playerID`, `subgroupID`) ,
+  INDEX `fk_playerSubgroups_2` (`subgroupID` ASC) ,
+  CONSTRAINT `fk_playerSubgroups_1`
+    FOREIGN KEY (`playerID` )
+    REFERENCES `$PREFIXplayers` (`playerID` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_playerSubgroups_2`
+    FOREIGN KEY (`subgroupID` )
+    REFERENCES `$PREFIXgroups` (`groupID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `$PREFIXtracks`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `$PREFIXtracks` (
+  `ID` INT NOT NULL AUTO_INCREMENT ,
+  `trackName` VARCHAR(45) NULL ,
+  `lowerGroupID` INT NULL ,
+  `higherGroupID` INT NULL ,
+  PRIMARY KEY (`ID`) ,
+  INDEX `fk_tracks_1` (`lowerGroupID` ASC) ,
+  INDEX `fk_tracks_2` (`higherGroupID` ASC) ,
+  CONSTRAINT `fk_tracks_1`
+    FOREIGN KEY (`lowerGroupID` )
+    REFERENCES `$PREFIXgroups` (`groupID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tracks_2`
+    FOREIGN KEY (`higherGroupID` )
+    REFERENCES `$PREFIXgroups` (`groupID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+-- -----------------------------------------------------
+-- Data for table `$PREFIXgroups`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `$PREFIXgroups` (`groupID`, `groupName`) VALUES (0, 'default');
+COMMIT;
+-- -----------------------------------------------------
+-- Data for table `$PREFIXworlds`
+-- -----------------------------------------------------
+START TRANSACTION;
+INSERT INTO `$PREFIXworlds` (`worldID`, `worldName`) VALUES (0, 'globalpermissions');
+COMMIT;

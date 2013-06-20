@@ -1,15 +1,14 @@
 package de.hydrox.bukkit.DroxPerms;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
@@ -19,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
+import de.hydrox.bukkit.DroxPerms.data.sql.SQLPermissions;
 
 /**
  * Base Class of DroxPerms
@@ -33,9 +33,6 @@ public class DroxPerms extends JavaPlugin {
 	private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
 	private DroxTestCommands testCommandExecutor = new DroxTestCommands();
 	private DroxStatsCommands statsCommandExecutor = new DroxStatsCommands(this);
-	//beard start
-	private DroxTimedCommands timedCommandExecutor = new DroxTimedCommands(this);
-	//beard end
 	private Map<Player, Map<String, PermissionAttachment>> permissions = new HashMap<Player, Map<String, PermissionAttachment>>();
 	private DroxPermsAPI API = null;
 
@@ -67,9 +64,18 @@ public class DroxPerms extends JavaPlugin {
 		logger.info("[DroxPerms] Activating Plugin.");
 		getConfig().options().copyDefaults(true);
 		saveConfig();
-		Config config = new Config(this);
+		new Config(this);
 		logger.info("[DroxPerms] Loading DataProvider");
-		if (Config.getDataProvider().equals(FlatFilePermissions.NODE)) {
+		if (Config.getDataProvider().equalsIgnoreCase(FlatFilePermissions.NODE)) {
+			dataProvider = new FlatFilePermissions(this);
+		} else if (Config.getDataProvider().equalsIgnoreCase(SQLPermissions.NODE)) {
+			try {
+				dataProvider = new SQLPermissions(Config.getMySQLConfig(), this);
+			} catch (SQLException e) {
+				SQLPermissions.mysqlError(e);
+			}
+		} else {
+			logger.warning("No DataProvider named \""+Config.getDataProvider()+ "\" available. Falling back to " + FlatFilePermissions.NODE);
 			dataProvider = new FlatFilePermissions(this);
 		}
 
@@ -81,9 +87,7 @@ public class DroxPerms extends JavaPlugin {
 		getCommand("changeplayer").setExecutor(playerCommandExecutor);
 		getCommand("testdroxperms").setExecutor(testCommandExecutor);
 		getCommand("droxstats").setExecutor(statsCommandExecutor);
-		//beard start
-		getCommand("changetimed").setExecutor(timedCommandExecutor);
-		//beard end
+
 		// Events
 		logger.info("[DroxPerms] Registering Events");
 		PluginManager pm = getServer().getPluginManager();
@@ -96,22 +100,6 @@ public class DroxPerms extends JavaPlugin {
 		}
 
 		enableScheduler();
-
-		//beard start
-		//run processing once a minute
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
-
-			@Override
-			public void run() {
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					if(!getAPI().processTimes(p.getName())){
-						getLogger().severe("An Error occured while processing " + p.getName() + ", check the log for more details");
-					}
-					refreshPlayer(p);
-				}
-
-			}}, 1200L , 1200L);
-		//beard end
 
 		logger.info("[DroxPerms] Plugin activated in " + (System.currentTimeMillis() - time) + "ms.");
 
@@ -133,6 +121,7 @@ public class DroxPerms extends JavaPlugin {
 		}
 		return "";
 	}
+
 	protected void registerPlayer(Player player) {
 		permissions.remove(player);
 		registerPlayer(player, player.getWorld());
@@ -187,6 +176,10 @@ public class DroxPerms extends JavaPlugin {
 			return;
 		}
 		Map<String, PermissionAttachment> attachments = permissions.get(player);
+		if (attachments == null) {
+			getLogger().severe("Attachments for Player " + player.getName() + " are null. THIS SHOULD NOT BE. Returning without updating Permissions.");
+			return;
+		}
 		for (PermissionAttachment attachment : attachments.values()) {
 			for (String key : attachment.getPermissions().keySet()) {
 				attachment.unsetPermission(key);
@@ -200,69 +193,42 @@ public class DroxPerms extends JavaPlugin {
 				.get(player);
 
 		PermissionAttachment attachment = attachments.get("group");
-		Map<String, List<String>> playerPermissions = dataProvider
+		Map<String, Map<String, Boolean>> playerPermissions = dataProvider
 				.getPlayerPermissions(player.getName(), world.getName(), false);
-		List<String> perms = playerPermissions.get("group");
+		Map<String, Boolean> perms = playerPermissions.get("group");
 		if (perms != null) {
-			for (String entry : playerPermissions.get("group")) {
-				if (entry.startsWith("-")) {
-					entry = entry.substring(1);
-					attachment.setPermission(entry, false);
-					logger.fine("[DroxPerms] Setting " + entry
-							+ " to false for player " + player.getName());
-				} else {
-					attachment.setPermission(entry, true);
-					logger.fine("[DroxPerms] Setting " + entry
-							+ " to true for player " + player.getName());
-				}
+			for (String entry : perms.keySet()) {
+				attachment.setPermission(entry, perms.get(entry));
+				logger.fine("[DroxPerms] Setting " + entry
+						+ " to " + perms.get(entry) + " for player " + player.getName());
 			}
 		}
 		attachment = attachments.get("subgroups");
 		perms = playerPermissions.get("subgroups");
 		if (perms != null) {
-			for (String entry : perms) {
-				if (entry.startsWith("-")) {
-					entry = entry.substring(1);
-					attachment.setPermission(entry, false);
-					logger.fine("[DroxPerms] Setting " + entry
-							+ " to false for player " + player.getName());
-				} else {
-					attachment.setPermission(entry, true);
-					logger.fine("[DroxPerms] Setting " + entry
-							+ " to true for player " + player.getName());
-				}
+			for (String entry : perms.keySet()) {
+				attachment.setPermission(entry, perms.get(entry));
+				logger.fine("[DroxPerms] Setting " + entry
+						+ " to " + perms.get(entry) + " for player " + player.getName());
 			}
 		}
 		attachment = attachments.get("global");
 		perms = playerPermissions.get("global");
-		if (perms != null)
-			for (String entry : perms) {
-				if (entry.startsWith("-")) {
-					entry = entry.substring(1);
-					attachment.setPermission(entry, false);
-					logger.fine("[DroxPerms] Setting " + entry
-							+ " to false for player " + player.getName());
-				} else {
-					attachment.setPermission(entry, true);
-					logger.fine("[DroxPerms] Setting " + entry
-							+ " to true for player " + player.getName());
-				}
+		if (perms != null) {
+			for (String entry : perms.keySet()) {
+				attachment.setPermission(entry, perms.get(entry));
+				logger.fine("[DroxPerms] Setting " + entry
+						+ " to " + perms.get(entry) + " for player " + player.getName());
 			}
+		}
 
 		attachment = attachments.get("world");
 		perms = playerPermissions.get("world");
 		if (perms != null) {
-			for (String entry : perms) {
-				if (entry.startsWith("-")) {
-					entry = entry.substring(1);
-					attachment.setPermission(entry, false);
-					logger.fine("[DroxPerms] Setting " + entry
-							+ " to false for player " + player.getName());
-				} else {
-					attachment.setPermission(entry, true);
-					logger.fine("[DroxPerms] Setting " + entry
-							+ " to true for player " + player.getName());
-				}
+			for (String entry : perms.keySet()) {
+				attachment.setPermission(entry, perms.get(entry));
+				logger.fine("[DroxPerms] Setting " + entry
+						+ " to " + perms.get(entry) + " for player " + player.getName());
 			}
 		}
 		player.recalculatePermissions();
@@ -294,7 +260,6 @@ public class DroxPerms extends JavaPlugin {
 		try {
 			metrics = new Metrics(this);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		initAPIMetrics(metrics);
@@ -315,7 +280,7 @@ public class DroxPerms extends JavaPlugin {
 			}
 		});
 
-		   // Info Set
+		// Info Set
 		graph.addPlotter(new Metrics.DroxPlotter("Info Set") {
 			@Override
 			public int getValue() {
