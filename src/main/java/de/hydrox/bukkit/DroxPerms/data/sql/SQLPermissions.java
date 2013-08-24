@@ -394,6 +394,17 @@ public class SQLPermissions extends APermissions {
 				player = new SQLUser(rs.getInt(1), rs.getString(2), this);
 				rs.close();
 				
+			} else if (numrows > 1) {
+				while(rs.next()) {
+					int id = rs.getInt(1);
+					String username = rs.getString(2);
+					if (username.equalsIgnoreCase(name)) {
+						player = new SQLUser(id, username, this);
+						break;
+					}
+				}
+				rs.close();
+
 			}
 
 		} catch (SQLException e) {

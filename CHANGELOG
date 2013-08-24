@@ -1,3 +1,7 @@
+v0.5.1 RB 1.6.2-R0.1
+* fix SQL getting confused if there are 2 names like foo_ba and Foo_Bar
+* change Save-thread to use the internal scheduler
+
 v0.5.0 RB 1.5.2-R1.0
 * fix Exceptions in droxstats-command
 * add support for MySQL
