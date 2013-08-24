@@ -263,11 +263,9 @@ public class SQLUser extends AUser {
 			num = prep.executeUpdate();
 		} catch (SQLException e) {
 			SQLPermissions.mysqlError(e);
+			return false;
 		}
-		if (num==1) {
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -283,11 +281,9 @@ public class SQLUser extends AUser {
 			num = prep.executeUpdate();
 		} catch (SQLException e) {
 			SQLPermissions.mysqlError(e);
+			return false;
 		}
-		if (num==1) {
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 	private Map<String, Boolean> getWorldPermissions(String world) {

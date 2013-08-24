@@ -197,11 +197,9 @@ public class SQLGroup extends AGroup {
 			num = prep.executeUpdate();
 		} catch (SQLException e) {
 			SQLPermissions.mysqlError(e);
+			return false;
 		} 
-		if (num==1) {
-			return true;
-		}
-		return false;
+		return true;
 	}
 
 	@Override
