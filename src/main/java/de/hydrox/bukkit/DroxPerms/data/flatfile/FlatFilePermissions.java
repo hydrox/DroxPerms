@@ -140,14 +140,31 @@ public class FlatFilePermissions extends APermissions{
 
 	protected AUser getExactUser(String name) {
 		AUser user = null;
-		if (User.existUser(name)) {
+		if (User.existUser(name.toLowerCase())) {
 			user = User.getUser(name);
 			return user;
 		} else {
-			ConfigurationSection node = usersConfig.getConfigurationSection("users." + name);
+			boolean migrate = false;
+			ConfigurationSection node = null;
+			node = usersConfig.getConfigurationSection("users." + name.toLowerCase());
+			if (node == null) {
+				node = usersConfig.getConfigurationSection("users." + name);
+				if (node != null) {
+					migrate = true;
+				}
+			}
 			if (node != null) {
-				user = new User(name, node);
+				user = new User(name.toLowerCase(), node);
 				User.addUser(user);
+				if (migrate) {
+					try {
+						usersConfig.set("users." + name, null);
+						usersConfig.save(new File(plugin.getDataFolder(), "users.yml"));
+					} catch (IOException e) {
+						plugin.getLogger().log(Level.SEVERE, "Could not save config to users.yml", e);
+					}
+					save();
+				}
 				return user;
 			}
 		}
