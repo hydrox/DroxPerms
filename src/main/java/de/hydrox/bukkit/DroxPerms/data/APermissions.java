@@ -74,6 +74,11 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
+	private List<String> calculateSubgroups(String input) {
+		List<String> tmp = new ArrayList<String>();
+		tmp.add(input);
+		return calculateSubgroups(tmp);
+	}
 	private List<String> calculateSubgroups(List<String> input) {
 		List<String> result = new ArrayList<String>(input);
 		List<String> toTest = new ArrayList<String>(input);
@@ -257,6 +262,11 @@ public abstract class APermissions implements IDataProvider {
 
 	public boolean addGroupSubgroup(CommandSender sender, String group, String subgroup) {
 		if (AGroup.existGroup(group)) {
+			List<String> subgroupsubgroups = calculateSubgroups(subgroup);
+			if (subgroupsubgroups.contains(group)) {
+				sender.sendMessage(ChatColor.RED + "Couldn't add subgroup to group " + group + " because the it would break the server by creating a group-cycle.");
+				return false;
+			}
 			boolean result = AGroup.getGroup(group).addSubgroup(subgroup);
 			if (result) {
 				sender.sendMessage(ChatColor.GREEN + "Added " + subgroup + " to subgrouplist of group " + group);
