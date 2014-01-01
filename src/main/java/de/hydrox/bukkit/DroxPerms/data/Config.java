@@ -33,13 +33,16 @@ public class Config {
 		logger.info("[DroxPerms] Setting SaveInterval: " + saveInterval + " minutes");
 		logger.info("[DroxPerms] Loading World-Mirrors");
 		worldMirrors = new HashMap<String, List<String>>();
-		Set<String> worlds = configuration.getConfigurationSection("Mirrors.").getKeys(false);
-		for (String world : worlds) {
-			List<String> worldList = configuration.getStringList("Mirrors." + world);
-			worldMirrors.put(world, worldList);
-			logger.fine("mirrors for world "+world+": " + worldMirrors.get(world).size());
+		ConfigurationSection mirrorConf = configuration.getConfigurationSection("Mirrors.");
+		if (mirrorConf != null) {
+			Set<String> worlds = mirrorConf.getKeys(false);
+			for (String world : worlds) {
+				List<String> worldList = configuration.getStringList("Mirrors." + world);
+				worldMirrors.put(world, worldList);
+				logger.fine("mirrors for world "+world+": " + worldMirrors.get(world).size());
+			}
 		}
-		
+
 		mysql = configuration.getConfigurationSection("MySQL");
 	}
 	
