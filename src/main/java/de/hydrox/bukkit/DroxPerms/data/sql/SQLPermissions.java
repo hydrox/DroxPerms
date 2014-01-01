@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -20,6 +21,7 @@ import de.hydrox.bukkit.DroxPerms.DroxPerms;
 import de.hydrox.bukkit.DroxPerms.data.APermissions;
 import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
+import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.flatfile.User;
 
 public class SQLPermissions extends APermissions {
@@ -99,6 +101,24 @@ public class SQLPermissions extends APermissions {
 			logger.severe("MySQL Library not found!");
 		}
 		
+		PreparedStatement getWorldId = conn.prepareStatement("SELECT COUNT(worldID) FROM " + SQLPermissions.tableprefix + "worlds WHERE worldName = ?;");
+		PreparedStatement addWorld = conn.prepareStatement("INSERT INTO " + SQLPermissions.tableprefix + "worlds (worldName) values (?);");
+		for (String key : Config.getWorlds()) {
+			getWorldId.clearParameters();
+			getWorldId.setString(1, key);
+			ResultSet rs = getWorldId.executeQuery();
+			rs.next();
+			int rowCount = rs.getInt(1);
+			if (rowCount == 0) {
+				logger.info("World " + key + " doesn't exists in Worldtable, inserting it now.");
+				addWorld.clearParameters();
+				addWorld.setString(1, key);
+				addWorld.executeUpdate();
+			} else {
+				logger.info("World " + key + " exists in Worldtable.");
+			}
+		}
+
 		try {
 			ResultSet rs = prepGetAllGroups.executeQuery();
 			while(rs.next()){
