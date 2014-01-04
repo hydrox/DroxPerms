@@ -216,7 +216,9 @@ public class SQLUser extends AUser {
 		} else {
 			world = Config.getRealWorld(world).toLowerCase();
 		}
-		
+		if (permission.startsWith("-")) {
+			permission = permission.substring(1);
+		}
 		PreparedStatement prep = provider.prepRemoveUserPermission;
 		int num=0;
 		try {
