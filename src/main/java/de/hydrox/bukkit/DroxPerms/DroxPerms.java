@@ -194,8 +194,18 @@ public class DroxPerms extends JavaPlugin {
 		Map<String, Map<String, Boolean>> playerPermissions = dataProvider
 				.getPlayerPermissions(player.getName(), world.getName(), false);
 		Map<String, Boolean> perms = playerPermissions.get("group");
+		Map<String, Boolean> negPerms = new HashMap<String, Boolean>();
 		if (perms != null) {
 			for (String entry : perms.keySet()) {
+				if(!perms.get(entry)) {
+					negPerms.put(entry, perms.get(entry));
+					continue;
+				}
+				attachment.setPermission(entry, perms.get(entry));
+				logger.fine("[DroxPerms] Setting " + entry
+						+ " to " + perms.get(entry) + " for player " + player.getName());
+			}
+			for (String entry : negPerms.keySet()) {
 				attachment.setPermission(entry, perms.get(entry));
 				logger.fine("[DroxPerms] Setting " + entry
 						+ " to " + perms.get(entry) + " for player " + player.getName());
@@ -203,8 +213,18 @@ public class DroxPerms extends JavaPlugin {
 		}
 		attachment = attachments.get("subgroups");
 		perms = playerPermissions.get("subgroups");
+		negPerms.clear();
 		if (perms != null) {
 			for (String entry : perms.keySet()) {
+				if(!perms.get(entry)) {
+					negPerms.put(entry, perms.get(entry));
+					continue;
+				}
+				attachment.setPermission(entry, perms.get(entry));
+				logger.fine("[DroxPerms] Setting " + entry
+						+ " to " + perms.get(entry) + " for player " + player.getName());
+			}
+			for (String entry : negPerms.keySet()) {
 				attachment.setPermission(entry, perms.get(entry));
 				logger.fine("[DroxPerms] Setting " + entry
 						+ " to " + perms.get(entry) + " for player " + player.getName());
@@ -212,8 +232,18 @@ public class DroxPerms extends JavaPlugin {
 		}
 		attachment = attachments.get("global");
 		perms = playerPermissions.get("global");
+		negPerms.clear();
 		if (perms != null) {
 			for (String entry : perms.keySet()) {
+				if(!perms.get(entry)) {
+					negPerms.put(entry, perms.get(entry));
+					continue;
+				}
+				attachment.setPermission(entry, perms.get(entry));
+				logger.fine("[DroxPerms] Setting " + entry
+						+ " to " + perms.get(entry) + " for player " + player.getName());
+			}
+			for (String entry : negPerms.keySet()) {
 				attachment.setPermission(entry, perms.get(entry));
 				logger.fine("[DroxPerms] Setting " + entry
 						+ " to " + perms.get(entry) + " for player " + player.getName());
@@ -222,8 +252,18 @@ public class DroxPerms extends JavaPlugin {
 
 		attachment = attachments.get("world");
 		perms = playerPermissions.get("world");
+		negPerms.clear();
 		if (perms != null) {
 			for (String entry : perms.keySet()) {
+				if(!perms.get(entry)) {
+					negPerms.put(entry, perms.get(entry));
+					continue;
+				}
+				attachment.setPermission(entry, perms.get(entry));
+				logger.fine("[DroxPerms] Setting " + entry
+						+ " to " + perms.get(entry) + " for player " + player.getName());
+			}
+			for (String entry : negPerms.keySet()) {
 				attachment.setPermission(entry, perms.get(entry));
 				logger.fine("[DroxPerms] Setting " + entry
 						+ " to " + perms.get(entry) + " for player " + player.getName());
