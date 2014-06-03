@@ -25,6 +25,8 @@ public interface IDataProvider {
 	 *            name of the Player
 	 * @return returns true if the Player could be created.
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean createPlayer(String name);
 
@@ -35,6 +37,8 @@ public interface IDataProvider {
 	 *            name of the Player
 	 * @return returns true if the Player could be deleted.
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean deletePlayer(CommandSender sender, String name);
 
@@ -56,6 +60,8 @@ public interface IDataProvider {
 	 *            player to be queried.
 	 * 
 	 * @return main group of the Player, or "" if player doesn't exist
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	String getPlayerGroup(String player);
 
@@ -68,6 +74,8 @@ public interface IDataProvider {
 	 * @param group
 	 *            group to be set
 	 * @return success of operation
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean setPlayerGroup(CommandSender sender, String player,
 			String group);
@@ -78,6 +86,8 @@ public interface IDataProvider {
 	 * @param player
 	 *            Player to be queried
 	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	List<String> getPlayerSubgroups(String player);
 
@@ -87,6 +97,8 @@ public interface IDataProvider {
 	 * @param player
 	 *            Player to be queried
 	 * @return ArrayList<String> containing the subgroups, null if Player doesn't exist
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	List<String> getPlayerSubgroupsSimple(String player);
 
@@ -98,6 +110,8 @@ public interface IDataProvider {
 	 * @param subgroup
 	 *            sub-group to be added
 	 * @return success of operation
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean addPlayerSubgroup(CommandSender sender, String player,
 			String subgroup);
@@ -110,6 +124,8 @@ public interface IDataProvider {
 	 * @param subgroup
 	 *            sub-group to be removed
 	 * @return success of operation
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean removePlayerSubgroup(CommandSender sender, String player,
 			String subgroup);
@@ -125,6 +141,8 @@ public interface IDataProvider {
 	 * @param node
 	 *            Permission-node to add
 	 * @return success of operation
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean addPlayerPermission(CommandSender sender, String player,
 			String world, String node);
@@ -141,6 +159,8 @@ public interface IDataProvider {
 	 * @param node
 	 *            Permission-node to remove
 	 * @return success of operation
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean removePlayerPermission(CommandSender sender, String player,
 			String world, String node);
@@ -154,6 +174,8 @@ public interface IDataProvider {
 	 * @param world
 	 *            World to be queried.
 	 * @return array of String containing the players permissions
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	Map<String, Map<String, Boolean>> getPlayerPermissions(String player, String world, boolean partial);
 
@@ -168,6 +190,8 @@ public interface IDataProvider {
 	 * @param data
 	 *            Data to be written.
 	 * @return success of operation
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean setPlayerInfo(CommandSender sender, String player,
 			String node, String data);
@@ -180,6 +204,8 @@ public interface IDataProvider {
 	 * @param node
 	 *            Info-node to be read
 	 * @return Info-node, is null if Player or Info-node doesn't exist
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	String getPlayerInfo(String player, String node);
 
@@ -189,6 +215,8 @@ public interface IDataProvider {
 	 * @param player
 	 *            Player to be queried
 	 * @return all Info-nodes of the Player, null if Player doesn't exist
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	Map<String, String> getPlayerInfoComplete(String player);
 
@@ -314,6 +342,8 @@ public interface IDataProvider {
 	 * @param track
 	 *            Track to be used
 	 * @return true if Player has been promoted, false if not
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean promotePlayer(CommandSender sender, String player, String track);
 
@@ -326,6 +356,8 @@ public interface IDataProvider {
 	 * @param track
 	 *            Track to be used
 	 * @return true if Player has been demoted, false if not
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	boolean demotePlayer(CommandSender sender, String player, String track);
 
