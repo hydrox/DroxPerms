@@ -2,6 +2,7 @@ package de.hydrox.bukkit.DroxPerms;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -55,6 +56,8 @@ public class DroxPermsAPI {
 	 *            Player to be queried
 	 * @return main group of the Player, or "" if player doesn't exist
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public String getPlayerGroup(String player) {
 		playerGroupGet++;
@@ -80,6 +83,8 @@ public class DroxPermsAPI {
 	 *            Group to be set
 	 * @return success of operation
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean setPlayerGroup(String player, String group) {
 		playerGroupSet++;
@@ -97,6 +102,8 @@ public class DroxPermsAPI {
 	 * @return ArrayList<String> containing the subgroups, null if Player
 	 *         doesn't exist
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public ArrayList<String> getPlayerSubgroups(String player) {
 		playerGroupGet++;
@@ -112,6 +119,8 @@ public class DroxPermsAPI {
 	 *            Subgroup to be added
 	 * @return success of operation
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean addPlayerSubgroup(String player, String subgroup) {
 		playerGroupSet++;
@@ -130,6 +139,8 @@ public class DroxPermsAPI {
 	 *            Subgroup to be removed
 	 * @return success of operation
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean removePlayerSubgroup(String player, String subgroup) {
 		playerGroupSet++;
@@ -148,6 +159,8 @@ public class DroxPermsAPI {
 	 *            Permission-node to be added
 	 * @return success of operation
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean addPlayerPermission(String player, String node) {
 		boolean result = addPlayerPermission(player, null, node);
@@ -166,6 +179,8 @@ public class DroxPermsAPI {
 	 *            Permission-node to be added
 	 * @return success of operation
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean addPlayerPermission(String player, String world, String node) {
 		playerPermAdd++;
@@ -184,6 +199,8 @@ public class DroxPermsAPI {
 	 *            Permission-node to be removed
 	 * @return success of operation
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean removePlayerPermission(String player, String node) {
 		boolean result = removeGroupPermission(player, null, node);
@@ -202,6 +219,8 @@ public class DroxPermsAPI {
 	 *            Permission-node to be removed
 	 * @return success of operation
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean removePlayerPermission(String player, String world,
 			String node) {
@@ -221,6 +240,8 @@ public class DroxPermsAPI {
 	 *            Info-node to be read
 	 * @return Info-node, is null if Player or Info-node doesn't exist
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public String getPlayerInfo(String player, String node) {
 		playerInfoGet++;
@@ -238,6 +259,8 @@ public class DroxPermsAPI {
 	 *            Data to be written.
 	 * @return success of operation
 	 * @since 0.1.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean setPlayerInfo(String player, String node, String data) {
 		playerInfoSet++;
@@ -404,6 +427,8 @@ public class DroxPermsAPI {
 	 *            Track to be used
 	 * @return true if Player has been promoted, false if not
 	 * @since 0.2.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean promotePlayer(String player, String track) {
 		playerGroupSet++;
@@ -421,6 +446,8 @@ public class DroxPermsAPI {
 	 *            Track to be used
 	 * @return true if Player has been demoted, false if not
 	 * @since 0.2.0
+	 * 
+	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean demotePlayer(String player, String track) {
 		playerGroupSet++;
