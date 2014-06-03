@@ -257,12 +257,11 @@ public class SQLUser extends AUser {
 	@Override
 	public boolean setGroup(String newGroup) {
 		PreparedStatement prep = provider.prepSetUserGroup;
-		int num = 0;
 		try {
 			prep.clearParameters();
 			prep.setString(1, newGroup);
 			prep.setInt(2, ID);
-			num = prep.executeUpdate();
+			prep.executeUpdate();
 		} catch (SQLException e) {
 			SQLPermissions.mysqlError(e);
 			return false;
@@ -273,14 +272,13 @@ public class SQLUser extends AUser {
 	@Override
 	public boolean setInfo(String node, String data) {
 		PreparedStatement prep = provider.prepAddUserInfoNode;
-		int num = 0;
 		try {
 			prep.clearParameters();
 			prep.setInt(1, ID);
 			prep.setString(2, node);
 			prep.setString(3, data);
 			prep.setString(4, data);
-			num = prep.executeUpdate();
+			prep.executeUpdate();
 		} catch (SQLException e) {
 			SQLPermissions.mysqlError(e);
 			return false;

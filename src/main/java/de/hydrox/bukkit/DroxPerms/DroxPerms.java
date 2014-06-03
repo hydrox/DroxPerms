@@ -15,7 +15,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
-import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
 import de.hydrox.bukkit.DroxPerms.data.sql.SQLPermissions;
 
 /**
@@ -29,7 +28,6 @@ public class DroxPerms extends JavaPlugin {
 	private DroxPlayerListener playerListener = new DroxPlayerListener(this);
 	private DroxGroupCommands groupCommandExecutor = new DroxGroupCommands(this);
 	private DroxPlayerCommands playerCommandExecutor = new DroxPlayerCommands(this);
-	private DroxTestCommands testCommandExecutor = new DroxTestCommands();
 	private DroxStatsCommands statsCommandExecutor = new DroxStatsCommands(this);
 	private Map<Player, Map<String, PermissionAttachment>> permissions = new HashMap<Player, Map<String, PermissionAttachment>>();
 	private DroxPermsAPI API = null;
@@ -61,17 +59,12 @@ public class DroxPerms extends JavaPlugin {
 		saveConfig();
 		new Config(this);
 		logger.info("[DroxPerms] Loading DataProvider");
-		if (Config.getDataProvider().equalsIgnoreCase(FlatFilePermissions.NODE)) {
-			dataProvider = new FlatFilePermissions(this);
-		} else if (Config.getDataProvider().equalsIgnoreCase(SQLPermissions.NODE)) {
+		if (Config.getDataProvider().equalsIgnoreCase(SQLPermissions.NODE)) {
 			try {
 				dataProvider = new SQLPermissions(Config.getMySQLConfig(), this);
 			} catch (SQLException e) {
 				SQLPermissions.mysqlError(e);
 			}
-		} else {
-			logger.warning("No DataProvider named \""+Config.getDataProvider()+ "\" available. Falling back to " + FlatFilePermissions.NODE);
-			dataProvider = new FlatFilePermissions(this);
 		}
 
 		API = new DroxPermsAPI(this);
@@ -80,7 +73,6 @@ public class DroxPerms extends JavaPlugin {
 		logger.info("[DroxPerms] Setting CommandExecutors");
 		getCommand("changegroup").setExecutor(groupCommandExecutor);
 		getCommand("changeplayer").setExecutor(playerCommandExecutor);
-		getCommand("testdroxperms").setExecutor(testCommandExecutor);
 		getCommand("droxstats").setExecutor(statsCommandExecutor);
 
 		// Events

@@ -22,7 +22,6 @@ import de.hydrox.bukkit.DroxPerms.data.APermissions;
 import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.data.Config;
-import de.hydrox.bukkit.DroxPerms.data.flatfile.User;
 
 public class SQLPermissions extends APermissions {
 
@@ -324,7 +323,7 @@ public class SQLPermissions extends APermissions {
 		}
 		SQLUser user = (SQLUser) getExactUser(name);
 		if (user != null) {
-			User.removeUser(name);
+			AUser.removeUser(name);
 			PreparedStatement prep = prepDeletePlayer;
 			int num=0;
 			try {
