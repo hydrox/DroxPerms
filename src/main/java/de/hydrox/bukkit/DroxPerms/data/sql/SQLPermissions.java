@@ -1,20 +1,27 @@
 package de.hydrox.bukkit.DroxPerms.data.sql;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import de.hydrox.bukkit.DroxPerms.DroxPerms;
@@ -22,6 +29,7 @@ import de.hydrox.bukkit.DroxPerms.data.APermissions;
 import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.data.Config;
+import de.hydrox.bukkit.DroxPerms.utils.uuid.MojangWebAPI;
 
 public class SQLPermissions extends APermissions {
 
@@ -39,8 +47,11 @@ public class SQLPermissions extends APermissions {
 
 	//prepared statements
 	private PreparedStatement prepGetAllPlayerNames;
+	private PreparedStatement prepGetPlayerByUUID;
 	private PreparedStatement prepGetExactPlayer;
 	private PreparedStatement prepGetPartialPlayer;
+
+	protected PreparedStatement prepGetLastPlayerName;
 
 	protected PreparedStatement prepGetUserGroup;
 	protected PreparedStatement prepGetUserSubgroups;
@@ -232,9 +243,11 @@ public class SQLPermissions extends APermissions {
 		try{
 			logger.fine("Preparing statements");
 
-			prepGetAllPlayerNames = conn.prepareStatement("SELECT playerName FROM " + tableprefix + "players");
-			prepGetExactPlayer = conn.prepareStatement("SELECT playerID, playerName FROM " + tableprefix + "players WHERE playerName=?");
-			prepGetPartialPlayer = conn.prepareStatement("SELECT playerID, playerName FROM " + tableprefix + "players WHERE playerName LIKE ?");
+			prepGetAllPlayerNames = conn.prepareStatement("SELECT playerName FROM " + tableprefix + "players"); //TODO returns uuids instead of names
+			prepGetPlayerByUUID = conn.prepareStatement("SELECT playerID, playerName FROM " + tableprefix + "players WHERE playerName=?");
+			prepGetExactPlayer = conn.prepareStatement("SELECT playerID, playerName, nodeData FROM " + tableprefix + "players NATURAL JOIN " + tableprefix + "playerInfoNodes WHERE nodeName = 'lastName' AND nodeData = ?");
+			prepGetPartialPlayer = conn.prepareStatement("SELECT playerID, playerName, nodeData FROM " + tableprefix + "players NATURAL JOIN " + tableprefix + "playerInfoNodes WHERE nodeName = 'lastName' AND nodeData LIKE ?");
+			prepGetLastPlayerName = conn.prepareStatement("SELECT nodeData FROM " + tableprefix + "playerInfoNodes WHERE playerID=? AND nodeName = 'lastName'");
 
 			prepGetUserGroup = conn.prepareStatement("SELECT groupName FROM " + SQLPermissions.tableprefix + "groups AS groups JOIN " + SQLPermissions.tableprefix + "players AS players ON groups.groupID=players.groupID WHERE players.playerID=?");
 			prepGetUserSubgroups = conn.prepareStatement("SELECT groupName FROM " + SQLPermissions.tableprefix + "groups AS groups JOIN " + SQLPermissions.tableprefix + "playerSubgroups AS subgroups ON subgroups.subgroupID=groups.groupID JOIN " + SQLPermissions.tableprefix + "players AS players ON players.playerID=subgroups.playerID WHERE players.playerID=?");
@@ -290,8 +303,8 @@ public class SQLPermissions extends APermissions {
 	}
 
 	@Override
-	public boolean createPlayer(String name) {
-		if(getExactUser(name) != null) {
+	public boolean createPlayer(UUID uuid) {
+		if(getUserByUUID(uuid) != null) {
 			return false;
 		} else {
 			PreparedStatement prep = prepCreatePlayer;
@@ -299,7 +312,7 @@ public class SQLPermissions extends APermissions {
 			try {
 				SQLGroup group = (SQLGroup) SQLGroup.getGroup("default");
 				prep.clearParameters();
-				prep.setString(1, name);
+				prep.setString(1, uuid.toString());
 				prep.setInt(2, group.getID());
 				num = prep.executeUpdate();
 				if (num==1) {
@@ -314,24 +327,29 @@ public class SQLPermissions extends APermissions {
 		}
 	}
 
-	@Override
 	public boolean deletePlayer(CommandSender sender, String name) {
-		Player player = plugin.getServer().getPlayerExact(name);
+		AUser user = getExactUserByName(name);
+		if (user != null) {
+			return deletePlayer(sender, user);
+		}
+		return false;
+	}
+	@Override
+	public boolean deletePlayer(CommandSender sender, AUser user) {
+		Player player = plugin.getServer().getPlayer(user.getUUID());
 		if (player != null) {
 			sender.sendMessage(ChatColor.RED + "Can't delete online Player.");
 			return false;
 		}
-		SQLUser user = (SQLUser) getExactUser(name);
 		if (user != null) {
-			AUser.removeUser(name);
 			PreparedStatement prep = prepDeletePlayer;
 			int num=0;
 			try {
 				prep.clearParameters();
-				prep.setString(1, name);
+				prep.setString(1, user.getUUID().toString());
 				num = prep.executeUpdate();
 				if (num==1) {
-					sender.sendMessage(ChatColor.GREEN + "Deleted Player " + name + ".");
+					sender.sendMessage(ChatColor.GREEN + "Deleted Player " + user.getName() + ".");
 					return true;
 				}
 			} catch (SQLException e) {
@@ -371,7 +389,7 @@ public class SQLPermissions extends APermissions {
 	}
 
 	@Override
-	protected AUser getExactUser(String name) {
+	public AUser getExactUserByName(String name) {
 		AUser player = null;
 		try {
 			prepGetExactPlayer.clearParameters();
@@ -384,7 +402,8 @@ public class SQLPermissions extends APermissions {
 				
 //				String adding = rs.getString(2); 
 //				logger.info("PLAYERNAME: " + adding);
-				player = new SQLUser(rs.getInt(1), rs.getString(2), this);
+				UUID uuid = UUID.fromString(rs.getString(2));
+				player = new SQLUser(rs.getInt(1), uuid, rs.getString(3), this);
 				rs.close();
 				
 			}
@@ -397,7 +416,33 @@ public class SQLPermissions extends APermissions {
 	}
 
 	@Override
-	protected AUser getPartialUser(String name) {
+	public AUser getUserByUUID(UUID uuid) {
+		AUser player = null;
+		try {
+			prepGetPlayerByUUID.clearParameters();
+			prepGetPlayerByUUID.setString(1, uuid.toString());
+			ResultSet rs = prepGetExactPlayer.executeQuery();
+			rs.last(); int numrows = rs.getRow(); rs.beforeFirst();
+//			logger.info("ROWS: " + numrows);
+			if(numrows == 1) {
+				rs.next();
+				
+//				String adding = rs.getString(2); 
+//				logger.info("PLAYERNAME: " + adding);
+				player = new SQLUser(rs.getInt(1), uuid, this);
+				rs.close();
+				
+			}
+
+		} catch (SQLException e) {
+			checkConnection();
+			mysqlError(e);
+		}
+		return player;
+	}
+
+	@Override
+	public AUser getPartialUserByName(String name) {
 		AUser player = null;
 		try {
 			prepGetPartialPlayer.clearParameters();
@@ -410,15 +455,17 @@ public class SQLPermissions extends APermissions {
 				
 //				String adding = rs.getString(2); 
 //				logger.info("PLAYERNAME: " + adding);
-				player = new SQLUser(rs.getInt(1), rs.getString(2), this);
+				UUID uuid = UUID.fromString(rs.getString(2));
+				player = new SQLUser(rs.getInt(1), uuid, rs.getString(3), this);
 				rs.close();
 				
 			} else if (numrows > 1) {
 				while(rs.next()) {
 					int id = rs.getInt(1);
-					String username = rs.getString(2);
+					String username = rs.getString(3);
 					if (username.equalsIgnoreCase(name)) {
-						player = new SQLUser(id, username, this);
+						UUID uuid = UUID.fromString(rs.getString(2));
+						player = new SQLUser(id, uuid, username, this);
 						break;
 					}
 				}
@@ -486,5 +533,92 @@ public class SQLPermissions extends APermissions {
 	@Override
 	public ATrack getTrack(String track) {
 		return new SQLTrack(track, this);
+	}
+	
+	public boolean migrateToNewerVersion() {
+		FileConfiguration configuration = plugin.getConfig();
+		String dbVersion = configuration.getString("DatabaseVersion", "0.5.1");
+		
+		if ("0.5.1".equals(dbVersion)) {
+			logger.info("detected Storage version 0.5.1, update to 1.0.0");
+			try {
+				PreparedStatement prepGetPlayerNamesToMigrate = conn.prepareStatement("SELECT playerName,playerID FROM " + tableprefix + "players WHERE playerID NOT IN (SELECT playerID FROM " + tableprefix + "playerInfoNodes WHERE nodeName = 'lastName') ORDER BY playerID LIMIT 100;");
+				//PreparedStatement prepGetPlayerNamesToMigrate = conn.prepareStatement("SELECT playerName,playerID FROM " + tableprefix + "players WHERE playerID NOT IN (SELECT playerID FROM " + tableprefix + "playerInfoNodes WHERE nodeName = 'lastName') AND playerID < 10 ORDER BY playerID LIMIT 100;");
+				PreparedStatement prepMigratePlayer1= conn.prepareStatement("UPDATE " + tableprefix + "players SET playerName = ? WHERE playerID = ?;");
+				Map<String, Integer> playerChunk = new HashMap<String, Integer>();
+				Set<String> ignoreList = new HashSet<String>();
+				do {
+				ResultSet rs = prepGetPlayerNamesToMigrate.executeQuery();
+				playerChunk.clear();
+				while(rs.next()){
+					String name = rs.getString(1); 
+					int id = rs.getInt(2);
+					if(ignoreList.contains(name)) { continue;}
+					//logger.info(id + ": " + name);
+					playerChunk.put(name, id);
+				}
+				ArrayList<String> playerNames = new ArrayList<String>(playerChunk.keySet());
+				Map<String, UUID> resultFromMojang = MojangWebAPI.lookupUUIDS(playerNames);
+				long startTime = System.currentTimeMillis();
+				for (Iterator<String> iterator = playerNames.iterator(); iterator
+						.hasNext();) {
+					String name = iterator.next();
+					UUID uuid = resultFromMojang.get(name);
+					int id = playerChunk.get(name);
+					//logger.info(uuid + ": " + name + " : " + id);
+					if (uuid == null) {
+						logger.info(uuid + ": " + name + " : " + id);
+						if (MojangWebAPI.hasPaid(name)) {
+							logger.info("'"+name + "' has paid, something is WRONG. DROP IT");
+							//MojangWebAPI.lookupUUIDFallback(name);
+							ignoreList.add(name);
+							playerChunk.remove(name);
+						} else {
+							logger.info(name + " is no longer a valid account. DROP IT");
+						}
+						PreparedStatement prep = prepDeletePlayer;
+						prep.clearParameters();
+						prep.setString(1, name);
+						prep.executeUpdate();
+						continue;
+					}
+					
+					prepMigratePlayer1.clearParameters();
+					prepMigratePlayer1.setString(1, uuid.toString());
+					prepMigratePlayer1.setInt(2, id);
+					prepMigratePlayer1.addBatch();
+					
+					prepAddUserInfoNode.clearParameters();
+					prepAddUserInfoNode.setInt(1, id);
+					prepAddUserInfoNode.setString(2, "lastName");
+					prepAddUserInfoNode.setString(3, name);
+					prepAddUserInfoNode.setString(4, name);
+					prepAddUserInfoNode.addBatch();
+					//prepAddUserInfoNode.executeUpdate();
+				}
+				prepMigratePlayer1.executeBatch();
+				prepAddUserInfoNode.executeBatch();
+				
+				logger.info("time: " + (System.currentTimeMillis() - startTime) + "ms.");
+				rs.close();
+				logger.info("PlayerChunk Size: " + playerChunk.size());
+				} while (playerChunk.size() > 0);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			dbVersion = "1.0.0";
+			logger.info("updated Storage to 1.0.0");
+			configuration.set("DatabaseVersion", dbVersion);
+			try {
+				configuration.save(new File(plugin.getDataFolder() + File.separator + "config.yml"));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+		
+		logger.info("Storage Migration complete");
+		return true;
 	}
 }

@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 
 public class DroxPlayerCommands implements CommandExecutor {
@@ -53,14 +54,18 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// add permission
 		if (split[0].equalsIgnoreCase("addperm")) {
 			playerPermAdd++;
-			if (split.length == 3) {
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 3) {
 				// add global permission
-				result = dp.addPlayerPermission(sender, split[1], null, split[2]);
+				result = dp.addPlayerPermission(sender, user, null, split[2]);					
+				plugin.refreshPlayer(plugin.getServer().getPlayer(user.getUUID()));
 			} else if (split.length == 4) {
 				// add world permission
-				result = dp.addPlayerPermission(sender, split[1], split[3], split[2]);
+				result = dp.addPlayerPermission(sender, user, split[3], split[2]);
+				plugin.refreshPlayer(plugin.getServer().getPlayer(user.getUUID()));
 			}
-			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
@@ -70,14 +75,17 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// remove permission
 		if (split[0].equalsIgnoreCase("remperm")) {
 			playerPermRem++;
-			if (split.length == 3) {
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 3) {
 				// remove global permission
-				result = dp.removePlayerPermission(sender, split[1], null, split[2]);
+				result = dp.removePlayerPermission(sender, user, null, split[2]);
 			} else if (split.length == 4) {
 				// remove world permission
-				result = dp.removePlayerPermission(sender, split[1], split[3], split[2]);
+				result = dp.removePlayerPermission(sender, user, split[3], split[2]);
 			}
-			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
+			plugin.refreshPlayer(user);
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
@@ -87,10 +95,13 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// add subgroup
 		if (split[0].equalsIgnoreCase("addsub")) {
 			playerAddSub++;
-			if (split.length == 3) {
-				result = dp.addPlayerSubgroup(sender, split[1], split[2]);
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 3) {
+				result = dp.addPlayerSubgroup(sender, user, split[2]);
 			}
-			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
+			plugin.refreshPlayer(user);
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
@@ -100,10 +111,13 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// remove subgroup
 		if (split[0].equalsIgnoreCase("remsub")) {
 			playerRemSub++;
-			if (split.length == 3) {
-				result = dp.removePlayerSubgroup(sender, split[1],split[2]);
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 3) {
+				result = dp.removePlayerSubgroup(sender, user,split[2]);
 			}
-			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
+			plugin.refreshPlayer(user);
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
@@ -113,10 +127,13 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// set group
 		if (split[0].equalsIgnoreCase("setgroup")) {
 			playerGroupSet++;
-			if (split.length == 3) {
-				result = dp.setPlayerGroup(sender, split[1],split[2]);
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 3) {
+				result = dp.setPlayerGroup(sender, user,split[2]);
 			}
-			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
+			plugin.refreshPlayer(user);
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
@@ -140,10 +157,13 @@ public class DroxPlayerCommands implements CommandExecutor {
 		if (split[0].equalsIgnoreCase("listperms") && split.length >= 2) {
 			playerListPerms++;
 			Map<String, Map<String, Boolean>> permissions = null;
-			if (split.length == 3) {
-				permissions = dp.getPlayerPermissions(split[1], split[2], true);
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				permissions = null;
+			} else if (split.length == 3) {
+				permissions = dp.getPlayerPermissions(user, split[2]);
 			} else if (split.length == 2) {
-				permissions = dp.getPlayerPermissions(split[1], null, true);
+				permissions = dp.getPlayerPermissions(user, null);
 			} else {
 				return false;
 			}
@@ -151,22 +171,22 @@ public class DroxPlayerCommands implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "Could not find user matching input or found more then one user matching");
 				return true;
 			}
-			String player = dp.getUserNameFromPart(split[1]); 
-			sender.sendMessage(player + " has permission from group: " + dp.getPlayerGroup(player));
-			List<String> subgroupssimple = dp.getPlayerSubgroupsSimple(player);
+			sender.sendMessage(user.getName() + " has the UUID: " + user.getUUID());
+			sender.sendMessage(user.getName() + " has permission from group: " + dp.getPlayerGroup(user));
+			List<String> subgroupssimple = dp.getPlayerSubgroupsSimple(user);
 			if (subgroupssimple != null && subgroupssimple.size() > 0) {
 				StringBuilder string = new StringBuilder();
-				string.append(player + " has permission from subgroups:");
+				string.append(user.getName() + " has permission from subgroups:");
 				for (String subgroupstring : subgroupssimple) {
 					string.append(" " + subgroupstring);
 				}
 				sender.sendMessage(string.toString());
 			}
-			List<String> subgroups = dp.getPlayerSubgroups(player);
+			List<String> subgroups = dp.getPlayerSubgroups(user);
 			subgroups.removeAll(subgroupssimple);
 			if (subgroups != null && subgroups.size() > 0) {
 				StringBuilder string = new StringBuilder();
-				string.append(player + " has permission from inherited subgroups:");
+				string.append(user.getName() + " has permission from inherited subgroups:");
 				for (String subgroupstring : subgroups) {
 					string.append(" " + subgroupstring);
 				}
@@ -174,7 +194,7 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			Map<String, Boolean> globalperms = permissions.get("global");
 			if (globalperms != null && globalperms.size() > 0) {
-				sender.sendMessage(player + " has permission globalpermissions:");
+				sender.sendMessage(user.getName() + " has permission globalpermissions:");
 				for (String globalstring : globalperms.keySet()) {
 					ChatColor color = (globalperms.get(globalstring)) ? ChatColor.GREEN : ChatColor.RED;
 					sender.sendMessage(" " + globalstring + ": " + color + globalperms.get(globalstring));
@@ -182,16 +202,16 @@ public class DroxPlayerCommands implements CommandExecutor {
 			}
 			Map<String, Boolean> worldperms = permissions.get("world");
 			if (worldperms != null && worldperms.size() > 0) {
-				sender.sendMessage(player + " has permission worldpermissions:");
+				sender.sendMessage(user.getName() + " has permission worldpermissions:");
 				for (String worldstring : worldperms.keySet()) {
 					ChatColor color = (worldperms.get(worldstring)) ? ChatColor.GREEN : ChatColor.RED;
 					sender.sendMessage(" " + worldstring + ": " + color + worldperms.get(worldstring));
 				}
 			}
-			Map<String, String> infos = dp.getPlayerInfoComplete(player);
+			Map<String, String> infos = dp.getPlayerInfoComplete(user);
 			if (infos != null) {
 				StringBuilder string = new StringBuilder();
-				string.append(player + " has info-nodes:\n");
+				string.append(user.getName() + " has info-nodes:\n");
 				for (String infonode : infos.keySet()) {
 					string.append("-" + infonode + ": " + infos.get(infonode) + "\n");
 				}
@@ -202,10 +222,13 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// promote
 		if (split[0].equalsIgnoreCase("promote")) {
 			playerPromote++;
-			if (split.length == 3) {
-				result = dp.promotePlayer(sender, split[1], split[2]);
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 3) {
+				result = dp.promotePlayer(sender, user, split[2]);
 			}
-			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
+			plugin.refreshPlayer(user);
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
@@ -215,10 +238,13 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// demote
 		if (split[0].equalsIgnoreCase("demote")) {
 			playerDemote++;
-			if (split.length == 3) {
-				result = dp.demotePlayer(sender, split[1], split[2]);
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 3) {
+				result = dp.demotePlayer(sender, user, split[2]);
 			}
-			plugin.refreshPlayer(plugin.getServer().getPlayer(split[1]));
+			plugin.refreshPlayer(user);
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
 			}
@@ -228,9 +254,12 @@ public class DroxPlayerCommands implements CommandExecutor {
 		// set info-node
 		if (split[0].equalsIgnoreCase("setinfo")) {
 			playerInfoSet++;
-			if (split.length == 4) {
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 4) {
 				String data = split[3].replace("_", " ");
-				result = dp.setPlayerInfo(sender, split[1], split[2], data);
+				result = dp.setPlayerInfo(sender, user, split[2], data);
 			}
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
@@ -240,8 +269,11 @@ public class DroxPlayerCommands implements CommandExecutor {
 
 		if (split[0].equalsIgnoreCase("unsetinfo")) {
 			playerInfoSet++;
-			if (split.length == 3) {
-				result = dp.setPlayerInfo(sender, split[1], split[2], null);
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 3) {
+				result = dp.setPlayerInfo(sender, user, split[2], null);
 			}
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");
@@ -250,8 +282,11 @@ public class DroxPlayerCommands implements CommandExecutor {
 		}
 
 		if (split[0].equalsIgnoreCase("delete")) {
-			if (split.length == 2) {
-				result = dp.deletePlayer(sender, split[1]);
+			AUser user = dp.getPartialUserByName(split[1]);
+			if (user == null) {
+				result = false;
+			} else if (split.length == 2) {
+				result = dp.deletePlayer(sender, user);
 			}
 			if (!result) {
 				sender.sendMessage(ChatColor.RED + "Operation unsuccessfull. non-unique/non-existant username given?");

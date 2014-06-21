@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -21,14 +22,11 @@ public abstract class APermissions implements IDataProvider {
 
 	protected static DroxPerms plugin = null;
 
-	public abstract boolean createPlayer(String name);
-
 	public abstract boolean deletePlayer(CommandSender sender, String name);
 
 	public abstract boolean createGroup(CommandSender sender, String name);
 
-	public String getPlayerGroup(String player) {
-		AUser user = getUser(player, true);
+	public String getPlayerGroup(AUser user) {
 		if (user != null) {
 			return user.getGroup();
 		} else {
@@ -36,8 +34,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public boolean setPlayerGroup(CommandSender sender, String player, String group) {
-		AUser user = getUser(player, true);
+	public boolean setPlayerGroup(CommandSender sender, AUser user, String group) {
 		if (user != null) {
 			boolean result = user.setGroup(group);
 			if (result) {
@@ -52,8 +49,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public List<String> getPlayerSubgroups(String player) {
-		AUser user = getUser(player, true);
+	public List<String> getPlayerSubgroups(AUser user) {
 		if (user != null) {
 			List<String> result = new ArrayList<String>(user.getSubgroups());
 			result.add(user.getGroup());
@@ -65,8 +61,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public List<String> getPlayerSubgroupsSimple(String player) {
-		AUser user = getUser(player, true);
+	public List<String> getPlayerSubgroupsSimple(AUser user) {
 		if (user != null) {
 			return new ArrayList<String>(user.getSubgroups());
 		} else {
@@ -100,8 +95,7 @@ public abstract class APermissions implements IDataProvider {
 		return result;
 	}
 
-	public boolean addPlayerSubgroup(CommandSender sender, String player, String subgroup) {
-		AUser user = getUser(player, true);
+	public boolean addPlayerSubgroup(CommandSender sender, AUser user, String subgroup) {
 		if (user != null) {
 			boolean result = user.addSubgroup(subgroup);
 			if (result) {
@@ -116,8 +110,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public boolean removePlayerSubgroup(CommandSender sender, String player, String subgroup) {
-		AUser user = getUser(player, true);
+	public boolean removePlayerSubgroup(CommandSender sender, AUser user, String subgroup) {
 		if (user != null) {
 			boolean result = user.removeSubgroup(subgroup);
 			if (result) {
@@ -132,8 +125,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public boolean addPlayerPermission(CommandSender sender, String player, String world, String node) {
-		AUser user = getUser(player, true);
+	public boolean addPlayerPermission(CommandSender sender, AUser user, String world, String node) {
 		if (user != null) {
 			boolean result = user.addPermission(world, node);
 			if (result) {
@@ -152,8 +144,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public boolean removePlayerPermission(CommandSender sender, String player, String world, String node) {
-		AUser user = getUser(player, true);
+	public boolean removePlayerPermission(CommandSender sender, AUser user, String world, String node) {
 		if (user != null) {
 			boolean result = user.removePermission(world, node);
 			if (result) {
@@ -168,21 +159,24 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public Map<String, Map<String, Boolean>> getPlayerPermissions(String player, String world, boolean partialMatch) {
-		AUser user = getUser(player, partialMatch);
+	public Map<String, Map<String, Boolean>> getPlayerPermissions(AUser user, String world) {
 		if (user == null) {
-			if (partialMatch) {
-				return null;
-			}
-			plugin.getServer().getLogger().info("[DroxPerms] User " + player + " doesn't exist yet. Creating ...");
-			createPlayer(player);
-			return getUser(player, false).getPermissions(world);
+			return null;
 		}
 		return user.getPermissions(world);
 	}
 
-	public boolean setPlayerInfo(CommandSender sender, String player, String node, String data) {
-		AUser user = getUser(player, true);
+	public Map<String, Map<String, Boolean>> getPlayerPermissions(UUID uuid, String world) {
+		AUser user = getUserByUUID(uuid);
+		if (user == null) {
+			plugin.getServer().getLogger().info("[DroxPerms] User with UUID " + uuid + " doesn't exist yet. Creating ...");
+			createPlayer(uuid);
+			return getUserByUUID(uuid).getPermissions(world);
+		}
+		return user.getPermissions(world);
+	}
+
+	public boolean setPlayerInfo(CommandSender sender, AUser user, String node, String data) {
 		if (user != null) {
 			boolean result = user.setInfo(node, data);
 			if (result) {
@@ -197,8 +191,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public String getPlayerInfo(String player, String node) {
-		AUser user = getUser(player, true);
+	public String getPlayerInfo(AUser user, String node) {
 		if (user != null) {
 			return user.getInfo(node);
 		} else {
@@ -206,8 +199,7 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	public Map<String, String> getPlayerInfoComplete(String player) {
-		AUser user = getUser(player, true);
+	public Map<String, String> getPlayerInfoComplete(AUser user) {
 		if (user != null) {
 			return user.getInfoComplete();
 		} else {
@@ -337,56 +329,51 @@ public abstract class APermissions implements IDataProvider {
 		}
 	}
 
-	private AUser getUser(String name, boolean checkPartial) {
+	private AUser getUserByName(String name, boolean checkPartial) {
 		if (checkPartial) {
-			return getPartialUser(name);
+			return getPartialUserByName(name);
 		}
-		return getExactUser(name);
+		return getExactUserByName(name);
 	}
-	protected abstract AUser getExactUser(String name);
-
-	protected abstract AUser getPartialUser(String name);
 
 	@Override
-	public boolean promotePlayer(CommandSender sender, String player,
+	public boolean promotePlayer(CommandSender sender, AUser user,
 			String track) {
 		ATrack selectedTrack = getTrack(track);
 		if (selectedTrack == null) {
 			sender.sendMessage(ChatColor.RED + "Could not find Track " + track + ".");
 			return false;
 		}
-		AUser user = getUser(player, true);
 		if (user != null) {
 			String newGroup = selectedTrack.getPromoteGroup(user.getGroup());
 			if (newGroup == null) {
 				sender.sendMessage(ChatColor.RED + "Could not promote on Track " + track + ".");
 				return false;
 			}
-			return setPlayerGroup(sender, player, newGroup);
+			return setPlayerGroup(sender, user, newGroup);
 		} else {
-			sender.sendMessage(ChatColor.RED + "Could not find User " + player + ".");
+			sender.sendMessage(ChatColor.RED + "Could not find User.");
 			return false;
 		}
 	}
 
 	@Override
-	public boolean demotePlayer(CommandSender sender, String player,
+	public boolean demotePlayer(CommandSender sender, AUser user,
 			String track) {
 		ATrack selectedTrack = getTrack(track);
 		if (selectedTrack == null) {
 			sender.sendMessage(ChatColor.RED + "Could not find Track " + track + ".");
 			return false;
 		}
-		AUser user = getUser(player, true);
 		if (user != null) {
 			String newGroup = selectedTrack.getDemoteGroup(user.getGroup());
 			if (newGroup == null) {
 				sender.sendMessage(ChatColor.RED + "Could not demote on Track " + track + ".");
 				return false;
 			}
-			return setPlayerGroup(sender, player, newGroup);
+			return setPlayerGroup(sender, user, newGroup);
 		} else {
-			sender.sendMessage(ChatColor.RED + "Could not find User " + player + ".");
+			sender.sendMessage(ChatColor.RED + "Could not find User.");
 			return false;
 		}
 	}
@@ -402,7 +389,7 @@ public abstract class APermissions implements IDataProvider {
 
 		Set<String> users = getAllUserNames();
 		for (String key : users) {
-			AUser user = getExactUser(key);
+			AUser user = getExactUserByName(key);
 			String userGroup = user.getGroup();
 			if (userGroup == null) {
 				plugin.logger.warning("Group for User " + user.getName() + " is not set");
@@ -429,7 +416,7 @@ public abstract class APermissions implements IDataProvider {
 
 		Set<String> users = getAllUserNames();
 		for (String key : users) {
-			AUser user = getExactUser(key);
+			AUser user = getExactUserByName(key);
 			List<String> subgroups = user.getSubgroups();
 			for (String subgroup : subgroups) {
 				List<String> resultGroup = result.get(subgroup);
@@ -444,7 +431,7 @@ public abstract class APermissions implements IDataProvider {
 	}
 
 	public String getUserNameFromPart(String partialName) {
-		AUser user = getUser(partialName, true);
+		AUser user = getUserByName(partialName, true);
 		if (user != null) {
 			return user.getName();
 		}

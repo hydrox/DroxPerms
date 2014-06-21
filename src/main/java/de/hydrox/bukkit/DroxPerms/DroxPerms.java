@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachment;
@@ -13,6 +14,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
 import de.hydrox.bukkit.DroxPerms.data.sql.SQLPermissions;
@@ -66,6 +68,17 @@ public class DroxPerms extends JavaPlugin {
 				SQLPermissions.mysqlError(e);
 			}
 		}
+		
+		if (!dataProvider.migrateToNewerVersion()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.exit(-1);
+			return;
+		}
 
 		API = new DroxPermsAPI(this);
 
@@ -95,10 +108,10 @@ public class DroxPerms extends JavaPlugin {
 		return API;
 	}
 
-	private String getPrefix(String player) {
-		String prefix = API.getPlayerInfo(player, "display_prefix");
+	private String getPrefix(AUser user) {
+		String prefix = API.getPlayerInfo(user.getUUID(), "display_prefix");
 		if (prefix == null) {
-			String group = API.getPlayerGroup(player);
+			String group = API.getPlayerGroup(user.getUUID());
 			prefix = API.getGroupInfo(group, "display_prefix");
 		}
 		if (prefix != null) {
@@ -110,7 +123,7 @@ public class DroxPerms extends JavaPlugin {
 	protected void registerPlayer(Player player) {
 		permissions.remove(player);
 		registerPlayer(player, player.getWorld());
-		String displayName = getPrefix(player.getName()) + player.getDisplayName();
+		String displayName = getPrefix(dataProvider.getUserByUUID(player.getUniqueId())) + player.getDisplayName();
 		if (displayName.length()>16) {
 			displayName = displayName.substring(0, 16);
 		}
@@ -149,6 +162,14 @@ public class DroxPerms extends JavaPlugin {
 		}
 	}
 
+	protected void refreshPlayer(AUser user) {
+		if (user == null) {
+			return;
+		}
+		Player player = Bukkit.getPlayer(user.getUUID());
+		refreshPlayer(player);
+	}
+
 	protected void refreshPlayer(Player player) {
 		if (player == null) {
 			return;
@@ -178,8 +199,9 @@ public class DroxPerms extends JavaPlugin {
 				.get(player);
 
 		PermissionAttachment attachment = attachments.get("group");
+		AUser user = dataProvider.getUserByUUID(player.getUniqueId());
 		Map<String, Map<String, Boolean>> playerPermissions = dataProvider
-				.getPlayerPermissions(player.getName(), world.getName(), false);
+				.getPlayerPermissions(user, world.getName());
 		Map<String, Boolean> perms = playerPermissions.get("group");
 		Map<String, Boolean> negPerms = new HashMap<String, Boolean>();
 		if (perms != null) {

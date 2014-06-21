@@ -1,22 +1,21 @@
 package de.hydrox.bukkit.DroxPerms.data;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class AUser {
-	protected static Map<String, AUser> users = new HashMap<String, AUser>();
-	protected static Map<String, AUser> backupUsers = new HashMap<String, AUser>();
-	protected static boolean testmode = false;
+	//protected static Map<String, AUser> users = new HashMap<String, AUser>();
+	//protected static Map<String, AUser> backupUsers = new HashMap<String, AUser>();
+	//protected static boolean testmode = false;
 
-	public static boolean removeUser(String name) {
+	/*public static boolean removeUser(String name) {
 		if (existUser(name.toLowerCase())) {
 			users.remove(name.toLowerCase());
 			return true;
 		}
 		return false;
-	}
+	}*/
 
 	public abstract boolean addPermission(String world, String permission);
 	public abstract boolean addSubgroup(String subgroup);
@@ -25,6 +24,7 @@ public abstract class AUser {
 	public abstract String getInfo(String node);
 	public abstract Map<String, String> getInfoComplete();
 	public abstract String getName();
+	public abstract UUID getUUID();
 	public abstract Map<String, Map<String, Boolean>> getPermissions(String world);
 	public abstract List<String> getSubgroups();
 	public abstract boolean removePermission(String world, String permission);
@@ -32,7 +32,7 @@ public abstract class AUser {
 	public abstract boolean setGroup(String newGroup);
 	public abstract boolean setInfo(String node, String data);
 
-	public static boolean addUser(AUser user) {
+	/*public static boolean addUser(AUser user) {
 		if (existUser(user.getName().toLowerCase())) {
 			return false;
 		}
@@ -72,6 +72,6 @@ public abstract class AUser {
 			users = backupUsers;
 			testmode = false;
 		}
-	}
+	}*/
 
 }
