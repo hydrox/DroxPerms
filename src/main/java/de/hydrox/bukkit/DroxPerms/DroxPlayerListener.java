@@ -58,14 +58,13 @@ public class DroxPlayerListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void updatePlayerSeenOnLogin(PlayerLoginEvent event) {
-		plugin.getAPI().setPlayerInfo(event.getPlayer().getName(), "lastSeen", Long.toString((System.currentTimeMillis() / 1000L)));
-		
-		
+		plugin.getAPI().setPlayerInfo(event.getPlayer().getUniqueId(), "lastSeen", Long.toString((System.currentTimeMillis() / 1000L)));
+		plugin.getAPI().setPlayerInfo(event.getPlayer().getUniqueId(), "lastName", event.getPlayer().getName());
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void updatePlayerSeenOnQuit(PlayerQuitEvent event) {
-		plugin.getAPI().setPlayerInfo(event.getPlayer().getName(), "lastSeen", Long.toString((System.currentTimeMillis() / 1000L)));
-		
+		plugin.getAPI().setPlayerInfo(event.getPlayer().getUniqueId(), "lastSeen", Long.toString((System.currentTimeMillis() / 1000L)));
+		plugin.getAPI().setPlayerInfo(event.getPlayer().getUniqueId(), "lastName", event.getPlayer().getName());
 	}
 }

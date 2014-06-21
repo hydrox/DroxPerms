@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.data.Config;
@@ -19,10 +23,20 @@ public class SQLUser extends AUser {
 	
 	private int ID;
 	private String name;
+	private UUID uuid;
 	
-	public SQLUser(int ID, String name, SQLPermissions provider) {
+	public SQLUser(int ID, UUID uuid, SQLPermissions provider) {
+		this(ID, uuid, null, provider);
+	}
+	
+	public SQLUser(int ID, UUID uuid, String name, SQLPermissions provider) {
 		this.ID = ID;
-		this.name = name;
+		this.uuid = uuid;
+		if (name == null) {
+			getLastName();
+		} else {
+			this.name = name;			
+		}
 		this.provider = provider;
 //		provider.logger.info("Username: " + name + " ID: " + ID);
 	}
@@ -146,8 +160,40 @@ public class SQLUser extends AUser {
 	}
 
 	@Override
+	public UUID getUUID() {
+		return uuid;
+	}
+
+	@Override
 	public String getName() {
 		return name;
+	}
+
+	public void getLastName() {
+		
+		Player player = Bukkit.getPlayer(uuid);
+		if (player != null) {
+			name = player.getName();
+			return;
+		}
+		provider.checkConnection();
+		PreparedStatement prep = provider.prepGetLastPlayerName;
+		try {
+			prep.clearParameters();
+			prep.setInt(1, ID);
+			ResultSet rs = prep.executeQuery();
+//			rs.last(); int numrows = rs.getRow(); rs.beforeFirst();
+//			provider.logger.info("ROWS: " + numrows);
+			rs.last(); int numrows = rs.getRow(); rs.beforeFirst();
+			if(numrows == 1) {
+				rs.next();
+//				provider.logger.info("NODE: " + node + " DATA: " + rs.getString(1));
+				name = rs.getString(1);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			SQLPermissions.mysqlError(e);
+		}
 	}
 
 	@Override

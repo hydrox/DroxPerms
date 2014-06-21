@@ -11,6 +11,8 @@ import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
+import de.hydrox.bukkit.DroxPerms.data.AUser;
+
 /**
  * This Class is the API of DroxPerms for external Plug-ins. <br>
  * To use it, use the following code-snippet in your plugin-class.
@@ -61,7 +63,14 @@ public class DroxPermsAPI {
 	 */
 	public String getPlayerGroup(String player) {
 		playerGroupGet++;
-		return plugin.dataProvider.getPlayerGroup(player);
+		AUser user = plugin.dataProvider.getExactUserByName(player);
+		return plugin.dataProvider.getPlayerGroup(user);
+	}
+        
+	public String getPlayerGroup(UUID uuid) {
+		playerGroupGet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		return plugin.dataProvider.getPlayerGroup(user);
 	}
         
 	/**
@@ -88,7 +97,8 @@ public class DroxPermsAPI {
 	 */
 	public boolean setPlayerGroup(String player, String group) {
 		playerGroupSet++;
-		boolean result = plugin.dataProvider.setPlayerGroup(fakeCS, player,
+		AUser user = plugin.dataProvider.getExactUserByName(player);
+		boolean result = plugin.dataProvider.setPlayerGroup(fakeCS, user,
 				group);
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
@@ -107,7 +117,8 @@ public class DroxPermsAPI {
 	 */
 	public ArrayList<String> getPlayerSubgroups(String player) {
 		playerGroupGet++;
-		return (ArrayList<String>) plugin.dataProvider.getPlayerSubgroups(player);
+		AUser user = plugin.dataProvider.getExactUserByName(player);
+		return (ArrayList<String>) plugin.dataProvider.getPlayerSubgroups(user);
 	}
 
 	/**
@@ -124,7 +135,8 @@ public class DroxPermsAPI {
 	 */
 	public boolean addPlayerSubgroup(String player, String subgroup) {
 		playerGroupSet++;
-		boolean result = plugin.dataProvider.addPlayerSubgroup(fakeCS, player,
+		AUser user = plugin.dataProvider.getExactUserByName(player);
+		boolean result = plugin.dataProvider.addPlayerSubgroup(fakeCS, user,
 				subgroup);
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
@@ -144,8 +156,9 @@ public class DroxPermsAPI {
 	 */
 	public boolean removePlayerSubgroup(String player, String subgroup) {
 		playerGroupSet++;
+		AUser user = plugin.dataProvider.getExactUserByName(player);
 		boolean result = plugin.dataProvider.removePlayerSubgroup(fakeCS,
-				player, subgroup);
+				user, subgroup);
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
 	}
@@ -164,7 +177,11 @@ public class DroxPermsAPI {
 	 */
 	public boolean addPlayerPermission(String player, String node) {
 		boolean result = addPlayerPermission(player, null, node);
-		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
+	}
+
+	public boolean addPlayerPermission(UUID uuid, String node) {
+		boolean result = addPlayerPermission(uuid, null, node);
 		return result;
 	}
 
@@ -184,9 +201,19 @@ public class DroxPermsAPI {
 	 */
 	public boolean addPlayerPermission(String player, String world, String node) {
 		playerPermAdd++;
+		AUser user = plugin.dataProvider.getExactUserByName(player);
 		boolean result = plugin.dataProvider.addPlayerPermission(fakeCS,
-				player, world, node);
+				user, world, node);
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
+	}
+
+	public boolean addPlayerPermission(UUID uuid, String world, String node) {
+		playerPermAdd++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		boolean result = plugin.dataProvider.addPlayerPermission(fakeCS,
+				user, world, node);
+		plugin.refreshPlayer(user);
 		return result;
 	}
 
@@ -203,8 +230,12 @@ public class DroxPermsAPI {
 	 * @deprecated player names are no longer guaranteed to be unique
 	 */
 	public boolean removePlayerPermission(String player, String node) {
-		boolean result = removeGroupPermission(player, null, node);
-		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		boolean result = removePlayerPermission(player, null, node);
+		return result;
+	}
+
+	public boolean removePlayerPermission(UUID uuid, String node) {
+		boolean result = removePlayerPermission(uuid, null, node);
 		return result;
 	}
 
@@ -225,9 +256,20 @@ public class DroxPermsAPI {
 	public boolean removePlayerPermission(String player, String world,
 			String node) {
 		playerPermRem++;
+		AUser user = plugin.dataProvider.getExactUserByName(player);
 		boolean result = plugin.dataProvider.removePlayerPermission(fakeCS,
-				player, world, node);
+				user, world, node);
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
+	}
+
+	public boolean removePlayerPermission(UUID uuid, String world,
+			String node) {
+		playerPermRem++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		boolean result = plugin.dataProvider.removePlayerPermission(fakeCS,
+				user, world, node);
+		plugin.refreshPlayer(user);
 		return result;
 	}
 
@@ -245,7 +287,14 @@ public class DroxPermsAPI {
 	 */
 	public String getPlayerInfo(String player, String node) {
 		playerInfoGet++;
-		return plugin.dataProvider.getPlayerInfo(player, node);
+		AUser user = plugin.dataProvider.getExactUserByName(player);
+		return plugin.dataProvider.getPlayerInfo(user, node);
+	}
+
+	public String getPlayerInfo(UUID uuid, String node) {
+		playerInfoGet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		return plugin.dataProvider.getPlayerInfo(user, node);
 	}
 
 	/**
@@ -264,7 +313,14 @@ public class DroxPermsAPI {
 	 */
 	public boolean setPlayerInfo(String player, String node, String data) {
 		playerInfoSet++;
-		return plugin.dataProvider.setPlayerInfo(fakeCS, player, node, data);
+		AUser user = plugin.dataProvider.getExactUserByName(player);
+		return plugin.dataProvider.setPlayerInfo(fakeCS, user, node, data);
+	}
+
+	public boolean setPlayerInfo(UUID uuid, String node, String data) {
+		playerInfoSet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		return plugin.dataProvider.setPlayerInfo(fakeCS, user, node, data);
 	}
 
 	/**
@@ -432,7 +488,8 @@ public class DroxPermsAPI {
 	 */
 	public boolean promotePlayer(String player, String track) {
 		playerGroupSet++;
-		boolean result = plugin.dataProvider.promotePlayer(fakeCS, player, track);
+		AUser user = plugin.dataProvider.getExactUserByName(player);
+		boolean result = plugin.dataProvider.promotePlayer(fakeCS, user, track);
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
 	}
@@ -451,7 +508,8 @@ public class DroxPermsAPI {
 	 */
 	public boolean demotePlayer(String player, String track) {
 		playerGroupSet++;
-		boolean result = plugin.dataProvider.demotePlayer(fakeCS, player, track);
+		AUser user = plugin.dataProvider.getExactUserByName(player);
+		boolean result = plugin.dataProvider.demotePlayer(fakeCS, user, track);
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
 	}
