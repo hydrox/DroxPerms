@@ -7,12 +7,16 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import de.hydrox.bukkit.DroxPerms.DroxPerms;
 import de.hydrox.bukkit.DroxPerms.data.AGroup;
@@ -20,10 +24,6 @@ import de.hydrox.bukkit.DroxPerms.data.APermissions;
 import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.utils.uuid.UUIDFetcher;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * 
