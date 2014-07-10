@@ -12,6 +12,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import de.hydrox.bukkit.DroxPerms.data.AUser;
+import de.hydrox.bukkit.DroxPerms.utils.uuid.UUIDFetcher;
 
 /**
  * This Class is the API of DroxPerms for external Plug-ins. <br>
@@ -569,6 +570,23 @@ public class DroxPermsAPI {
 	 */
 	public void save() {
 		plugin.dataProvider.save();
+	}
+	
+	/**
+	 * Returns a UUID when provided with a player name.
+	 * @param name
+	 * @return UUID associated with player name, or null if exception occurs
+	 * @since 1.0.0
+	 */	
+	public UUID getUUIDFromName(String name) {
+		UUID uuid;
+		try {
+			uuid = UUIDFetcher.getUUIDOf(name);
+		} catch (Exception e) {
+			e.printStackTrace();
+			uuid = null;
+		}
+		return uuid;
 	}
 }
 
