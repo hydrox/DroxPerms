@@ -12,7 +12,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import de.hydrox.bukkit.DroxPerms.data.AUser;
-import de.hydrox.bukkit.DroxPerms.utils.uuid.UUIDFetcher;
+import de.hydrox.bukkit.DroxPerms.utils.uuid.MojangWebAPI;
 
 /**
  * This Class is the API of DroxPerms for external Plug-ins. <br>
@@ -580,12 +580,7 @@ public class DroxPermsAPI {
 	 */	
 	public UUID getUUIDFromName(String name) {
 		UUID uuid;
-		try {
-			uuid = UUIDFetcher.getUUIDOf(name);
-		} catch (Exception e) {
-			e.printStackTrace();
-			uuid = null;
-		}
+		uuid = MojangWebAPI.getUUIDOf(name);
 		return uuid;
 	}
 }

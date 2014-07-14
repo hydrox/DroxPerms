@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,6 +144,15 @@ public class MojangWebAPI {
         for(String name : names){
           System.out.println(name + " :: "  + (MojangWebAPI.hasPaid(name) ? "paid" : "not paid"));
         }
+    }
+    
+    public static UUID getUUIDOf(String name) {
+	try {
+	    return lookupUUIDS(Arrays.asList(name)).get(name);
+	} catch (Exception e) {
+		return null;
+		//do nothing
+	}
     }
     
 }

@@ -23,7 +23,8 @@ import de.hydrox.bukkit.DroxPerms.data.AGroup;
 import de.hydrox.bukkit.DroxPerms.data.APermissions;
 import de.hydrox.bukkit.DroxPerms.data.ATrack;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
-import de.hydrox.bukkit.DroxPerms.utils.uuid.UUIDFetcher;
+import de.hydrox.bukkit.DroxPerms.utils.uuid.MojangWebAPI;
+import java.util.Collection;
 
 /**
  * 
@@ -180,36 +181,30 @@ public class FlatFilePermissions extends APermissions{
 	@Override
 	public AUser getExactUserByName(String name) {
 		UUID uuid;
-		try {
-			uuid = UUIDFetcher.getUUIDOf(name);
-		} catch (Exception ex) {
+		uuid = MojangWebAPI.getUUIDOf(name);
+		if (uuid == null) {
 			plugin.getLogger().info("Could not retrieve UUID for player: " + name + "!");
-			plugin.getLogger().info("Stacktrace: ");
-			ex.printStackTrace();
-			uuid = null;
 		}
 		return getUserByUUID(uuid);
 	}
 	
 	@Override
 	public AUser getPartialUserByName(String name) {
-		Player[] players = plugin.getServer().getOnlinePlayers();
+		Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
+		Iterator<? extends Player> playerItem = players.iterator();
 		UUID uuid;
 		
-		for (int i = 0; i < players.length; i++) {
-			if (players[i].getName().contains(name)) {
-				name = players[i].getName();
+		while (playerItem.hasNext()) {
+			String newName = playerItem.next().getName();
+			if (newName.contains(name)) {
+				name = newName;
 				break;
 			}
 		}
 		
-		try {
-			uuid = UUIDFetcher.getUUIDOf(name);
-		} catch (Exception ex) {
+		uuid = MojangWebAPI.getUUIDOf(name);
+		if (uuid == null) {
 			plugin.getLogger().info("Could not retrieve UUID for player: " + name + "!");
-			plugin.getLogger().info("Stacktrace: ");
-			ex.printStackTrace();
-			uuid = null;
 		}
 		return getUserByUUID(uuid);
 	}
@@ -236,10 +231,9 @@ public class FlatFilePermissions extends APermissions{
 			List users = new ArrayList();
 			users.addAll(userSet);
 			
-			UUIDFetcher fetcher = new UUIDFetcher(users);
 			Map<String, UUID> response = null;
 			try {
-				response = fetcher.call();
+				response = MojangWebAPI.lookupUUIDS(users);
 			} catch(Exception ex) {
 				plugin.getLogger().warning("Could not retreve UUIDS! Abandoning migration.");
 				return false;
