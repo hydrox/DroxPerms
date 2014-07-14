@@ -168,6 +168,7 @@ public class FlatFilePermissions extends APermissions{
 			return user;
 		} else {
 			ConfigurationSection node = null;
+			if (uuid == null) plugin.logger.warning("UUID IS NULL");
 			node = usersConfig.getConfigurationSection("users." + uuid.toString());
 			if (node != null) {
 				user = new User(uuid, node);

@@ -579,9 +579,7 @@ public class DroxPermsAPI {
 	 * @since 1.0.0
 	 */	
 	public UUID getUUIDFromName(String name) {
-		UUID uuid;
-		uuid = MojangWebAPI.getUUIDOf(name);
-		return uuid;
+		return MojangWebAPI.getUUIDOf(name);
 	}
 }
 

@@ -147,12 +147,14 @@ public class MojangWebAPI {
     }
     
     public static UUID getUUIDOf(String name) {
+	UUID uuid;
 	try {
-	    return lookupUUIDS(Arrays.asList(name)).get(name);
+	    uuid = lookupUUIDS(Arrays.asList(name)).get(name);
 	} catch (Exception e) {
-		return null;
-		//do nothing
+	    uuid = null;
+	    e.printStackTrace();
 	}
+	return uuid;
     }
     
 }
