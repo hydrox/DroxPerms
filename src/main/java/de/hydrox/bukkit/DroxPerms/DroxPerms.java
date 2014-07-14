@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 import de.hydrox.bukkit.DroxPerms.data.AUser;
 import de.hydrox.bukkit.DroxPerms.data.Config;
 import de.hydrox.bukkit.DroxPerms.data.IDataProvider;
+import de.hydrox.bukkit.DroxPerms.data.flatfile.FlatFilePermissions;
 import de.hydrox.bukkit.DroxPerms.data.sql.SQLPermissions;
 
 /**
@@ -61,12 +62,17 @@ public class DroxPerms extends JavaPlugin {
 		saveConfig();
 		new Config(this);
 		logger.info("[DroxPerms] Loading DataProvider");
-		if (Config.getDataProvider().equalsIgnoreCase(SQLPermissions.NODE)) {
+		if (Config.getDataProvider().equalsIgnoreCase(FlatFilePermissions.NODE)) {
+			dataProvider = new FlatFilePermissions(this);
+		} else if (Config.getDataProvider().equalsIgnoreCase(SQLPermissions.NODE)) {
 			try {
 				dataProvider = new SQLPermissions(Config.getMySQLConfig(), this);
 			} catch (SQLException e) {
 				SQLPermissions.mysqlError(e);
 			}
+		} else {
+			logger.warning("No DataProvider named \""+Config.getDataProvider()+ "\" available. Falling back to " + FlatFilePermissions.NODE);
+			dataProvider = new FlatFilePermissions(this);
 		}
 		
 		if (!dataProvider.migrateToNewerVersion()) {

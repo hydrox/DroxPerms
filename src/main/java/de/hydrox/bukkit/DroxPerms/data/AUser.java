@@ -1,21 +1,23 @@
 package de.hydrox.bukkit.DroxPerms.data;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public abstract class AUser {
-	//protected static Map<String, AUser> users = new HashMap<String, AUser>();
-	//protected static Map<String, AUser> backupUsers = new HashMap<String, AUser>();
-	//protected static boolean testmode = false;
+	protected static Map<UUID, AUser> users = new HashMap<UUID, AUser>();
+	protected static Map<UUID, AUser> backupUsers = new HashMap<UUID, AUser>();
+	protected static boolean testmode = false;
 
-	/*public static boolean removeUser(String name) {
-		if (existUser(name.toLowerCase())) {
-			users.remove(name.toLowerCase());
+	public static boolean removeUser(UUID uuid) {
+		if (existUser(uuid)) {
+			users.remove(uuid);
 			return true;
 		}
 		return false;
-	}*/
+	}
 
 	public abstract boolean addPermission(String world, String permission);
 	public abstract boolean addSubgroup(String subgroup);
@@ -32,20 +34,20 @@ public abstract class AUser {
 	public abstract boolean setGroup(String newGroup);
 	public abstract boolean setInfo(String node, String data);
 
-	/*public static boolean addUser(AUser user) {
-		if (existUser(user.getName().toLowerCase())) {
+	public static boolean addUser(AUser user) {
+		if (existUser(user.getUUID())) {
 			return false;
 		}
-		users.put(user.getName().toLowerCase(), user);
+		users.put(user.getUUID(), user);
 		return true;
 	}
 
-	public static AUser getUser(String name) {
-		return users.get(name.toLowerCase());
+	public static AUser getUser(UUID uuid) {
+		return users.get(uuid);
 	}
 
-	public static boolean existUser(String name) {
-		if (users.containsKey(name.toLowerCase())) {
+	public static boolean existUser(UUID uuid) {
+		if (users.containsKey(uuid)) {
 			return true;
 		}
 		return false;
@@ -62,7 +64,7 @@ public abstract class AUser {
 	public static void setTestMode() {
 		if (!testmode) {
 			backupUsers = users;
-			users = new HashMap<String, AUser>();
+			users = new HashMap<UUID, AUser>();
 			testmode = true;
 		}
 	}
@@ -72,6 +74,6 @@ public abstract class AUser {
 			users = backupUsers;
 			testmode = false;
 		}
-	}*/
+	}
 
 }

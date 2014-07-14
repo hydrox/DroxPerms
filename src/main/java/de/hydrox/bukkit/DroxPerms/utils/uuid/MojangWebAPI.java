@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class MojangWebAPI {
     public static final String NAME_DATA_LOOKUP_ENDPOINT     = "https://sessionserver.mojang.com/session/minecraft/profile/";
     public static final String HAS_PAID_ENDPOINT             = "https://minecraft.net/haspaid.jsp?user=";
     public static final String UUID_NAME_LOOKUP_ENDPOINT_ALT = "https://uuid.swordpvp.com/uuid/";
+    private static Map<String, UUID> storedUUIDS = new HashMap<String, UUID>();
     
     public static final int MAX_QUERIES_PER_REQUEST = 100;
     /**
@@ -143,6 +145,24 @@ public class MojangWebAPI {
         for(String name : names){
           System.out.println(name + " :: "  + (MojangWebAPI.hasPaid(name) ? "paid" : "not paid"));
         }
+    }
+    
+    public static UUID getUUIDOf(String name) {
+	UUID uuid;
+	
+	if (storedUUIDS.containsKey(name)) {
+		return storedUUIDS.get(name);
+	}
+	
+	try {
+	    uuid = MojangWebAPI.lookupUUIDS(Arrays.asList(name)).get(name);
+	} catch (Exception e) {
+	    uuid = null;
+	    e.printStackTrace();
+	    return uuid;
+	}
+	storedUUIDS.put(name, uuid);
+	return uuid;
     }
     
 }

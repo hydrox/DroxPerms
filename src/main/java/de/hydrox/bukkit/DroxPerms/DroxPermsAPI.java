@@ -12,6 +12,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import de.hydrox.bukkit.DroxPerms.data.AUser;
+import de.hydrox.bukkit.DroxPerms.utils.uuid.MojangWebAPI;
 
 /**
  * This Class is the API of DroxPerms for external Plug-ins. <br>
@@ -103,6 +104,15 @@ public class DroxPermsAPI {
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
 	}
+	
+	public boolean setPlayerGroup(UUID uuid, String group) {
+		playerGroupSet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		boolean result = plugin.dataProvider.setPlayerGroup(fakeCS, user,
+			        group);
+		plugin.refreshPlayer(user);
+		return result;
+	}
 
 	/**
 	 * Returns the sub-groups of the Player.
@@ -118,6 +128,12 @@ public class DroxPermsAPI {
 	public ArrayList<String> getPlayerSubgroups(String player) {
 		playerGroupGet++;
 		AUser user = plugin.dataProvider.getExactUserByName(player);
+		return (ArrayList<String>) plugin.dataProvider.getPlayerSubgroups(user);
+	}
+	
+	public ArrayList<String> getPlayerSubgroups(UUID uuid) {
+		playerGroupGet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
 		return (ArrayList<String>) plugin.dataProvider.getPlayerSubgroups(user);
 	}
 
@@ -141,6 +157,15 @@ public class DroxPermsAPI {
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
 	}
+	
+	public boolean addPlayerSubgroup(UUID uuid, String subgroup) {
+		playerGroupSet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		boolean result = plugin.dataProvider.addPlayerSubgroup(fakeCS, user,
+				subgroup);
+		plugin.refreshPlayer(user);
+		return result;
+	}
 
 	/**
 	 * Removes a Subgroup from a Player.
@@ -160,6 +185,15 @@ public class DroxPermsAPI {
 		boolean result = plugin.dataProvider.removePlayerSubgroup(fakeCS,
 				user, subgroup);
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
+		return result;
+	}
+	
+	public boolean removePlayerSubgroup(UUID uuid, String subgroup) {
+		playerGroupSet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		boolean result = plugin.dataProvider.removePlayerSubgroup(fakeCS,
+				user, subgroup);
+		plugin.refreshPlayer(user);
 		return result;
 	}
 
@@ -493,6 +527,14 @@ public class DroxPermsAPI {
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
 	}
+	
+	public boolean promotePlayer(UUID uuid, String track) {
+		playerGroupSet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		boolean result = plugin.dataProvider.promotePlayer(fakeCS, user, track);
+		plugin.refreshPlayer(user);
+		return result;
+	}
 
 	/**
 	 * Demotes a Player along a given Track.
@@ -513,6 +555,14 @@ public class DroxPermsAPI {
 		plugin.refreshPlayer(plugin.getServer().getPlayer(player));
 		return result;
 	}
+	
+	public boolean demotePlayer(UUID uuid, String track) {
+		playerGroupSet++;
+		AUser user = plugin.dataProvider.getUserByUUID(uuid);
+		boolean result = plugin.dataProvider.demotePlayer(fakeCS, user, track);
+		plugin.refreshPlayer(user);
+		return result;
+	}
 
 	/**
 	 * Tells the DataProvider to save all changes.
@@ -520,6 +570,16 @@ public class DroxPermsAPI {
 	 */
 	public void save() {
 		plugin.dataProvider.save();
+	}
+	
+	/**
+	 * Returns a UUID when provided with a player name.
+	 * @param name
+	 * @return UUID associated with player name, or null if exception occurs
+	 * @since 1.0.0
+	 */	
+	public UUID getUUIDFromName(String name) {
+		return MojangWebAPI.getUUIDOf(name);
 	}
 }
 
