@@ -168,7 +168,6 @@ public class FlatFilePermissions extends APermissions{
 			return user;
 		} else {
 			ConfigurationSection node = null;
-			if (uuid == null) plugin.logger.warning("UUID IS NULL");
 			node = usersConfig.getConfigurationSection("users." + uuid.toString());
 			if (node != null) {
 				user = new User(uuid, node);
@@ -181,33 +180,74 @@ public class FlatFilePermissions extends APermissions{
 	
 	@Override
 	public AUser getExactUserByName(String name) {
-		UUID uuid;
-		uuid = MojangWebAPI.getUUIDOf(name);
-		if (uuid == null) {
-			plugin.getLogger().info("Could not retrieve UUID for player: " + name + "!");
+		AUser user = null;
+		
+		ConfigurationSection node = null;
+		String currentUUID = null;
+		ConfigurationSection usersNode = usersConfig.getConfigurationSection("users");
+		Iterator<String> userIter = usersNode.getValues(false).keySet().iterator();
+			
+		while (userIter.hasNext()) {
+			currentUUID = userIter.next();
+			ConfigurationSection currentNode = usersConfig.getConfigurationSection("users." + currentUUID);
+			String lastName = currentNode.getString("info." + "lastName");
+			if (name.equals(lastName)) {
+				node = currentNode;
+				break;
+			}
 		}
-		return getUserByUUID(uuid);
+		
+		if (User.existUser(UUID.fromString(currentUUID))) {
+			user = User.getUser(UUID.fromString(currentUUID));
+			return user;
+		} else {
+			if (node != null) {
+				user = new User(UUID.fromString(currentUUID), node);
+				User.addUser(user);
+				return user;
+			}
+		}
+		return null;
 	}
 	
 	@Override
 	public AUser getPartialUserByName(String name) {
 		Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
-		Iterator<? extends Player> playerItem = players.iterator();
-		UUID uuid;
-		
-		while (playerItem.hasNext()) {
-			String newName = playerItem.next().getName();
+		Iterator<? extends Player> playerIter = players.iterator();
+		AUser user = null;
+		while (playerIter.hasNext()) {
+			String newName = playerIter.next().getName();
 			if (newName.contains(name)) {
 				name = newName;
 				break;
 			}
 		}
-		
-		uuid = MojangWebAPI.getUUIDOf(name);
-		if (uuid == null) {
-			plugin.getLogger().info("Could not retrieve UUID for player: " + name + "!");
+		ConfigurationSection node = null;
+		String currentUUID = null;
+		ConfigurationSection usersNode = usersConfig.getConfigurationSection("users");
+		Iterator<String> userIter = usersNode.getValues(false).keySet().iterator();
+			
+		while (userIter.hasNext()) {
+			currentUUID = userIter.next();
+			ConfigurationSection currentNode = usersConfig.getConfigurationSection("users." + currentUUID);
+			String lastName = currentNode.getString("info." + "lastName");
+			if (name.equals(lastName)) {
+				node = currentNode;
+				break;
+			}
 		}
-		return getUserByUUID(uuid);
+		
+		if (User.existUser(UUID.fromString(currentUUID))) {
+			user = User.getUser(UUID.fromString(currentUUID));
+			return user;
+		} else {
+			if (node != null) {
+				user = new User(UUID.fromString(currentUUID), node);
+				User.addUser(user);
+				return user;
+			}
+		}
+		return null;
 	}
 
 	@Override
